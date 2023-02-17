@@ -1,4 +1,4 @@
-package com.gt.login;
+package com.gt.zega;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
@@ -19,6 +20,7 @@ public class VerifyEmailFragment extends Fragment implements View.OnClickListene
     private EditText digit2;
     private EditText digit3;
     private EditText digit4;
+    private TextView phoneNumber;
     private Button resendCodeButton;
     private Button verifyButton;
 
@@ -31,6 +33,8 @@ public class VerifyEmailFragment extends Fragment implements View.OnClickListene
         digit2 = view.findViewById(R.id.digit2);
         digit3 = view.findViewById(R.id.digit3);
         digit4 = view.findViewById(R.id.digit4);
+
+        phoneNumber=view.findViewById(R.id.phoneNumberTextView);
 
         resendCodeButton = view.findViewById(R.id.resendCodeButton);
         verifyButton = view.findViewById(R.id.verifyButton);

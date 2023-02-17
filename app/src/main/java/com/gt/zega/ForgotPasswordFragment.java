@@ -1,4 +1,4 @@
-package com.gt.login;
+package com.gt.zega;
 
 import static android.content.ContentValues.TAG;
 
@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.textfield.TextInputLayout;
+
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuth;
@@ -141,11 +142,7 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
 
                 break;
             case R.id.backToLogin:
-                LoginFragment loginFragment = new LoginFragment();
-                FragmentManager fragmentManager = getParentFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.content_frame, loginFragment)
-                        .commit();
+                getActivity().onBackPressed();
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + view.getId());

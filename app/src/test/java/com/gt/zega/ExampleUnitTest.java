@@ -1,4 +1,4 @@
-package com.gt.login;
+package com.gt.zega;
 
 import org.junit.Test;
 

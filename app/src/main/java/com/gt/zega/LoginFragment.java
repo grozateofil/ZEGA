@@ -1,4 +1,4 @@
-package com.gt.login;
+package com.gt.zega;
 
 import static android.content.ContentValues.TAG;
 
@@ -12,15 +12,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputLayout;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
+
 
 import java.util.regex.Pattern;
 
@@ -65,10 +65,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.forgotPassword:
                 ForgotPasswordFragment forgotPasswordFragment = new ForgotPasswordFragment();
-                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.content_frame, forgotPasswordFragment);
-                transaction.setTransition(FragmentTransaction.TRANSIT_NONE);
-                transaction.addToBackStack(null);
+                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                transaction.hide(this);
+                transaction.add(R.id.content_frame, forgotPasswordFragment);
+                transaction.addToBackStack(TAG);
                 transaction.commit();
                 break;
             case R.id.loginButton:
@@ -78,9 +78,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.createAccountButton:
                 RegisterFragment registerFragment = new RegisterFragment();
-                FragmentTransaction fragmentTransaction=getParentFragmentManager().beginTransaction();
+                FragmentTransaction fragmentTransaction = getParentFragmentManager().beginTransaction();
                 fragmentTransaction.hide(this);
-                fragmentTransaction.add(R.id.content_frame,registerFragment);
+                fragmentTransaction.add(R.id.content_frame, registerFragment);
                 fragmentTransaction.addToBackStack(TAG);
                 fragmentTransaction.commit();
 
@@ -89,8 +89,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     }
 
     private boolean validation() {
-        if (emailValidation(email.getEditText().getText().toString())==false |
-                passwordValidation(password.getEditText().getText().toString())==false) {
+        if (emailValidation(email.getEditText().getText().toString()) == false |
+                passwordValidation(password.getEditText().getText().toString()) == false) {
             return false;
         }
         return true;

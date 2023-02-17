@@ -1,4 +1,4 @@
-package com.gt.login;
+package com.gt.zega;
 
 import android.content.Context;
 import android.graphics.Rect;

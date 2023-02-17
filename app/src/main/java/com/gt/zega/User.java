@@ -1,4 +1,4 @@
-package com.gt.login;
+package com.gt.zega;
 
 
 public class User {

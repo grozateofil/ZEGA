@@ -1,4 +1,4 @@
-package com.gt.login;
+package com.gt.zega;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
@@ -72,11 +73,12 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.backToLoginButton:
-                LoginFragment loginFragment = new LoginFragment();
-                FragmentManager fragmentManager = getParentFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.content_frame, loginFragment)
-                        .commit();
+//                LoginFragment loginFragment = new LoginFragment();
+//                FragmentManager fragmentManager = getParentFragmentManager();
+//                fragmentManager.beginTransaction()
+//                        .replace(R.id.content_frame, loginFragment)
+//                        .commit();
+                getActivity().onBackPressed();
                 break;
         }
     }
@@ -172,11 +174,16 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                databaseReference.child("Firstname").push().setValue(firstname.getEditText().getText().toString());
-                databaseReference.child("Lastname").push().setValue(lastname.getEditText().getText().toString());
-                databaseReference.child("Email").push().setValue(email.getEditText().getText().toString());
-                databaseReference.child("Password").push().setValue(password.getEditText().getText().toString());
-                Toast.makeText(getActivity().getApplicationContext(), "Succes!", Toast.LENGTH_LONG).show();
+                databaseReference.child("Firstname").setValue(firstname.getEditText().getText().toString());
+                databaseReference.child("Lastname").setValue(lastname.getEditText().getText().toString());
+                databaseReference.child("Email").setValue(email.getEditText().getText().toString().trim());
+                databaseReference.child("Password").setValue(password.getEditText().getText().toString());
+                Toast.makeText(getActivity().getApplicationContext(), "Succes!", Toast.LENGTH_SHORT).show();
+                LoginFragment loginFragment = new LoginFragment();
+                FragmentManager fragmentManager = getParentFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.content_frame, loginFragment)
+                        .commit();
 
             }
 

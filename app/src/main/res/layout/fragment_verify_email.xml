@@ -14,7 +14,7 @@
         android:layout_centerInParent="true"
         android:layout_marginTop="80dp"
         android:layout_marginBottom="10dp"
-        android:text="VERIFY EMAIL"
+        android:text="Verificare cod"
         android:textColor="@color/desertStorm"
         android:textSize="40sp"
         android:textStyle="bold" />
@@ -25,8 +25,17 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/verifyEmailTextView"
         android:layout_centerHorizontal="true"
+        android:text="Introduceti codul trimis la"
+        android:textColor="@color/desertStorm"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+    <TextView
+        android:id="@+id/phoneNumberTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/descriptionTextView"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"
-        android:text="Please enter the 4 digit code sent to email"
         android:textColor="@color/desertStorm"
         android:textSize="18sp"
         android:textStyle="bold" />
@@ -35,39 +44,43 @@
         android:id="@+id/code"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/descriptionTextView"
+        android:layout_below="@id/phoneNumberTextView"
         android:layout_centerHorizontal="true">
 
         <EditText
             android:id="@+id/digit1"
-            android:layout_width="wrap_content"
+            android:layout_width="30dp"
             android:layout_height="wrap_content"
             android:inputType="number"
             android:textSize="24dp"
+            android:gravity="center_horizontal"
             android:maxLength="1"/>
 
         <EditText
             android:id="@+id/digit2"
-            android:layout_width="wrap_content"
+            android:layout_width="30dp"
             android:layout_height="wrap_content"
             android:inputType="number"
             android:textSize="24dp"
+            android:gravity="center_horizontal"
             android:maxLength="1"/>
 
         <EditText
             android:id="@+id/digit3"
-            android:layout_width="wrap_content"
+            android:layout_width="30dp"
             android:layout_height="wrap_content"
             android:inputType="number"
             android:textSize="24dp"
+            android:gravity="center_horizontal"
             android:maxLength="1" />
 
         <EditText
             android:id="@+id/digit4"
-            android:layout_width="wrap_content"
+            android:layout_width="30dp"
             android:layout_height="wrap_content"
             android:inputType="number"
             android:textSize="24dp"
+            android:gravity="center_horizontal"
             android:maxLength="1"
             android:imeOptions="actionDone"/>
     </LinearLayout>
@@ -80,7 +93,7 @@
         android:layout_below="@id/code"
         android:backgroundTint="@color/darkYellow"
         android:outlineSpotShadowColor="@color/darkYellow"
-        android:text="RESEND CODE"
+        android:text="RETRIMITERE COD"
         android:textColor="@color/blackRussian"
         android:textSize="15sp"
         android:layout_marginTop="10dp"
@@ -93,7 +106,7 @@
         android:layout_below="@id/resendCodeButton"
         android:layout_centerHorizontal="true"
         android:backgroundTint="@color/blackRussian"
-        android:text="SUBMIT"
+        android:text="TRIMITE"
         android:textColor="@color/darkYellow"
         android:textSize="15sp"
         android:textStyle="bold"
