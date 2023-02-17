@@ -13,7 +13,6 @@ import androidx.fragment.app.FragmentManager;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
-
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
@@ -98,10 +97,10 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                 .matcher(email)
                 .matches();
         if (email.isEmpty()) {
-            this.email.setError("Camp obligatoriu");
+            this.email.setError(getText(R.string.required));
             return false;
         } else if (isCorrect == false) {
-            this.email.setError("Email invalid");
+            this.email.setError(getText(R.string.invalidEmail));
             return false;
         } else {
             this.email.setError(null);
@@ -112,7 +111,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
     private boolean lastNameValidation(String lastName) {
         if (lastName.isEmpty()) {
-            this.lastname.setError("Camp obligatoriu");
+            this.lastname.setError(getText(R.string.required));
             return false;
         } else {
             this.lastname.setError(null);
@@ -123,7 +122,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
     private boolean firstNameValidation(String firstName) {
         if (firstName.isEmpty()) {
-            this.firstname.setError("Camp obligatoriu");
+            this.firstname.setError(getText(R.string.required));
             return false;
         } else {
             this.firstname.setError(null);
@@ -134,7 +133,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
     private boolean passwordValidation(String password) {
         if (password.isEmpty()) {
-            this.password.setError("Camp obligatoriu");
+            this.password.setError(getText(R.string.required));
             return false;
         } else {
             this.password.setError(null);

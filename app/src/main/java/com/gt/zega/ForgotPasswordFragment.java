@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.textfield.TextInputLayout;
-
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuth;
@@ -108,7 +107,7 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
             case R.id.submitButton:
 
                 if (phoneNumber.getEditText().getText().toString().isEmpty()) {
-                    this.phoneNumber.setError("Camp obligatoriu");
+                    this.phoneNumber.setError(getText(R.string.required));
                 } else if (isValidPhoneNumber()) {
                     this.phoneNumber.setError(null);
                     this.phoneNumber.setErrorEnabled(false);

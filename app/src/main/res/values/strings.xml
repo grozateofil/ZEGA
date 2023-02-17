@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">ZEGA</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="required">Camp obligatoriu</string>
+    <string name="invalidEmail">Email invalid</string>
+    <string name="incorrectEmail">Email incorect</string>
 </resources>

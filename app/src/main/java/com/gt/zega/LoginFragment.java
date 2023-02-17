@@ -17,10 +17,8 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.SignInMethodQueryResult;
-
 
 import java.util.regex.Pattern;
 
@@ -102,10 +100,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 .matcher(email)
                 .matches();
         if (email.isEmpty()) {
-            this.email.setError("Camp obligatoriu");
+            this.email.setError(getText(R.string.required));
             return false;
         } else if (isCorrect == false) {
-            this.email.setError("Email invalid");
+            this.email.setError(getText(R.string.invalidEmail));
             return false;
         } else {
             this.email.setError(null);
@@ -123,7 +121,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                         emailExists = task.getResult().getSignInMethods().isEmpty();
 
                         if (emailExists) {
-                            Toast.makeText(getActivity().getApplicationContext(), "Email incorect", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity().getApplicationContext(), R.string.incorrectEmail, Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(getActivity().getApplicationContext(), "Succes!", Toast.LENGTH_LONG).show();
                         }
@@ -136,7 +134,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     private boolean passwordValidation(String password) {
         if (password.isEmpty()) {
-            this.password.setError("Camp obligatoriu");
+            this.password.setError(getText(R.string.required));
             return false;
         } else {
             this.password.setError(null);
