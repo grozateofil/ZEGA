@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/blackRussian"
+    tools:context=".RegisterFragment">
+
+    <TextView
+        android:id="@+id/tv_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:layout_marginBottom="65dp"
+        android:text="CREATE ACCOUNT"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:textColor="@color/desertStorm"
+        android:textSize="45sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/firstname"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_logo"
+        android:backgroundTint="@color/desertStorm"
+        android:layout_marginLeft="30dp"
+        android:textColorHint="@color/desertStorm"
+        android:textColor="@color/desertStorm"
+        android:hint="Firstname"
+        android:inputType="textPersonName"
+        android:textSize="15sp"
+        app:startIconDrawable="@drawable/person_icon"
+        app:startIconTint="@color/desertStorm"
+        android:drawablePadding="10dp"
+        app:errorEnabled="true">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/blackRussian"
+            android:singleLine="true"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/lastname"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_logo"
+        android:layout_toRightOf="@id/firstname"
+        android:backgroundTint="@color/desertStorm"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="30dp"
+        android:textColorHint="@color/desertStorm"
+        android:textColor="@color/desertStorm"
+        android:hint="Lastname"
+        android:inputType="textPersonName"
+        android:textSize="15sp"
+        app:startIconDrawable="@drawable/person_icon"
+        app:startIconTint="@color/desertStorm"
+        android:drawablePadding="10dp"
+        app:errorEnabled="true">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/blackRussian"
+            android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/desertStorm"
+        android:layout_below="@id/firstname"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:textColorHint="@color/desertStorm"
+        android:textColor="@color/desertStorm"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:textSize="15sp"
+        app:startIconDrawable="@drawable/email_icon"
+        app:startIconTint="@color/desertStorm"
+        android:drawablePadding="10dp"
+        app:errorEnabled="true">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/blackRussian" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/desertStorm"
+        android:layout_below="@id/email"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:textColorHint="@color/desertStorm"
+        android:textColor="@color/desertStorm"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:textSize="15sp"
+        app:startIconDrawable="@drawable/password_icon"
+        app:startIconTint="@color/desertStorm"
+        android:drawablePadding="10dp"
+        app:endIconMode="password_toggle"
+        app:endIconTint="@color/desertStorm"
+        app:errorEnabled="true">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/blackRussian"
+            android:inputType="textPassword"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <Button
+        android:id="@+id/createButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/password"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="30dp"
+        android:backgroundTint="@color/darkYellow"
+        android:text="Create"
+        android:textColor="@android:color/white"
+        app:cornerRadius="20dp"/>
+
+    <TextView
+        android:id="@+id/dontHaveAccout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/desertStorm"
+        android:text="ALREADY HAVE AN ACCOUT?"
+        android:layout_marginBottom="-10dp"
+        android:textSize="17sp"
+        android:layout_above="@id/backToLoginButton"/>
+
+
+    <Button
+        android:id="@+id/backToLoginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/blackRussian"
+        android:outlineSpotShadowColor="@color/blackRussian"
+        android:text="Login"
+        android:textColor="@color/darkYellow"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:cornerRadius="20dp" />
+
+
+</RelativeLayout>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/darkYellow"
+    tools:context=".LoginFragment">
+
+    <FrameLayout xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:ignore="MergeRootFrame" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/subtitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:layout_marginBottom="10dp"
+        android:text="WELCOME"
+        android:textColor="@color/desertStorm"
+        android:textSize="45sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/loginEmail"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginBottom="50dp"
+        android:text="LOGIN"
+        android:textColor="@color/desertStorm"
+        android:textSize="17sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/loginEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/loginPassword"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:backgroundTint="@color/desertStorm"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:textColor="@color/desertStorm"
+        android:textColorHint="@color/desertStorm"
+        android:textSize="15sp"
+        app:startIconDrawable="@drawable/email_icon"
+        app:startIconTint="@color/desertStorm"
+        app:errorEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/darkYellow" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/loginPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="-1dp"
+        android:layout_marginRight="30dp"
+        android:backgroundTint="@color/desertStorm"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:textColor="@color/desertStorm"
+        android:textColorHint="@color/desertStorm"
+        android:textSize="15sp"
+        app:endIconMode="password_toggle"
+        app:endIconTint="@color/desertStorm"
+        app:startIconDrawable="@drawable/password_icon"
+        app:startIconTint="@color/desertStorm"
+        app:errorEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/darkYellow"
+            android:inputType="textPassword" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <CheckBox
+        android:id="@+id/rememberMeCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/loginPassword"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="23dp"
+        android:layout_marginTop="1dp"
+        android:text="Remember me"/>
+
+    <Button
+        android:id="@+id/forgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/loginPassword"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="1dp"
+        android:backgroundTint="@color/darkYellow"
+        android:outlineSpotShadowColor="@color/darkYellow"
+        android:text="Forgot password?"
+        android:textColor="@color/blackRussian"
+        app:cornerRadius="20dp" />
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/forgotPassword"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="30dp"
+        android:backgroundTint="@color/blackRussian"
+        android:text="Login"
+        android:textColor="@android:color/white"
+        app:cornerRadius="20dp" />
+
+    <TextView
+        android:id="@+id/dontHaveAccout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/createAccountButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="-10dp"
+        android:text="DON'T HAVE AN ACCOUT?"
+        android:textColor="@color/desertStorm"
+        android:textSize="17sp" />
+
+    <Button
+        android:id="@+id/createAccountButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/darkYellow"
+        android:outlineSpotShadowColor="@color/darkYellow"
+        android:text="Create account"
+        android:textColor="@color/blackRussian"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:cornerRadius="20dp" />
+
+</RelativeLayout>
