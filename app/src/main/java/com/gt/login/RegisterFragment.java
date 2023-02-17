@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
@@ -143,31 +142,26 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     }
 
     private void firebaseRegistration() {
-        fAuth.createUserWithEmailAndPassword(email.getEditText().getText().toString(), password.getEditText().getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        fAuth.createUserWithEmailAndPassword(email.getEditText().getText().toString(), password.getEditText().getText().toString()).addOnCompleteListener((@NonNull Task<AuthResult> authResultTask) -> {
 
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Succes", Toast.LENGTH_LONG).show();
-                } else {
-                    fAuth.fetchSignInMethodsForEmail(email.getEditText().getText().toString())
-                            .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+            if (authResultTask.isSuccessful()) {
+                Toast.makeText(getActivity().getApplicationContext(), "Succes", Toast.LENGTH_LONG).show();
+            } else {
+                fAuth.fetchSignInMethodsForEmail(email.getEditText().getText().toString())
+                        .addOnCompleteListener((@NonNull Task<SignInMethodQueryResult> task) -> {
 
-                                    boolean isNewUser = task.getResult().getSignInMethods().isEmpty();
+                            boolean isNewUser = task.getResult().getSignInMethods().isEmpty();
 
-                                    if (isNewUser) {
-                                        emailExists = false;
-                                    } else {
-                                        emailExists = true;
-                                    }
+                            if (isNewUser) {
+                                emailExists = false;
+                            } else {
+                                emailExists = true;
+                            }
 
-                                }
-                            });
-                    if (emailExists == true) {
-                        Toast.makeText(getActivity().getApplicationContext(), "This email exists", Toast.LENGTH_LONG).show();
-                    }
+//                                }
+                        });
+                if (emailExists == true) {
+                    Toast.makeText(getActivity().getApplicationContext(), "This email exists", Toast.LENGTH_LONG).show();
                 }
             }
         });

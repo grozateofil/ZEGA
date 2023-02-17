@@ -107,9 +107,10 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
             case R.id.submitButton:
 
                 if (phoneNumber.getEditText().getText().toString().isEmpty()) {
-                    Toast.makeText(getActivity().getApplicationContext(), "Completeaza", Toast.LENGTH_LONG).show();
-                } else if (isValidPhoneNumber() == true) {
-
+                    this.phoneNumber.setError("Camp obligatoriu");
+                } else if (isValidPhoneNumber()) {
+                    this.phoneNumber.setError(null);
+                    this.phoneNumber.setErrorEnabled(false);
                     PhoneAuthOptions options =
                             PhoneAuthOptions.newBuilder(fAuth)
                                     .setPhoneNumber(ccp.getFullNumberWithPlus())       // Phone number to verify
@@ -122,8 +123,8 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
                     Toast.makeText(getActivity().getApplicationContext(), "SMS send", Toast.LENGTH_LONG).show();
                     codeSend = true;
 
-                } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Nr are format incorect", Toast.LENGTH_LONG).show();
+                } else if(!ccp.isValidFullNumber()){
+                    this.phoneNumber.setError("Formatul numarului este incorect");
                 }
 
 
@@ -146,6 +147,8 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
                         .replace(R.id.content_frame, loginFragment)
                         .commit();
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + view.getId());
         }
     }
 
