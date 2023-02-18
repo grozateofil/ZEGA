@@ -54,7 +54,8 @@
             android:inputType="number"
             android:textSize="24dp"
             android:gravity="center_horizontal"
-            android:maxLength="1"/>
+            android:maxLength="1"
+            android:importantForAutofill="yes" />
 
         <EditText
             android:id="@+id/digit2"
@@ -63,7 +64,8 @@
             android:inputType="number"
             android:textSize="24dp"
             android:gravity="center_horizontal"
-            android:maxLength="1"/>
+            android:maxLength="1"
+            android:importantForAutofill="yes" />
 
         <EditText
             android:id="@+id/digit3"
@@ -72,7 +74,8 @@
             android:inputType="number"
             android:textSize="24dp"
             android:gravity="center_horizontal"
-            android:maxLength="1" />
+            android:maxLength="1"
+            android:importantForAutofill="yes" />
 
         <EditText
             android:id="@+id/digit4"
@@ -82,7 +85,28 @@
             android:textSize="24dp"
             android:gravity="center_horizontal"
             android:maxLength="1"
-            android:imeOptions="actionDone"/>
+            android:importantForAutofill="yes" />
+
+        <EditText
+            android:id="@+id/digit5"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:textSize="24dp"
+            android:gravity="center_horizontal"
+            android:maxLength="1"
+            android:importantForAutofill="yes" />
+
+        <EditText
+            android:id="@+id/digit6"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:textSize="24dp"
+            android:gravity="center_horizontal"
+            android:maxLength="1"
+            android:importantForAutofill="yes"
+            android:imeOptions="actionDone" />
     </LinearLayout>
 
     <Button

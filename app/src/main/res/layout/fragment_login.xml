@@ -7,11 +7,10 @@
     android:background="@color/darkYellow"
     tools:context=".LoginFragment">
 
-    <FrameLayout xmlns:tools="http://schemas.android.com/tools"
+    <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         tools:ignore="MergeRootFrame" />
 
     <TextView
@@ -22,7 +21,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="80dp"
         android:layout_marginBottom="10dp"
-        android:text="WELCOME"
+        android:text="Bine ai venit"
         android:textColor="@color/desertStorm"
         android:textSize="45sp"
         android:textStyle="bold" />
@@ -35,7 +34,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginStart="25dp"
         android:layout_marginBottom="50dp"
-        android:text="LOGIN"
+        android:text="@string/login"
         android:textColor="@color/desertStorm"
         android:textSize="17sp" />
 
@@ -47,8 +46,8 @@
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:backgroundTint="@color/desertStorm"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
+        android:hint="@string/email"
+
         android:textColor="@color/desertStorm"
         android:textColorHint="@color/desertStorm"
         android:textSize="15sp"
@@ -59,7 +58,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/darkYellow" />
+            android:background="@color/darkYellow"
+            android:inputType="textEmailAddress" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -72,7 +72,7 @@
         android:layout_marginTop="-1dp"
         android:layout_marginRight="30dp"
         android:backgroundTint="@color/desertStorm"
-        android:hint="Password"
+        android:hint="@string/password"
         android:inputType="textPassword"
         android:textColor="@color/desertStorm"
         android:textColorHint="@color/desertStorm"
@@ -84,6 +84,7 @@
         app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/loginPasswordTIET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/darkYellow"
@@ -101,7 +102,7 @@
         android:layout_centerInParent="true"
         android:layout_marginStart="23dp"
         android:layout_marginTop="1dp"
-        android:text="Remember me"/>
+        android:text="Răman conectat" />
 
     <Button
         android:id="@+id/forgotPassword"
@@ -112,7 +113,7 @@
         android:layout_marginTop="1dp"
         android:backgroundTint="@color/darkYellow"
         android:outlineSpotShadowColor="@color/darkYellow"
-        android:text="Forgot password?"
+        android:text="@string/forgotPassword"
         android:textColor="@color/blackRussian"
         app:cornerRadius="20dp" />
 
@@ -125,7 +126,7 @@
         android:layout_marginTop="15dp"
         android:layout_marginRight="30dp"
         android:backgroundTint="@color/blackRussian"
-        android:text="Login"
+        android:text="@string/login"
         android:textColor="@android:color/white"
         app:cornerRadius="20dp" />
 
@@ -136,7 +137,7 @@
         android:layout_above="@id/createAccountButton"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="-10dp"
-        android:text="DON'T HAVE AN ACCOUT?"
+        android:text="@string/withoutAccount"
         android:textColor="@color/desertStorm"
         android:textSize="17sp" />
 
@@ -149,7 +150,7 @@
         android:layout_marginBottom="20dp"
         android:backgroundTint="@color/darkYellow"
         android:outlineSpotShadowColor="@color/darkYellow"
-        android:text="Create account"
+        android:text="@string/createAccount"
         android:textColor="@color/blackRussian"
         android:textSize="15sp"
         android:textStyle="bold"

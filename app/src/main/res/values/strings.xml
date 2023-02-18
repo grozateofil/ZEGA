@@ -1,6 +1,19 @@
 <resources>
     <string name="app_name">ZEGA</string>
-    <string name="required">Camp obligatoriu</string>
+    <string name="required">Câmp obligatoriu</string>
     <string name="invalidEmail">Email invalid</string>
     <string name="incorrectEmail">Email incorect</string>
+    <string name="incorrectPhoneNumber">Formatul numărului este incorect</string>
+    <string name="forgotPassword">Ai uitat parola?</string>
+    <string name="withoutAccount">Nu ai un cont?</string>
+    <string name="withAccount">Ai un cont?</string>
+    <string name="createAccount">Crează cont</string>
+    <string name="email">Email</string>
+    <string name="password">Parolă</string>
+    <string name="login">Login</string>
+    <string name="firstName">Prenume</string>
+    <string name="lastName">Nume de familie</string>
+    <string name="europeanCountries">AL,AD,AT,BY,BE,BA,BG,HR,CZ,DK,EE,FI,FR,DE,GR,HU,IS,IE,IT,LV,LI,LT,LU,MT,MD,MC,ME,MK,NL,NO,PL,PT,RO,RU,SM,RS,SK,SI,ES,SE,CH,UA,GB</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -9,18 +9,17 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.SignInMethodQueryResult;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.hbb20.CountryCodePicker;
 
 import java.util.regex.Pattern;
 
@@ -29,11 +28,13 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
     private TextInputLayout firstname;
     private TextInputLayout lastname;
+    private CountryCodePicker ccp;
+    private TextInputLayout phoneNumber;
     private TextInputLayout email;
     private TextInputLayout password;
 
     private FirebaseAuth fAuth;
-
+    private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
 
     private boolean emailExists;
@@ -48,6 +49,12 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
         firstname = view.findViewById(R.id.firstname);
         lastname = view.findViewById(R.id.lastname);
+
+        ccp = (CountryCodePicker) view.findViewById(R.id.ccpRegistration);
+        phoneNumber = view.findViewById(R.id.phoneNumberRegistration);
+        ccp.registerCarrierNumberEditText(phoneNumber.getEditText());
+        ccp.setCustomMasterCountries(getText(R.string.europeanCountries).toString());
+
         email = view.findViewById(R.id.email);
         password = view.findViewById(R.id.password);
 
@@ -55,7 +62,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         backToLoginButton = view.findViewById(R.id.backToLoginButton);
 
         fAuth = FirebaseAuth.getInstance();
-        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("users");
 
         createButton.setOnClickListener(this);
         backToLoginButton.setOnClickListener(this);
@@ -66,12 +74,12 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.createButton:
+            case (R.id.createButton):
                 if (validation()) {
-                    firebaseRegistration2();
+                    firebaseRegistration();
                 }
                 break;
-            case R.id.backToLoginButton:
+            case (R.id.backToLoginButton):
 //                LoginFragment loginFragment = new LoginFragment();
 //                FragmentManager fragmentManager = getParentFragmentManager();
 //                fragmentManager.beginTransaction()
@@ -83,30 +91,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     }
 
     private boolean validation() {
-        if (!emailValidation(email.getEditText().getText().toString()) |
+        return !(!phoneNumberValidation() | !emailValidation(email.getEditText().getText().toString()) |
                 !firstNameValidation(firstname.getEditText().getText().toString()) | !lastNameValidation(lastname.getEditText().getText().toString()) |
-                !passwordValidation(password.getEditText().getText().toString())) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean emailValidation(String email) {
-        String regexPattern = "^(.+)@(\\S+)$";
-        boolean isCorrect = Pattern.compile(regexPattern)
-                .matcher(email)
-                .matches();
-        if (email.isEmpty()) {
-            this.email.setError(getText(R.string.required));
-            return false;
-        } else if (isCorrect == false) {
-            this.email.setError(getText(R.string.invalidEmail));
-            return false;
-        } else {
-            this.email.setError(null);
-            this.email.setErrorEnabled(false);
-            return true;
-        }
+                !passwordValidation(password.getEditText().getText().toString()));
     }
 
     private boolean lastNameValidation(String lastName) {
@@ -131,6 +118,55 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    public boolean phoneNumberValidation() {
+        if (phoneNumber.getEditText().getText().toString().isEmpty()) {
+            this.phoneNumber.setError(getText(R.string.required));
+            return false;
+        } else if (!ccp.isValidFullNumber()) {
+            this.phoneNumber.setError(getText(R.string.incorrectPhoneNumber));
+            return false;
+        } else {
+            this.phoneNumber.setError(null);
+            this.phoneNumber.setErrorEnabled(false);
+            return true;
+        }
+    }
+
+    private boolean emailValidation(String email) {
+        String regexPattern = "^(.+)@(\\S+)$";
+        boolean isCorrect = Pattern.compile(regexPattern)
+                .matcher(email)
+                .matches();
+        if (email.isEmpty()) {
+            this.email.setError(getText(R.string.required));
+            return false;
+        } else if (!isCorrect) {
+            this.email.setError(getText(R.string.invalidEmail));
+            return false;
+        } else {
+            this.email.setError(null);
+            this.email.setErrorEnabled(false);
+            return true;
+        }
+    }
+
+    private void checkIfEmailExists(String emailAddress) {
+        fAuth.fetchSignInMethodsForEmail(emailAddress)
+                .addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                        emailExists = task.getResult().getSignInMethods().isEmpty();
+                        if (!emailExists) {
+                            email.setError("Exista deja un cont asociat acestei adrese de email!");
+                        } else {
+                            email.setError(null);
+                            email.setErrorEnabled(false);
+                        }
+
+                    }
+                });
+    }
+
     private boolean passwordValidation(String password) {
         if (password.isEmpty()) {
             this.password.setError(getText(R.string.required));
@@ -143,53 +179,39 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     }
 
     private void firebaseRegistration() {
-        fAuth.createUserWithEmailAndPassword(email.getEditText().getText().toString(), password.getEditText().getText().toString()).addOnCompleteListener((@NonNull Task<AuthResult> authResultTask) -> {
+        String firstName = firstname.getEditText().getText().toString();
+        String lastName = lastname.getEditText().getText().toString();
+        String phoneNumber = ccp.getFullNumberWithPlus();
+        String emailAddress = email.getEditText().getText().toString().trim();
+        String pass = password.getEditText().getText().toString();
 
-            if (authResultTask.isSuccessful()) {
-                Toast.makeText(getActivity().getApplicationContext(), "Succes", Toast.LENGTH_LONG).show();
-            } else {
-                fAuth.fetchSignInMethodsForEmail(email.getEditText().getText().toString())
-                        .addOnCompleteListener((@NonNull Task<SignInMethodQueryResult> task) -> {
+        UserAccount userAccount = new UserAccount(emailAddress, pass);
+        User user = new User(firstName, lastName, phoneNumber, userAccount);
 
-                            boolean isNewUser = task.getResult().getSignInMethods().isEmpty();
-
-                            if (isNewUser) {
-                                emailExists = false;
+        fAuth.createUserWithEmailAndPassword(emailAddress, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    FirebaseUser firebaseUser = fAuth.getCurrentUser();
+                    databaseReference.child(firebaseUser.getUid()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                firebaseUser.sendEmailVerification();
+                                Toast.makeText(getActivity().getApplicationContext(), "Ti-a fost trimis un email pentru a valida adresa de email", Toast.LENGTH_LONG).show();
+                                getActivity().onBackPressed();
                             } else {
-                                emailExists = true;
+                                Toast.makeText(getActivity().getApplicationContext(), "Eroare la inregistrare", Toast.LENGTH_LONG).show();
                             }
-
-//                                }
-                        });
-                if (emailExists == true) {
-                    Toast.makeText(getActivity().getApplicationContext(), "This email exists", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } else {
+                    checkIfEmailExists(emailAddress);
                 }
             }
         });
+
     }
 
-    private void firebaseRegistration2() {
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                databaseReference.child("Firstname").setValue(firstname.getEditText().getText().toString());
-                databaseReference.child("Lastname").setValue(lastname.getEditText().getText().toString());
-                databaseReference.child("Email").setValue(email.getEditText().getText().toString().trim());
-                databaseReference.child("Password").setValue(password.getEditText().getText().toString());
-                Toast.makeText(getActivity().getApplicationContext(), "Succes!", Toast.LENGTH_SHORT).show();
-                LoginFragment loginFragment = new LoginFragment();
-                FragmentManager fragmentManager = getParentFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.content_frame, loginFragment)
-                        .commit();
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
 }
