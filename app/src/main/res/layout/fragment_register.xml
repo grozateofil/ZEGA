@@ -34,18 +34,16 @@
             android:layout_marginLeft="30dp"
             android:backgroundTint="@color/desertStorm"
             android:hint="@string/firstName"
-
             android:textColor="@color/desertStorm"
             android:textColorHint="@color/desertStorm"
             android:textSize="15sp"
-            app:errorEnabled="true"
-            app:startIconTint="@color/desertStorm">
+            app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
                 android:background="@color/blackRussian"
+                android:inputType="textPersonName|textCapWords"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -62,14 +60,13 @@
             android:textColor="@color/desertStorm"
             android:textColorHint="@color/desertStorm"
             android:textSize="15sp"
-            app:errorEnabled="true"
-            app:startIconTint="@color/desertStorm">
+            app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
                 android:background="@color/blackRussian"
+                android:inputType="textPersonName|textCapWords"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -92,8 +89,10 @@
             app:ccpDialog_fastScroller_handleColor="@color/desertStorm"
             app:ccpDialog_showCloseIcon="true"
             app:ccpDialog_textColor="@color/desertStorm"
+            app:ccp_arrowColor="@color/desertStorm"
             app:ccp_autoDetectCountry="true"
             app:ccp_autoFormatNumber="true"
+            app:ccp_contentColor="@color/desertStorm"
             app:ccp_countryPreference="ro"
             app:ccp_defaultNameCode="ro"
             app:ccp_showNameCode="false" />
@@ -107,13 +106,10 @@
             android:backgroundTint="@color/desertStorm"
             android:drawablePadding="10dp"
             android:hint="Telefon"
-
             android:textColor="@color/desertStorm"
             android:textColorHint="@color/desertStorm"
-
             android:textSize="15sp"
-            app:errorEnabled="true"
-            app:startIconTint="@color/desertStorm">
+            app:errorEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -133,13 +129,10 @@
         android:backgroundTint="@color/desertStorm"
         android:drawablePadding="10dp"
         android:hint="@string/email"
-
         android:textColor="@color/desertStorm"
         android:textColorHint="@color/desertStorm"
-
         android:textSize="15sp"
-        app:errorEnabled="true"
-        app:startIconTint="@color/desertStorm">
+        app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -158,16 +151,16 @@
         android:backgroundTint="@color/desertStorm"
         android:drawablePadding="10dp"
         android:hint="@string/password"
-        android:inputType="textPassword"
         android:textColor="@color/desertStorm"
         android:textColorHint="@color/desertStorm"
         android:textSize="15sp"
         app:endIconMode="password_toggle"
         app:endIconTint="@color/desertStorm"
         app:errorEnabled="true"
-        app:startIconTint="@color/desertStorm">
+        app:errorIconDrawable="@null">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/passwordTIET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/blackRussian"
@@ -185,7 +178,7 @@
         android:layout_marginRight="30dp"
         android:layout_marginBottom="30dp"
         android:backgroundTint="@color/darkYellow"
-        android:text="Crează"
+        android:text="@string/signUp"
         android:textColor="@android:color/white"
         app:cornerRadius="20dp" />
 
@@ -196,7 +189,7 @@
         android:layout_above="@id/backToLoginButton"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="-10dp"
-        android:text="@string/withAccount"
+        android:text="@string/haveAccount"
         android:textColor="@color/desertStorm"
         android:textSize="17sp" />
 

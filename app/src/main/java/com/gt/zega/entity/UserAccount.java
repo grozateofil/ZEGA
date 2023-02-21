@@ -1,4 +1,4 @@
-package com.gt.zega;
+package com.gt.zega.entity;
 
 public class UserAccount {
     private String email;

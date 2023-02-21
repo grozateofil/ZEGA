@@ -1,4 +1,4 @@
-package com.gt.zega;
+package com.gt.zega.entity;
 
 
 public class User {
@@ -13,6 +13,12 @@ public class User {
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.userAccount = userAccount;
+    }
+
+    public User(String firstName, String lastName, String phoneNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
     }
 
     public String getFirstName() {
@@ -45,5 +51,15 @@ public class User {
 
     public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", userAccount=" + userAccount +
+                '}';
     }
 }
