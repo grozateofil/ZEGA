@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,7 +32,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private Button forgotPasswordButton;
     private Button loginButton;
     private Button registerButton;
-    private CheckBox rememberMeCheckBox;
 
     private FirebaseAuth fAuth;
 
@@ -49,11 +47,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         password = view.findViewById(R.id.loginPassword);
 
         forgotPasswordButton = view.findViewById(R.id.forgotPasswordButton);
-        rememberMeCheckBox = view.findViewById(R.id.rememberMeCheckBox);
         loginButton = view.findViewById(R.id.loginButton);
         registerButton = view.findViewById(R.id.createAccountButton);
 
         fAuth = FirebaseAuth.getInstance();
+
+        sharedPreferences = getContext().getSharedPreferences("Preferences", 0);
+
 
         validations = new ValidationsImpl();
 
@@ -63,17 +63,19 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case (R.id.loginButton):
                 if (validation()) {
                     firebaseLogin();
+
                 }
                 break;
 
             case (R.id.forgotPasswordButton):
-                ForgotPasswordFragment forgotPasswordFragment = new ForgotPasswordFragment();
+                ResetPasswordFragment forgotPasswordFragment = new ResetPasswordFragment();
                 FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                 transaction.hide(this);
                 transaction.add(R.id.content_frame, forgotPasswordFragment);
@@ -93,8 +95,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     }
 
     private boolean validation() {
-        return !(!validations.emailValidation(email) |
-                !validations.passwordValidation(password));
+        return (validations.emailValidation(email) &
+                validations.passwordValidation(password));
     }
 
     private void firebaseLogin() {
@@ -102,8 +104,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         String pass = password.getEditText().getText().toString();
 
         fAuth.signInWithEmailAndPassword(emailAddress, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+
+
                 if (task.isSuccessful()) {
                     email.setError(null);
                     email.setErrorEnabled(false);
@@ -112,16 +117,24 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                     password.setErrorEnabled(false);
 
                     Toast.makeText(getActivity().getApplicationContext(), "Succes!", Toast.LENGTH_SHORT).show();
+
                     HomeFragment homeFragment = new HomeFragment();
                     FragmentManager fragmentManager = getParentFragmentManager();
                     fragmentManager.beginTransaction()
                             .replace(R.id.content_frame, homeFragment)
                             .commit();
+
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("LOGIN", emailAddress);
+                    editor.commit();
+
+
                 } else {
                     email.setError("\0");
                     password.setError("\0");
                     Toast.makeText(getActivity().getApplicationContext(), "Email sau parolă incorectă", Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
     }

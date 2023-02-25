@@ -14,7 +14,7 @@ public class ValidationsImpl implements Validations {
     public boolean firstNameValidation(TextInputLayout firstName) {
         Context context = firstName.getContext();
         String firstNameString = firstName.getEditText().getText().toString();
-        if (firstNameString.isEmpty()) {
+        if (firstNameString.isEmpty() || firstNameString.matches("\\s*")) {
             firstName.setError(context.getResources().getText(R.string.required));
             return false;
         } else {
@@ -28,7 +28,7 @@ public class ValidationsImpl implements Validations {
     public boolean lastNameValidation(TextInputLayout lastName) {
         Context context = lastName.getContext();
         String lastNameString = lastName.getEditText().getText().toString();
-        if (lastNameString.isEmpty()) {
+        if (lastNameString.isEmpty() || lastNameString.matches("\\s*")) {
             lastName.setError(context.getResources().getText(R.string.required));
             return false;
         } else {
@@ -41,8 +41,8 @@ public class ValidationsImpl implements Validations {
     @Override
     public boolean phoneNumberValidation(TextInputLayout phoneNumber, CountryCodePicker ccp) {
         Context context = phoneNumber.getContext();
-        String lastNameString = phoneNumber.getEditText().getText().toString();
-        if (lastNameString.isEmpty()) {
+        String phoneNumberString = phoneNumber.getEditText().getText().toString();
+        if (phoneNumberString.isEmpty()) {
             phoneNumber.setError(context.getResources().getText(R.string.required));
             return false;
         } else if (!ccp.isValidFullNumber()) {
@@ -58,15 +58,11 @@ public class ValidationsImpl implements Validations {
     @Override
     public boolean emailValidation(TextInputLayout email) {
         Context context = email.getContext();
-        String regexPattern = "^(.+)@(\\S+)$";
         String emailString = email.getEditText().getText().toString();
-        boolean isCorrect = Pattern.compile(regexPattern)
-                .matcher(emailString)
-                .matches();
         if (emailString.isEmpty()) {
             email.setError(context.getResources().getString(R.string.required));
             return false;
-        } else if (!isCorrect) {
+        } else if (!Pattern.compile("^[\\w.]+@([\\w-]+\\.)+[\\w-]{2,4}$").matcher(emailString).matches()) {
             email.setError(context.getResources().getString(R.string.invalidEmail));
             return false;
         } else {
@@ -83,6 +79,9 @@ public class ValidationsImpl implements Validations {
         if (passwordString.isEmpty()) {
             password.setError(context.getResources().getText(R.string.required));
             return false;
+        } else if (Pattern.compile("^(?=.*\\s).+$").matcher(passwordString).matches()) {
+            password.setError("Parola nu poate să conțină spațiu gol");
+            return false;
         } else {
             password.setError(null);
             password.setErrorEnabled(false);
@@ -97,22 +96,26 @@ public class ValidationsImpl implements Validations {
         if (passwordString.isEmpty()) {
             password.setError(context.getResources().getText(R.string.required));
             return false;
-        } else if (passwordString.length() < 6) {
-            password.setError("Parola trebuie să conțină minim 6 caractere");
-            return false;
-        } else if (!Pattern.compile("^(?=.*\\p{Upper}).+$").matcher(passwordString).matches()) {
-            password.setError("Parola trebuie să conțină minim o majusculă");
-            return false;
-        } else if (!Pattern.compile("^(?=.*\\p{Digit}).+$").matcher(passwordString).matches()) {
-            password.setError("Parola trebuie să conțină minim o cifră");
-            return false;
-        } else if (!Pattern.compile("^(?=.*\\p{Punct}).+$").matcher(passwordString).matches()) {
-            password.setError("Parola trebuie să conțină minim un caracter special");
-            return false;
         } else if (Pattern.compile("^(?=.*\\s).+$").matcher(passwordString).matches()) {
             password.setError("Parola nu poate să conțină spațiu gol");
             return false;
-        } else {
+//        } else if (passwordString.length() < 6) {
+//            password.setError("Parola trebuie să conțină minim 6 caractere");
+//            return false;
+//        }
+//        else if (!Pattern.compile("^(?=.*\\p{Upper}).+$").matcher(passwordString).matches()) {
+//            password.setError("Parola trebuie să conțină minim o majusculă");
+//            return false;
+        }
+//        else if (!Pattern.compile("^(?=.*\\p{Digit}).+$").matcher(passwordString).matches()) {
+//            password.setError("Parola trebuie să conțină minim o cifră");
+//            return false;
+//        }
+//        else if (!Pattern.compile("^(?=.*\\p{Punct}).+$").matcher(passwordString).matches()) {
+//            password.setError("Parola trebuie să conțină minim un caracter special");
+//            return false;
+//        }
+        else {
             password.setError(null);
             password.setErrorEnabled(false);
             return true;

@@ -15,7 +15,7 @@ import com.gt.zega.database.Checking;
 import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
 
-public class ForgotPasswordFragment extends Fragment implements View.OnClickListener {
+public class ResetPasswordFragment extends Fragment implements View.OnClickListener {
 
     private TextInputLayout email;
     private Button submitButton;
@@ -28,7 +28,7 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_forgot_password, container, false);
+        View view = inflater.inflate(R.layout.fragment_reset_password, container, false);
 
         email = view.findViewById(R.id.forgotPasswordEmail);
 
@@ -49,20 +49,10 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case (R.id.submitBtn):
-                if (validations.emailValidation(email)) {
-                    if (Checking.checkIfEmailExists(fAuth, email, "Nu există niciun cont asociat acestei adrese de email")) {
-                        fAuth.sendPasswordResetEmail(email.getEditText().getText().toString())
-                                .addOnCompleteListener(task -> {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(getActivity().getApplicationContext(), "În căteva momente vei primi un email pentru resetarea parolei", Toast.LENGTH_SHORT).show();
-                                        getActivity().onBackPressed();
-                                    } else {
-                                        Toast.makeText(getActivity().getApplicationContext(), "Eroare la trimitere", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                    }
-                }
+                if (validation()) {
 
+                    resetPassword();
+                }
                 break;
             case (R.id.backToLoginBtn):
                 getActivity().onBackPressed();
@@ -70,5 +60,29 @@ public class ForgotPasswordFragment extends Fragment implements View.OnClickList
             default:
                 throw new IllegalStateException("Unexpected value: " + view.getId());
         }
+    }
+
+    private boolean validation() {
+        return (validations.emailValidation(email) &&
+                Checking.checkIfEmailExists(fAuth, email, "Nu există niciun cont asociat acestei adrese de email")
+//                | Checking.emailVerification(fAuth, getContext())
+        );
+    }
+
+    private void resetPassword() {
+
+        fAuth.sendPasswordResetEmail(email.getEditText().getText().toString())
+                .addOnCompleteListener(task -> {
+
+                    if (task.isSuccessful()) {
+
+                        Toast.makeText(getActivity().getApplicationContext(), "În căteva momente vei primi un email pentru resetarea parolei", Toast.LENGTH_SHORT).show();
+                        getActivity().onBackPressed();
+
+                    } else {
+                        Toast.makeText(getActivity().getApplicationContext(), "Eroare la trimitere", Toast.LENGTH_SHORT).show();
+                    }
+
+                });
     }
 }

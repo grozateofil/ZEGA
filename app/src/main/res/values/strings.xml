@@ -15,6 +15,10 @@
     <string name="firstName">Prenume</string>
     <string name="lastName">Nume de familie</string>
     <string name="europeanCountries">AL,AD,AT,BY,BE,BA,BG,HR,CZ,DK,EE,FI,FR,DE,GR,HU,IS,IE,IT,LV,LI,LT,LU,MT,MD,MC,ME,MK,NL,NO,PL,PT,RO,RU,SM,RS,SK,SI,ES,SE,CH,UA,GB</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="selectACountry">Selectați o țară</string>
+    <string name="search">Caută</string>
+    <string name="wantToExit">Doriți să vă deconectați?</string>
+    <string name="yes">Da</string>
+    <string name="no">Nu</string>
 </resources>

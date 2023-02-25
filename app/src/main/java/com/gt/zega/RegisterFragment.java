@@ -1,10 +1,14 @@
 package com.gt.zega;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -51,10 +55,12 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         firstname = view.findViewById(R.id.firstname);
         lastname = view.findViewById(R.id.lastname);
 
-        ccp = (CountryCodePicker) view.findViewById(R.id.ccpRegistration);
+        ccp = view.findViewById(R.id.ccpRegistration);
         phoneNumber = view.findViewById(R.id.phoneNumberRegistration);
         ccp.registerCarrierNumberEditText(phoneNumber.getEditText());
         ccp.setCustomMasterCountries(getText(R.string.europeanCountries).toString());
+        ccp.setDialogEventsListener(dialogEventsListener());
+
 
         email = view.findViewById(R.id.email);
         password = view.findViewById(R.id.password);
@@ -88,6 +94,27 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    private CountryCodePicker.DialogEventsListener dialogEventsListener() {
+        return new CountryCodePicker.DialogEventsListener() {
+            @Override
+            public void onCcpDialogOpen(Dialog dialog) {
+                TextView title = dialog.findViewById(com.hbb20.R.id.textView_title);
+                title.setText(R.string.selectACountry);
+
+                EditText search = dialog.findViewById(com.hbb20.R.id.editText_search);
+                search.setHint(R.string.search);
+            }
+
+            @Override
+            public void onCcpDialogDismiss(DialogInterface dialogInterface) {
+            }
+
+            @Override
+            public void onCcpDialogCancel(DialogInterface dialogInterface) {
+            }
+        };
+    }
+
     private boolean validation() {
         return !(!validations.firstNameValidation(firstname) |
                 !validations.lastNameValidation(lastname) |
@@ -97,10 +124,10 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     }
 
     private void firebaseRegistration() {
-        String firstName = firstname.getEditText().getText().toString();
-        String lastName = lastname.getEditText().getText().toString();
+        String firstName = firstname.getEditText().getText().toString().replaceFirst("\\s++$", "").replaceFirst("^\\s*", "");
+        String lastName = lastname.getEditText().getText().toString().replaceFirst("\\s++$", "").replaceFirst("^\\s*", "");
         String phoneNumber = ccp.getFullNumberWithPlus();
-        String emailAddress = email.getEditText().getText().toString().replaceAll("\\s", "");
+        String emailAddress = email.getEditText().getText().toString();
         String pass = password.getEditText().getText().toString();
 
         UserAccount userAccount = new UserAccount(emailAddress, pass);
@@ -118,9 +145,10 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                fAuth.setLanguageCode("ro");
-                                firebaseUser.sendEmailVerification();
-                                Toast.makeText(getActivity().getApplicationContext(), "Ți-a fost trimis un email pentru a valida adresa de email", Toast.LENGTH_LONG).show();
+//                                fAuth.setLanguageCode("ro");
+//                                firebaseUser.sendEmailVerification();
+//                                Toast.makeText(getActivity().getApplicationContext(), "Ți-a fost trimis un email pentru a valida adresa de email", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getActivity().getApplicationContext(), "Cont creat cu succes", Toast.LENGTH_SHORT).show();
                                 getActivity().onBackPressed();
                             } else {
                                 Toast.makeText(getActivity().getApplicationContext(), "Eroare la înregistrare", Toast.LENGTH_SHORT).show();

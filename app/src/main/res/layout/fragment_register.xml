@@ -20,18 +20,23 @@
         android:textSize="45sp"
         android:textStyle="bold" />
 
+
     <LinearLayout
         android:id="@+id/fullName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_below="@id/tv_logo"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:weightSum="100">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/firstname"
-            android:layout_width="160dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="50"
             android:layout_marginLeft="30dp"
+            android:layout_marginRight="5dp"
             android:backgroundTint="@color/desertStorm"
             android:hint="@string/firstName"
             android:textColor="@color/desertStorm"
@@ -49,14 +54,14 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/lastname"
-            android:layout_width="160dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_weight="50"
+            android:layout_marginLeft="5dp"
             android:layout_marginRight="30dp"
             android:layout_toRightOf="@id/firstname"
             android:backgroundTint="@color/desertStorm"
             android:hint="@string/lastName"
-
             android:textColor="@color/desertStorm"
             android:textColorHint="@color/desertStorm"
             android:textSize="15sp"
@@ -69,27 +74,29 @@
                 android:inputType="textPersonName|textCapWords"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
-
     </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/fullName"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <com.hbb20.CountryCodePicker
             android:id="@+id/ccpRegistration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
             app:ccpDialog_backgroundColor="@color/black"
             app:ccpDialog_fastScroller_bubbleColor="@color/desertStorm"
             app:ccpDialog_fastScroller_bubbleTextAppearance="@style/bubbleText"
             app:ccpDialog_fastScroller_handleColor="@color/desertStorm"
             app:ccpDialog_showCloseIcon="true"
+            app:ccp_showArrow="false"
             app:ccpDialog_textColor="@color/desertStorm"
-            app:ccp_arrowColor="@color/desertStorm"
             app:ccp_autoDetectCountry="true"
             app:ccp_autoFormatNumber="true"
             app:ccp_contentColor="@color/desertStorm"
@@ -97,14 +104,12 @@
             app:ccp_defaultNameCode="ro"
             app:ccp_showNameCode="false" />
 
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/phoneNumberRegistration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="30dp"
             android:backgroundTint="@color/desertStorm"
-            android:drawablePadding="10dp"
             android:hint="Telefon"
             android:textColor="@color/desertStorm"
             android:textColorHint="@color/desertStorm"
@@ -118,6 +123,7 @@
                 android:inputType="phone" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
+
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/email"
@@ -140,6 +146,7 @@
             android:background="@color/blackRussian"
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
+
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/password"
@@ -181,6 +188,7 @@
         android:text="@string/signUp"
         android:textColor="@android:color/white"
         app:cornerRadius="20dp" />
+
 
     <TextView
         android:id="@+id/dontHaveAccout"

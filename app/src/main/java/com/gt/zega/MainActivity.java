@@ -1,7 +1,11 @@
 package com.gt.zega;
 
 import android.content.Context;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Rect;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,23 +15,40 @@ import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+
+import com.gt.zega.internetConnection.NetworkChangeListener;
 
 public class MainActivity extends AppCompatActivity {
-    private Fragment fragment;
-    private FragmentManager fragmentManager;
-    private FragmentTransaction fragmentTransaction;
+    NetworkChangeListener networkChangeListener = new NetworkChangeListener();
+
+    private SharedPreferences sharedpreferences;
+
+//    private ConnectivityLiveData connectivityLiveData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        LoginFragment loginFragment=new LoginFragment();
+//        connectivityLiveData=new ConnectivityLiveData(getApplicationContext());
+//        connectivityLiveData.observe(this, new Observer<Boolean>() {
+//            @Override
+//            public void onChanged(Boolean aBoolean) {
+//
+//            }
+//        });
 
-        setFragment(loginFragment);
+        sharedpreferences = getApplicationContext().getSharedPreferences("Preferences", 0);
+        String login = sharedpreferences.getString("LOGIN", null);
 
-//        addFragment();
+        if (login != null) {
+            HomeFragment loginFragment = new HomeFragment();
+            setFragment(loginFragment);
+        } else {
+            LoginFragment loginFragment = new LoginFragment();
+            setFragment(loginFragment);
+        }
     }
 
     public void setFragment(Fragment fragment) {
@@ -37,35 +58,14 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-//    public void addFragment(){
-//        LoginFragment loginFragment=new LoginFragment();
-//        loginFragment.setCallBackFragment(this);
-//        fragmentManager=getSupportFragmentManager();
-//        fragmentTransaction=fragmentManager.beginTransaction();
-//        fragmentTransaction.add(R.id.fragmentContainer,fragment).commit();
-//    }
-//
-//    public void replaceFragment(){
-//        fragment=new RegisterFragment();
-//        fragmentManager=getSupportFragmentManager();
-//        fragmentTransaction=fragmentManager.beginTransaction();
-//        fragmentTransaction.addToBackStack(null);
-//        fragmentTransaction.add(R.id.fragmentContainer,fragment).commit();
-//    }
-//
-//    @Override
-//    public void changeFragment() {
-//        replaceFragment();
-//    }
-
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
-            if ( v instanceof EditText) {
+            if (v instanceof EditText) {
                 Rect outRect = new Rect();
                 v.getGlobalVisibleRect(outRect);
-                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
                     v.clearFocus();
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
@@ -75,5 +75,17 @@ public class MainActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(event);
     }
 
+    @Override
+    protected void onStart() {
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkChangeListener, intentFilter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        unregisterReceiver(networkChangeListener);
+        super.onStop();
+    }
 }
 
