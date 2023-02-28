@@ -1,4 +1,4 @@
-package com.gt.zega;
+package com.gt.zega.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.gt.zega.R;
 import com.gt.zega.database.Checking;
 import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;

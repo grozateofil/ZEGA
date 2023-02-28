@@ -3,16 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blackRussian">
+    android:background="@color/black_russian">
 
     <TextView
         android:id="@+id/confirmDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="1dp"
+        android:layout_marginTop="10dp"
         android:text="Doriți să vă deconectați?"
-        android:textColor="@color/desertStorm"
+        android:textColor="@color/desert_storm"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,10 +25,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:backgroundTint="@color/darkYellow"
+        android:backgroundTint="@color/floral_white"
+        android:outlineSpotShadowColor="@color/floral_white"
         android:text="Nu"
-        android:textColor="@android:color/white"
-        app:cornerRadius="20dp"
+        android:textColor="@color/black_russian"
+        app:cornerRadius="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,10 +40,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:backgroundTint="@color/darkYellow"
+        android:backgroundTint="@color/floral_white"
+        android:outlineSpotShadowColor="@color/floral_white"
         android:text="Da"
-        android:textColor="@android:color/white"
-        app:cornerRadius="20dp"
+        android:textColor="@color/black_russian"
+        app:cornerRadius="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.916"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,10 +54,10 @@
         class="androidx.appcompat.app.AlertController$RecycleListView"
         android:layout_width="0dp"
         android:layout_height="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_Yes"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/btn_Yes">
 
     </view>
 

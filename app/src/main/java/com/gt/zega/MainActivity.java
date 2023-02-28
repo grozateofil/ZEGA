@@ -1,29 +1,61 @@
 package com.gt.zega;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.gt.zega.fragment.AboutUsFragment;
+import com.gt.zega.fragment.HomeFragment;
+import com.gt.zega.fragment.LoginFragment;
+import com.gt.zega.fragment.NotificationFragment;
+import com.gt.zega.fragment.ProfileFragment;
+import com.gt.zega.fragment.SettingsFragment;
 import com.gt.zega.internetConnection.NetworkChangeListener;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     NetworkChangeListener networkChangeListener = new NetworkChangeListener();
 
-    private SharedPreferences sharedpreferences;
+    private static final float END_SCALE = 0.7f;
 
-//    private ConnectivityLiveData connectivityLiveData;
+    private View contentView;
+
+    private SharedPreferences sharedPreferences;
+
+    private TextView userNameHeader;
+
+    private ImageView userPhoto;
+
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,16 +63,77 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-//        connectivityLiveData=new ConnectivityLiveData(getApplicationContext());
-//        connectivityLiveData.observe(this, new Observer<Boolean>() {
+
+        sharedPreferences = getApplicationContext().getSharedPreferences("Preferences", 0);
+        String login = sharedPreferences.getString("LOGIN", null);
+
+        contentView = findViewById(R.id.holder);
+        drawerLayout = findViewById(R.id.drawerLayout);
+        navigationView = findViewById(R.id.nav_view);
+        toolbar = findViewById(R.id.toolbar);
+
+
+        toolbar.setContentInsetStartWithNavigation(0);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.bringToFront();
+
+        navigationView.getMenu().getItem(0).setChecked(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (drawerLayout.isDrawerOpen(navigationView)) {
+                    drawerLayout.closeDrawer(navigationView);
+                } else {
+                    drawerLayout.openDrawer(navigationView);
+                }
+            }
+        });
+
+        drawerLayout.setScrimColor(Color.TRANSPARENT);
+        drawerLayout.setDrawerElevation(0);
+//        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drower_open, R.string.navigation_drower_close);
+//        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                //labelView.setVisibility(slideOffset > 0 ? View.VISIBLE : View.GONE);
+
+                // Scale the View based on current slide offset
+                final float diffScaledOffset = slideOffset * (1f - END_SCALE);
+                final float offsetScale = 1 - diffScaledOffset;
+                contentView.setScaleX(offsetScale);
+                contentView.setScaleY(offsetScale);
+
+
+                // Translate the View, accounting for the scaled width
+                final float xOffset = drawerView.getWidth() * slideOffset;
+                final float xOffsetDiff = contentView.getWidth() * diffScaledOffset / 2;
+                final float xTranslation = xOffset - xOffsetDiff;
+                contentView.setTranslationX(xTranslation);
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                // labelView.setVisibility(View.GONE);
+            }
+        });
+
+//        userNameHeader = navigationView.getHeaderView(0).findViewById(R.id.userNameMenuHeader);
+//        userNameHeader.setText(sharedPreferences.getString("currentUserName", null));
+//        userPhoto = navigationView.getHeaderView(0).findViewById(R.id.userPhoto);
+//        userPhoto.setOnClickListener(new View.OnClickListener() {
 //            @Override
-//            public void onChanged(Boolean aBoolean) {
-//
+//            public void onClick(View v) {
+//                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new ProfileFragment()).commit();
+//                navigationView.setCheckedItem(R.id.nav_profile);
+//                drawerLayout.closeDrawer(GravityCompat.START);
 //            }
 //        });
-
-        sharedpreferences = getApplicationContext().getSharedPreferences("Preferences", 0);
-        String login = sharedpreferences.getString("LOGIN", null);
 
         if (login != null) {
             HomeFragment loginFragment = new HomeFragment();
@@ -53,26 +146,104 @@ public class MainActivity extends AppCompatActivity {
 
     public void setFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
-                .commit();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            View v = getCurrentFocus();
-            if (v instanceof EditText) {
+            View view = getCurrentFocus();
+            if (view instanceof EditText) {
                 Rect outRect = new Rect();
-                v.getGlobalVisibleRect(outRect);
+                view.getGlobalVisibleRect(outRect);
                 if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
-                    v.clearFocus();
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    view.clearFocus();
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
             }
         }
         return super.dispatchTouchEvent(event);
+    }
+
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        boolean fragmentSelected = false;
+        switch (menuItem.getItemId()) {
+            case (R.id.nav_home):
+                fragmentSelected = true;
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new HomeFragment()).commit();
+//                Toast.makeText(this, R.string.maintenance_works, Toast.LENGTH_SHORT).show();
+                break;
+
+            case (R.id.nav_profile):
+                fragmentSelected = true;
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new ProfileFragment()).commit();
+                break;
+
+            case (R.id.nav_notification):
+                fragmentSelected = true;
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new NotificationFragment()).commit();
+//                Toast.makeText(this, R.string.maintenance_works, Toast.LENGTH_SHORT).show();
+                break;
+
+            case (R.id.nav_settings):
+                fragmentSelected = true;
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new SettingsFragment()).commit();
+                break;
+
+            case (R.id.nav_aboutUs):
+                fragmentSelected = true;
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new AboutUsFragment()).commit();
+                break;
+
+            case (R.id.nav_logout):
+                confirmLogout();
+                break;
+
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return fragmentSelected;
+    }
+
+    private void confirmLogout() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.confirm_logout, null);
+        builder.setView(view);
+
+        Button cancelButton = view.findViewById(R.id.btn_No);
+        Button okButton = view.findViewById(R.id.btn_Yes);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.setCancelable(false);
+        dialog.getWindow().setGravity(Gravity.CENTER);
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+                LoginFragment loginFragment = new LoginFragment();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.content_frame, loginFragment).commit();
+
+                FirebaseAuth.getInstance().signOut();
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove("LOGIN");
+                editor.apply();
+
+            }
+        });
+
     }
 
     @Override
@@ -86,6 +257,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         unregisterReceiver(networkChangeListener);
         super.onStop();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (this.drawerLayout.isDrawerVisible(GravityCompat.START)) {
+            this.drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 }
 

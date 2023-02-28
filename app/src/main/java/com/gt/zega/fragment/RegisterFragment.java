@@ -1,9 +1,12 @@
-package com.gt.zega;
+package com.gt.zega.fragment;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.gt.zega.R;
 import com.gt.zega.entity.User;
 import com.gt.zega.entity.UserAccount;
 import com.gt.zega.util.Validations;
@@ -54,25 +58,28 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
         firstname = view.findViewById(R.id.firstname);
         lastname = view.findViewById(R.id.lastname);
-
         ccp = view.findViewById(R.id.ccpRegistration);
         phoneNumber = view.findViewById(R.id.phoneNumberRegistration);
+        email = view.findViewById(R.id.email);
+        password = view.findViewById(R.id.password);
+        createButton = view.findViewById(R.id.createButton);
+        backToLoginButton = view.findViewById(R.id.backToLoginButton);
+
         ccp.registerCarrierNumberEditText(phoneNumber.getEditText());
         ccp.setCustomMasterCountries(getText(R.string.europeanCountries).toString());
         ccp.setDialogEventsListener(dialogEventsListener());
-
-
-        email = view.findViewById(R.id.email);
-        password = view.findViewById(R.id.password);
-
-        createButton = view.findViewById(R.id.createButton);
-        backToLoginButton = view.findViewById(R.id.backToLoginButton);
 
         fAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("users");
 
         validations = new ValidationsImpl();
+
+        firstname.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
+        lastname.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
+        phoneNumber.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
+        email.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
+        password.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
 
         createButton.setOnClickListener(this);
         backToLoginButton.setOnClickListener(this);
@@ -83,6 +90,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+
             case (R.id.createButton):
                 if (validation()) {
                     firebaseRegistration();
@@ -93,6 +101,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                 break;
         }
     }
+
 
     private CountryCodePicker.DialogEventsListener dialogEventsListener() {
         return new CountryCodePicker.DialogEventsListener() {
@@ -163,5 +172,30 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    @NonNull
+    private ActionMode.Callback getActionModeCallback() {
+        return new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+
+            }
+        };
+    }
 
 }
+

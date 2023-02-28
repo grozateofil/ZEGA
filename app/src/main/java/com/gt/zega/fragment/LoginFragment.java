@@ -1,16 +1,21 @@
-package com.gt.zega;
+package com.gt.zega.fragment;
 
 import static android.content.ContentValues.TAG;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -20,6 +25,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.gt.zega.R;
 import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
 
@@ -42,6 +48,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_login, container, false);
         email = view.findViewById(R.id.loginEmail);
         password = view.findViewById(R.id.loginPassword);
@@ -57,10 +64,38 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
         validations = new ValidationsImpl();
 
+        email.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
+        password.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
+
         forgotPasswordButton.setOnClickListener(this);
         loginButton.setOnClickListener(this);
         registerButton.setOnClickListener(this);
         return view;
+    }
+
+    @NonNull
+    private ActionMode.Callback getActionModeCallback() {
+        return new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+
+            }
+        };
     }
 
 
@@ -137,5 +172,21 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+        DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawerLayout);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawerLayout);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED);
     }
 }

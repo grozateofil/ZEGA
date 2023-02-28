@@ -6,6 +6,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String phoneNumber;
+    private String photo;
     private UserAccount userAccount;
 
     public User(String firstName, String lastName, String phoneNumber, UserAccount userAccount) {
@@ -15,10 +16,19 @@ public class User {
         this.userAccount = userAccount;
     }
 
+
+    public User(String firstName, String lastName, String phoneNumber, String photo) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.photo = photo;
+    }
+
     public User(String firstName, String lastName, String phoneNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
+
     }
 
     public String getFirstName() {
@@ -51,6 +61,14 @@ public class User {
 
     public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     @Override

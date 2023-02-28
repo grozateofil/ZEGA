@@ -5,12 +5,25 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
+    <color name="black">#121212</color>
     <color name="white">#FFFFFFFF</color>
 
     <color name="darkYellow">#dc9f04</color>
-    <color name="blackRussian">#1c1c23</color>
+    <!--    <color name="blackRussian">#1c1c23</color>-->
+    <color name="black_russian">#17181D</color>
     <color name="goldenYellow">#fcdc04</color>
-    <color name="desertStorm">#edebe8</color>
+    <color name="desert_storm">#edebe8</color>
+
+
+    <color name="coldNorth">#549C9F</color>
+    <color name="dustStorm">#E3CBC7</color>
+    <color name="sandRift">#AA8978</color>
+
+    <color name="background_fragment">#AA8978</color>
+    <color name="background_button">#AA8978</color>
+
+
+    <color name="floral_white">#FFF7EC</color>
+
 
 </resources>

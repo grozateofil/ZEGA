@@ -4,91 +4,69 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkYellow"
-    tools:context=".LoginFragment">
-
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        tools:ignore="MergeRootFrame" />
+    android:background="@color/floral_white"
+    tools:context=".fragment.LoginFragment">
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/subtitle"
-        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="30dp"
         android:layout_marginTop="80dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="65dp"
         android:text="Bine ai venit"
-        android:textColor="@color/desertStorm"
-        android:textSize="45sp"
+        android:textColor="@color/black_russian"
+        android:textSize="35sp"
         android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/subtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/loginEmail"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="25dp"
-        android:layout_marginBottom="50dp"
-        android:text="@string/login"
-        android:textColor="@color/desertStorm"
-        android:textSize="17sp" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/loginEmail"
+        style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/loginPassword"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:backgroundTint="@color/desertStorm"
         android:hint="@string/email"
-        android:textColor="@color/desertStorm"
-        android:textColorHint="@color/desertStorm"
         android:textSize="15sp"
+        app:errorEnabled="true"
         app:startIconDrawable="@drawable/email_icon"
-        app:startIconTint="@color/desertStorm"
-        app:errorEnabled="true">
+        app:startIconTint="@color/black_russian">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/darkYellow"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:textColor="@color/black_russian" /><!--android:textCursorDrawable="@drawable/color_cursor" -->
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/loginPassword"
+        style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="-1dp"
         android:layout_marginRight="30dp"
-        android:backgroundTint="@color/desertStorm"
         android:hint="@string/password"
         android:inputType="textPassword"
-        android:textColor="@color/desertStorm"
-        android:textColorHint="@color/desertStorm"
         android:textSize="15sp"
         app:endIconMode="password_toggle"
-        app:endIconTint="@color/desertStorm"
+        app:endIconTint="@color/black_russian"
         app:errorEnabled="true"
         app:errorIconDrawable="@null"
         app:startIconDrawable="@drawable/password_icon"
-        app:startIconTint="@color/desertStorm">
+        app:startIconTint="@color/black_russian">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/loginPasswordTIET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/darkYellow"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="@color/black_russian" />
+        <!--            android:textCursorDrawable="@drawable/color_cursor"-->
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -110,11 +88,14 @@
         android:layout_height="40dp"
         android:layout_below="@id/loginPassword"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="14dp"
-        android:backgroundTint="@color/darkYellow"
-        android:outlineSpotShadowColor="@color/darkYellow"
+        android:layout_marginTop="-27dp"
+        android:layout_marginRight="30dp"
+        android:backgroundTint="@android:color/transparent"
+        android:outlineAmbientShadowColor="@android:color/transparent"
+        android:outlineSpotShadowColor="@android:color/transparent"
+        android:padding="0dp"
         android:text="@string/forgotPassword"
-        android:textColor="@color/blackRussian"
+        android:textColor="@color/black_russian"
         app:cornerRadius="20dp" />
 
     <Button
@@ -125,10 +106,11 @@
         android:layout_marginLeft="30dp"
         android:layout_marginTop="15dp"
         android:layout_marginRight="30dp"
-        android:backgroundTint="@color/blackRussian"
+        android:backgroundTint="@color/black_russian"
+        android:outlineSpotShadowColor="@color/black_russian"
         android:text="@string/login"
-        android:textColor="@android:color/white"
-        app:cornerRadius="20dp" />
+        android:textColor="@color/floral_white"
+        app:cornerRadius="3dp" />
 
     <TextView
         android:id="@+id/dontHaveAccout"
@@ -136,9 +118,9 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/createAccountButton"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="-10dp"
+        android:layout_marginBottom="-7dp"
         android:text="@string/withoutAccount"
-        android:textColor="@color/desertStorm"
+        android:textColor="@color/black_russian"
         android:textSize="17sp" />
 
     <Button
@@ -148,12 +130,10 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
-        android:backgroundTint="@color/darkYellow"
-        android:outlineSpotShadowColor="@color/darkYellow"
+        android:backgroundTint="@color/black_russian"
+        android:outlineSpotShadowColor="@color/black_russian"
         android:text="@string/signUp"
-        android:textColor="@color/blackRussian"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:cornerRadius="20dp" />
+        android:textColor="#FFF7EC"
+        app:cornerRadius="3dp" />
 
 </RelativeLayout>

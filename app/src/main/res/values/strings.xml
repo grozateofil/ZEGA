@@ -21,4 +21,8 @@
     <string name="wantToExit">Doriți să vă deconectați?</string>
     <string name="yes">Da</string>
     <string name="no">Nu</string>
+
+    <string name="navigation_drower_open">Open</string>
+    <string name="navigation_drower_close">Close</string>
+
 </resources>

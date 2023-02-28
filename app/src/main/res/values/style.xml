@@ -5,4 +5,20 @@
         <item name="android:textColor">#000000</item>
     </style>
 
+    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxStrokeColor">@color/text_input_box_stroke</item>
+        <item name="hintTextColor">@color/black_russian</item> <!--hintColor from outline-->
+        <item name="android:textColorHint">@color/black_russian
+        </item> <!--hintColor from inside the TextInputLayout-->
+        <item name="android:textCursorDrawable">@color/black_russian</item>
+    </style>
+
+    <style name="buttonStyle" parent="@android:style/Widget.Button">
+        <item name="android:textColor">#FFF7EC</item>
+        <item name="android:backgroundTint">@color/black_russian</item>
+        <item name="cornerRadius">3dp</item>
+        <item name="android:outlineSpotShadowColor">@color/black_russian</item>
+    </style>
+
+
 </resources>
