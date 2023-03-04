@@ -13,17 +13,30 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="40dp"
-        android:layout_marginBottom="65dp"
+        android:layout_marginBottom="35dp"
         android:text="Editare profil"
         android:textColor="@color/black_russian"
         android:textSize="35sp"
         android:textStyle="bold" />
 
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/profilePicture"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_below="@id/title"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="30dp"
+        android:background="@drawable/avatar"
+        android:clickable="true"
+        android:scaleType="fitXY"
+        app:shapeAppearanceOverlay="@style/circleImageView" />
+
     <LinearLayout
         android:id="@+id/fullName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/title"
+        android:layout_below="@id/profilePicture"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="18dp"
         android:orientation="horizontal"
