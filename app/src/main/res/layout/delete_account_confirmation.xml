@@ -6,14 +6,14 @@
     android:background="@color/black_russian">
 
     <TextView
-        android:id="@+id/confirmDescription"
+        android:id="@+id/confirmDeleteAccountDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="1dp"
         android:layout_marginTop="10dp"
-        android:text="Doriți să vă deconectați?"
+        android:text="Sunteți sigur că doriți să ștergeți contul?"
         android:textColor="@color/desert_storm"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.196"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btn_No"
+        android:id="@+id/noButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -33,10 +33,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.916"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/confirmDescription" />
+        app:layout_constraintTop_toBottomOf="@+id/confirmDeleteAccountDescription" />
 
     <Button
-        android:id="@+id/btn_Yes"
+        android:id="@+id/yesButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -48,7 +48,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/confirmDescription" />
+        app:layout_constraintTop_toBottomOf="@+id/confirmDeleteAccountDescription" />
 
     <view
         class="androidx.appcompat.app.AlertController$RecycleListView"
@@ -57,7 +57,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_Yes">
+        app:layout_constraintTop_toBottomOf="@+id/yesButton">
 
     </view>
 

@@ -25,7 +25,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.gt.zega.R;
+import com.gt.zega.entity.User;
 import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
 
@@ -40,10 +47,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private Button registerButton;
 
     private FirebaseAuth fAuth;
+    private DatabaseReference databaseReference;
+    private FirebaseUser firebaseUser;
 
     private SharedPreferences sharedPreferences;
 
     private Validations validations;
+    private String userKey;
+    private static User user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,11 +69,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         registerButton = view.findViewById(R.id.createAccountButton);
 
         fAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
+        firebaseUser = fAuth.getCurrentUser();
 
         sharedPreferences = getContext().getSharedPreferences("Preferences", 0);
 
-
         validations = new ValidationsImpl();
+
+        //email.getEditText().setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS|InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
 
         email.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
         password.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
@@ -153,6 +167,17 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
                     Toast.makeText(getActivity().getApplicationContext(), "Succes!", Toast.LENGTH_SHORT).show();
 
+                    databaseReference.child(fAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            user = dataSnapshot.getValue(User.class);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                        }
+                    });
+
                     HomeFragment homeFragment = new HomeFragment();
                     FragmentManager fragmentManager = getParentFragmentManager();
                     fragmentManager.beginTransaction()
@@ -188,5 +213,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawerLayout);
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED);
+    }
+
+    public static User getCurrentUser() {
+        return user;
     }
 }

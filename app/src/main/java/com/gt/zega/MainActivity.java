@@ -31,6 +31,9 @@ import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.gt.zega.fragment.AboutUsFragment;
 import com.gt.zega.fragment.HomeFragment;
 import com.gt.zega.fragment.LoginFragment;
@@ -39,12 +42,13 @@ import com.gt.zega.fragment.ProfileFragment;
 import com.gt.zega.fragment.SettingsFragment;
 import com.gt.zega.internetConnection.NetworkChangeListener;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     NetworkChangeListener networkChangeListener = new NetworkChangeListener();
 
     private static final float END_SCALE = 0.7f;
 
     private View contentView;
+    private View navigationHeader;
 
     private SharedPreferences sharedPreferences;
 
@@ -57,15 +61,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
+    private FirebaseAuth firebaseAuth;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
+    private FirebaseUser firebaseUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference();
+        firebaseUser = firebaseAuth.getCurrentUser();
 
         sharedPreferences = getApplicationContext().getSharedPreferences("Preferences", 0);
         String login = sharedPreferences.getString("LOGIN", null);
+        String userName = sharedPreferences.getString("userData", null);
 
         contentView = findViewById(R.id.holder);
         drawerLayout = findViewById(R.id.drawerLayout);
@@ -77,11 +91,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        navigationHeader = navigationView.getHeaderView(0);
+
 
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
 
         navigationView.getMenu().getItem(0).setChecked(true);
+
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,17 +140,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-//        userNameHeader = navigationView.getHeaderView(0).findViewById(R.id.userNameMenuHeader);
-//        userNameHeader.setText(sharedPreferences.getString("currentUserName", null));
-//        userPhoto = navigationView.getHeaderView(0).findViewById(R.id.userPhoto);
-//        userPhoto.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new ProfileFragment()).commit();
-//                navigationView.setCheckedItem(R.id.nav_profile);
-//                drawerLayout.closeDrawer(GravityCompat.START);
-//            }
-//        });
+
+//        userPhoto = navigationView.getHeaderView(0).findViewById(R.id.userPictureMenuHeader);
+//        userPhoto.setOnClickListener(this);
 
         if (login != null) {
             HomeFragment loginFragment = new HomeFragment();
@@ -166,6 +175,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.dispatchTouchEvent(event);
     }
 
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+//            case (R.id.userPictureMenuHeader): {
+//                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new ProfileFragment()).commit();
+//                navigationView.setCheckedItem(R.id.nav_profile);
+//                drawerLayout.closeDrawer(GravityCompat.START);
+//                break;
+//            }
+        }
+    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -240,6 +261,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.remove("LOGIN");
                 editor.apply();
+                navigationView.getMenu().getItem(0).setChecked(true);
 
             }
         });
@@ -267,5 +289,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             super.onBackPressed();
         }
     }
+
+
 }
 

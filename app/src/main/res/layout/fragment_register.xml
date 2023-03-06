@@ -14,24 +14,24 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="80dp"
-        android:layout_marginBottom="65dp"
+        android:layout_marginBottom="35dp"
         android:text="@string/createAccount"
         android:textColor="@color/black_russian"
         android:textSize="35sp"
         android:textStyle="bold" />
 
-    <!--    <ImageView-->
+    <!--    <com.google.android.material.imageview.ShapeableImageView-->
     <!--        android:id="@+id/selectPhotoFromGalery"-->
-    <!--        android:layout_width="100dp"-->
-    <!--        android:layout_height="50dp"-->
+    <!--        android:layout_width="70dp"-->
+    <!--        android:layout_height="70dp"-->
     <!--        android:layout_below="@id/tv_logo"-->
     <!--        android:layout_alignParentStart="true"-->
     <!--        android:layout_centerHorizontal="true"-->
     <!--        android:layout_marginLeft="30dp"-->
-    <!--        android:layout_marginBottom="10dp"-->
-    <!--        android:background="#E11C1C"-->
+    <!--        android:background="@drawable/avatar"-->
     <!--        android:clickable="true"-->
-    <!--        android:scaleType="fitXY" />-->
+    <!--        android:scaleType="fitXY"-->
+    <!--        app:shapeAppearanceOverlay="@style/circleImageView" />-->
 
 
     <LinearLayout
@@ -53,7 +53,10 @@
             android:layout_weight="50"
             android:hint="@string/firstName"
             android:textSize="15sp"
-            app:errorEnabled="true">
+            app:endIconMode="clear_text"
+            app:endIconTint="@color/black_russian"
+            app:errorEnabled="true"
+            app:errorIconDrawable="@null">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -73,7 +76,10 @@
             android:layout_weight="50"
             android:hint="@string/lastName"
             android:textSize="15sp"
-            app:errorEnabled="true">
+            app:endIconMode="clear_text"
+            app:endIconTint="@color/black_russian"
+            app:errorEnabled="true"
+            app:errorIconDrawable="@null">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -121,7 +127,10 @@
             android:layout_marginRight="30dp"
             android:hint="Telefon"
             android:textSize="15sp"
-            app:errorEnabled="true">
+            app:endIconMode="clear_text"
+            app:endIconTint="@color/black_russian"
+            app:errorEnabled="true"
+            app:errorIconDrawable="@null">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
@@ -144,7 +153,10 @@
         android:drawablePadding="10dp"
         android:hint="@string/email"
         android:textSize="15sp"
-        app:errorEnabled="true">
+        app:endIconMode="clear_text"
+        app:endIconTint="@color/black_russian"
+        app:errorEnabled="true"
+        app:errorIconDrawable="@null">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"

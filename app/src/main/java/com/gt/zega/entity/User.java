@@ -1,13 +1,16 @@
 package com.gt.zega.entity;
 
-
 public class User {
 
     private String firstName;
     private String lastName;
     private String phoneNumber;
-    private String photo;
+    private String imageUrl;
     private UserAccount userAccount;
+
+    public User() {
+
+    }
 
     public User(String firstName, String lastName, String phoneNumber, UserAccount userAccount) {
         this.firstName = firstName;
@@ -17,11 +20,11 @@ public class User {
     }
 
 
-    public User(String firstName, String lastName, String phoneNumber, String photo) {
+    public User(String firstName, String lastName, String phoneNumber, String imageUrl) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
-        this.photo = photo;
+        this.imageUrl = imageUrl;
     }
 
     public User(String firstName, String lastName, String phoneNumber) {
@@ -63,20 +66,21 @@ public class User {
         this.userAccount = userAccount;
     }
 
-    public String getPhoto() {
-        return photo;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setPhoto(String photo) {
-        this.photo = photo;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @Override
     public String toString() {
         return "User: " +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", userAccount=" + userAccount;
+                "firstName: " + firstName +
+                ", lastName: " + lastName +
+                ", phoneNumber: " + phoneNumber +
+                ", imageUrl: " + imageUrl +
+                ", userAccount: " + userAccount;
     }
 }

@@ -17,4 +17,5 @@ public interface Validations {
 
     public boolean createPassword(TextInputLayout password);
 
+
 }

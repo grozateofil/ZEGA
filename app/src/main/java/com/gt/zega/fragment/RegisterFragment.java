@@ -25,6 +25,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.gt.zega.R;
 import com.gt.zega.entity.User;
 import com.gt.zega.entity.UserAccount;
@@ -34,6 +36,9 @@ import com.hbb20.CountryCodePicker;
 
 
 public class RegisterFragment extends Fragment implements View.OnClickListener {
+
+//    private ImageView imageView;
+//    private Uri imageUri;
 
     private TextInputLayout firstname;
     private TextInputLayout lastname;
@@ -45,16 +50,21 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     private FirebaseAuth fAuth;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    private FirebaseStorage firebaseStorage;
+    private StorageReference storageReference;
 
     private Validations validations;
+    private String userUid;
+    private User user;
 
     private Button createButton;
     private Button backToLoginButton;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_register, container, false);
+
+//        imageView = view.findViewById(R.id.selectPhotoFromGalery);
 
         firstname = view.findViewById(R.id.firstname);
         lastname = view.findViewById(R.id.lastname);
@@ -73,6 +83,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("users");
 
+        firebaseStorage = FirebaseStorage.getInstance();
+//        storageReference = firebaseStorage.getReference("usersProfilePictures");
+
         validations = new ValidationsImpl();
 
         firstname.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
@@ -81,6 +94,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         email.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
         password.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
 
+//        imageView.setOnClickListener(this);
         createButton.setOnClickListener(this);
         backToLoginButton.setOnClickListener(this);
 
@@ -91,16 +105,46 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
 
+//            case (R.id.selectPhotoFromGalery):
+//                openGallery();
+//                break;
+
             case (R.id.createButton):
-                if (validation()) {
+                if (validation())
+//                    if (imageView.getDrawable() != null) {
                     firebaseRegistration();
-                }
+//                    } else {
+//                        Toast.makeText(getActivity().getApplicationContext(), "Nicio imagine selectata pt profil", Toast.LENGTH_SHORT).show();
+//
+//                    }
                 break;
             case (R.id.backToLoginButton):
                 getActivity().onBackPressed();
                 break;
         }
     }
+
+//    public void openGallery() {
+//        Intent photo = new Intent(Intent.ACTION_PICK);
+//        photo.setType("image/*");
+//        activityResultLaunch.launch(photo);
+//    }
+
+//    ActivityResultLauncher<Intent> activityResultLaunch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+//        @Override
+//        public void onActivityResult(ActivityResult result) {
+//            if (result.getResultCode() == Activity.RESULT_OK) {
+//                Intent data = result.getData();
+//                if (data != null) {
+//                    imageUri = data.getData();
+//                    imageView.setImageURI(imageUri);
+//                } else {
+//                    Toast.makeText(getActivity().getApplicationContext(), "Nicio imagine selectata", Toast.LENGTH_SHORT).show();
+//
+//                }
+//            }
+//        }
+//    });
 
 
     private CountryCodePicker.DialogEventsListener dialogEventsListener() {
@@ -125,11 +169,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     }
 
     private boolean validation() {
-        return !(!validations.firstNameValidation(firstname) |
-                !validations.lastNameValidation(lastname) |
-                !validations.phoneNumberValidation(phoneNumber, ccp) |
-                !validations.emailValidation(email) |
-                !validations.createPassword(password));
+        return (validations.firstNameValidation(firstname) & validations.lastNameValidation(lastname) & validations.phoneNumberValidation(phoneNumber, ccp) & validations.emailValidation(email) & validations.createPassword(password));
     }
 
     private void firebaseRegistration() {
@@ -140,7 +180,19 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         String pass = password.getEditText().getText().toString();
 
         UserAccount userAccount = new UserAccount(emailAddress, pass);
-        User user = new User(firstName, lastName, phoneNumber);
+        user = new User(firstName, lastName, phoneNumber);
+
+
+//        storageReference = firebaseStorage.getReference("usersProfilePictures/" + emailAddress + "_profile_picture." + getPhotoExtension(imageUri));
+//        storageReference.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                        @Override
+//                        public void onSuccess(Uri uri) {
+//                            String imageUrl = uri.toString();
+//                            user = new User(firstName, lastName, phoneNumber, imageUrl);
 
         fAuth.createUserWithEmailAndPassword(userAccount.getEmail(), userAccount.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -150,14 +202,19 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                     email.setErrorEnabled(false);
 
                     FirebaseUser firebaseUser = fAuth.getCurrentUser();
-                    databaseReference.child(firebaseUser.getUid()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    userUid = firebaseUser.getUid();
+                    databaseReference.child(userUid).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
+
+                                Toast.makeText(getActivity().getApplicationContext(), "Cont creat cu succes", Toast.LENGTH_SHORT).show();
+
+
 //                                fAuth.setLanguageCode("ro");
 //                                firebaseUser.sendEmailVerification();
 //                                Toast.makeText(getActivity().getApplicationContext(), "Ți-a fost trimis un email pentru a valida adresa de email", Toast.LENGTH_LONG).show();
-                                Toast.makeText(getActivity().getApplicationContext(), "Cont creat cu succes", Toast.LENGTH_SHORT).show();
+
                                 getActivity().onBackPressed();
                             } else {
                                 Toast.makeText(getActivity().getApplicationContext(), "Eroare la înregistrare", Toast.LENGTH_SHORT).show();
@@ -169,8 +226,21 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                 }
             }
         });
+//                        }
+//                    });
+//                }
+//            }
+//        });
+
 
     }
+
+
+//    private String getPhotoExtension(Uri uri) {
+//        ContentResolver contentResolver = getContext().getContentResolver();
+//        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+//        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+//    }
 
     @NonNull
     private ActionMode.Callback getActionModeCallback() {

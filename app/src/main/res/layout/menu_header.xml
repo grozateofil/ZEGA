@@ -6,21 +6,24 @@
     android:orientation="vertical"
     android:padding="20dp">
 
-    <!--    <ImageView-->
-    <!--        android:id="@+id/userPhoto"-->
+    <!--    <com.google.android.material.imageview.ShapeableImageView-->
+    <!--        android:id="@+id/userPictureMenuHeader"-->
     <!--        android:layout_width="75dp"-->
     <!--        android:layout_height="75dp"-->
+    <!--        android:layout_below="@id/tv_logo"-->
+    <!--        android:layout_alignParentStart="true"-->
+    <!--        android:layout_centerHorizontal="true"-->
+    <!--        android:background="@drawable/avatar"-->
     <!--        android:clickable="true"-->
-    <!--        android:contentDescription="Profil"-->
-    <!--        android:src="@drawable/account_icon" />-->
+    <!--        app:shapeAppearanceOverlay="@style/circleImageView" />-->
 
 
     <!--    <TextView-->
     <!--        android:id="@+id/userNameMenuHeader"-->
     <!--        android:layout_width="wrap_content"-->
     <!--        android:layout_height="wrap_content"-->
-    <!--        android:text="name"-->
-    <!--        android:textColor="#FFF7EC"-->
+    <!--        android:text=""-->
+    <!--        android:textColor="#FF0000"-->
     <!--        android:textSize="24sp" />-->
 
     <!--    <TextView-->

@@ -29,9 +29,10 @@
         android:layout_marginRight="30dp"
         android:hint="@string/email"
         android:textSize="15sp"
+        app:endIconMode="clear_text"
+        app:endIconTint="@color/black_russian"
         app:errorEnabled="true"
-        app:startIconDrawable="@drawable/email_icon"
-        app:startIconTint="@color/black_russian">
+        app:errorIconDrawable="@null">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -56,9 +57,7 @@
         app:endIconMode="password_toggle"
         app:endIconTint="@color/black_russian"
         app:errorEnabled="true"
-        app:errorIconDrawable="@null"
-        app:startIconDrawable="@drawable/password_icon"
-        app:startIconTint="@color/black_russian">
+        app:errorIconDrawable="@null">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/loginPasswordTIET"
@@ -88,7 +87,7 @@
         android:layout_height="40dp"
         android:layout_below="@id/loginPassword"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="-27dp"
+        android:layout_marginTop="-15dp"
         android:layout_marginRight="30dp"
         android:backgroundTint="@android:color/transparent"
         android:outlineAmbientShadowColor="@android:color/transparent"

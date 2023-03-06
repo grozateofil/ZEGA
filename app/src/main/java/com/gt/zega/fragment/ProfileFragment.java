@@ -1,20 +1,12 @@
 package com.gt.zega.fragment;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
@@ -28,20 +20,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.gt.zega.R;
 import com.gt.zega.entity.User;
 import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
 import com.hbb20.CountryCodePicker;
-import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
 
-    private ImageView profilePicture;
-    private Uri imageUri;
+//    private ImageView profilePicture;
+//    private Uri imageUri;
 
     private TextInputLayout firstname;
     private TextInputLayout lastname;
@@ -56,6 +49,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private DatabaseReference databaseReference;
     private FirebaseUser firebaseUser;
     private FirebaseAuth firebaseAuth;
+    private FirebaseStorage firebaseStorage;
+    private StorageReference storageReference;
 
     private Validations validations;
     private User user;
@@ -65,7 +60,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        profilePicture = view.findViewById(R.id.profilePicture);
+//        profilePicture = view.findViewById(R.id.profilePicture);
 
         firstname = view.findViewById(R.id.newFirstname);
         lastname = view.findViewById(R.id.newLastname);
@@ -86,7 +81,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             getUserData(userKey);
         }
 
-        profilePicture.setOnClickListener(this);
+//        profilePicture.setOnClickListener(this);
         resetPassword.setOnClickListener(this);
         save.setOnClickListener(this);
 
@@ -97,9 +92,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case (R.id.profilePicture):
-                openGallery();
-                break;
+//            case (R.id.profilePicture):
+//                openGallery();
+//                break;
             case (R.id.resetPasswordButton):
                 resetPassword();
                 break;
@@ -110,30 +105,29 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    public void openGallery() {
-        Intent photo = new Intent(Intent.ACTION_PICK);
-        photo.setType("image/*");
-        activityResultLaunch.launch(photo);
-    }
-
-    ActivityResultLauncher<Intent> activityResultLaunch = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null) {
-                            imageUri = data.getData();
-                            // String picturePath = getPath(getActivity().getApplicationContext(), imageUri);
-                            profilePicture.setImageURI(imageUri);
-                        } else {
-                            Toast.makeText(getActivity().getApplicationContext(), "Nicio imagine selectată", Toast.LENGTH_SHORT).show();
-
-                        }
-                    }
-                }
-            });
+//    public void openGallery() {
+//        Intent photo = new Intent(Intent.ACTION_PICK);
+//        photo.setType("image/*");
+//        activityResultLaunch.launch(photo);
+//    }
+//
+//    ActivityResultLauncher<Intent> activityResultLaunch = registerForActivityResult(
+//            new ActivityResultContracts.StartActivityForResult(),
+//            new ActivityResultCallback<ActivityResult>() {
+//                @Override
+//                public void onActivityResult(ActivityResult result) {
+//                    if (result.getResultCode() == Activity.RESULT_OK) {
+//                        Intent data = result.getData();
+//                        if (data != null) {
+//                            imageUri = data.getData();
+//                            profilePicture.setImageURI(imageUri);
+//                        } else {
+//                            Toast.makeText(getActivity().getApplicationContext(), "Nicio imagine selectată", Toast.LENGTH_SHORT).show();
+//
+//                        }
+//                    }
+//                }
+//            });
 
     private boolean validation(TextInputLayout firstname, TextInputLayout lastname, TextInputLayout phoneNumber, CountryCodePicker ccp) {
         return (validations.firstNameValidation(firstname) &
@@ -147,7 +141,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
                 if (user != null) {
-                    Picasso.get().load(user.getImageUrl()).into(profilePicture);
+//                    Picasso.get().load(user.getImageUrl()).into(profilePicture);
                     firstname.getEditText().setText(user.getFirstName());
                     lastname.getEditText().setText(user.getLastName());
                     ccp.setFullNumber(user.getPhoneNumber());
@@ -186,6 +180,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
+//                        saveProfilePicture();
                         Toast.makeText(getActivity().getApplicationContext(), "Date actualizate cu succes", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getActivity().getApplicationContext(), "Actualizarea datelor a eșuat", Toast.LENGTH_SHORT).show();
@@ -198,5 +193,22 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
 
     }
+
+//    private void saveProfilePicture() {
+//        firebaseStorage = FirebaseStorage.getInstance();
+//        storageReference = firebaseStorage.getReference("usersProfilePictures/"+firebaseUser.getEmail()+"_profile_picture."+getPhotoExtension(imageUri));
+//        storageReference.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//            @Override
+//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//
+//            }
+//        });
+//    }
+
+//    private String getPhotoExtension(Uri uri) {
+//        ContentResolver contentResolver = getContext().getContentResolver();
+//        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+//        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+//    }
 
 }

@@ -1,5 +1,7 @@
 package com.gt.zega.fragment;
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,11 +10,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.gt.zega.R;
-import com.gt.zega.database.Checking;
 import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
 
@@ -21,6 +23,8 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
     private TextInputLayout email;
     private Button submitButton;
     private Button backToLoginButton;
+
+    private Bundle bundle;
 
     private Validations validations;
 
@@ -32,7 +36,7 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
         View view = inflater.inflate(R.layout.fragment_reset_password, container, false);
 
         email = view.findViewById(R.id.forgotPasswordEmail);
-
+        bundle = new Bundle();
         submitButton = view.findViewById(R.id.submitBtn);
         backToLoginButton = view.findViewById(R.id.backToLoginBtn);
 
@@ -51,7 +55,6 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
         switch (view.getId()) {
             case (R.id.submitBtn):
                 if (validation()) {
-
                     resetPassword();
                 }
                 break;
@@ -64,10 +67,7 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
     }
 
     private boolean validation() {
-        return (validations.emailValidation(email) &&
-                Checking.checkIfEmailExists(fAuth, email, "Nu există niciun cont asociat acestei adrese de email")
-//                | Checking.emailVerification(fAuth, getContext())
-        );
+        return validations.emailValidation(email);
     }
 
     private void resetPassword() {
@@ -76,12 +76,20 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
                 .addOnCompleteListener(task -> {
 
                     if (task.isSuccessful()) {
+                        bundle.putString("email", email.getEditText().getText().toString());
+                        ResetPasswordConfirmationFragment forgotPasswordFragment = new ResetPasswordConfirmationFragment();
+                        forgotPasswordFragment.setArguments(bundle);
+                        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                        transaction.hide(this);
+                        transaction.add(R.id.content_frame, forgotPasswordFragment);
+                        transaction.addToBackStack(TAG);
+                        transaction.commit();
 
-                        Toast.makeText(getActivity().getApplicationContext(), "În căteva momente vei primi un email pentru resetarea parolei", Toast.LENGTH_SHORT).show();
-                        getActivity().onBackPressed();
+//                        Toast.makeText(getActivity().getApplicationContext(), "În căteva momente vei primi un email pentru resetarea parolei", Toast.LENGTH_SHORT).show();
+//                        getActivity().onBackPressed();
 
                     } else {
-                        Toast.makeText(getActivity().getApplicationContext(), "Eroare la trimitere", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getApplicationContext(), "E-mailul introdus nu este înregistrat", Toast.LENGTH_SHORT).show();
                     }
 
                 });

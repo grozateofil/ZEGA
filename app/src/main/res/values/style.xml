@@ -6,14 +6,27 @@
     </style>
 
     <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
-        <item name="boxStrokeColor">@color/text_input_box_stroke</item>
+        <item name="boxStrokeColor">@color/text_input_box_stroke_black</item>
         <item name="hintTextColor">@color/black_russian</item> <!--hintColor from outline-->
         <item name="android:textColorHint">@color/black_russian
         </item> <!--hintColor from inside the TextInputLayout-->
         <item name="android:textCursorDrawable">@color/black_russian</item>
     </style>
 
-    <style name="buttonStyle" parent="@android:style/Widget.Button">
+    <style name="TextInputLayoutDeleteAccountStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxStrokeColor">@color/text_input_box_stroke_white</item>
+        <item name="hintTextColor">@color/floral_white</item> <!--hintColor from outline-->
+        <item name="android:textColorHint">@color/floral_white
+        </item> <!--hintColor from inside the TextInputLayout-->
+        <item name="android:textCursorDrawable">@color/floral_white</item>
+    </style>
+
+    <style name="circleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="buttonStyle" parent="">
         <item name="android:textColor">#FFF7EC</item>
         <item name="android:backgroundTint">@color/black_russian</item>
         <item name="cornerRadius">3dp</item>

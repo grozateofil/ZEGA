@@ -99,14 +99,14 @@ public class ValidationsImpl implements Validations {
         } else if (Pattern.compile("^(?=.*\\s).+$").matcher(passwordString).matches()) {
             password.setError("Parola nu poate să conțină spațiu gol");
             return false;
-//        } else if (passwordString.length() < 6) {
-//            password.setError("Parola trebuie să conțină minim 6 caractere");
-//            return false;
-//        }
+        } else if (passwordString.length() < 6) {
+            password.setError("Parola trebuie să conțină minim 6 caractere");
+            return false;
+        }
 //        else if (!Pattern.compile("^(?=.*\\p{Upper}).+$").matcher(passwordString).matches()) {
 //            password.setError("Parola trebuie să conțină minim o majusculă");
 //            return false;
-        }
+//        }
 //        else if (!Pattern.compile("^(?=.*\\p{Digit}).+$").matcher(passwordString).matches()) {
 //            password.setError("Parola trebuie să conțină minim o cifră");
 //            return false;
@@ -121,4 +121,5 @@ public class ValidationsImpl implements Validations {
             return true;
         }
     }
+
 }
