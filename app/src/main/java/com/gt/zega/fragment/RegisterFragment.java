@@ -94,6 +94,17 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         email.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
         password.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
 
+        phoneNumber.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (b) {
+                    ccp.setHintExampleNumberEnabled(true);
+                } else {
+                    phoneNumber.getEditText().setHint(null);
+                }
+            }
+        });
+
 //        imageView.setOnClickListener(this);
         createButton.setOnClickListener(this);
         backToLoginButton.setOnClickListener(this);
