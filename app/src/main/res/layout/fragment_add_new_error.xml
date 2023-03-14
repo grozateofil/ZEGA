@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/floral_white"
+    tools:context=".fragment.AddNewErrorFragment">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="50dp"
+        android:text="Aparat defect"
+        android:textColor="@color/black_russian"
+        android:textSize="26sp"
+        android:textStyle="bold" />
+
+    <!--    <LinearLayout-->
+    <!--        android:id="@+id/currentUserName"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_below="@id/title"-->
+    <!--        android:layout_centerHorizontal="true"-->
+    <!--        android:layout_marginTop="18dp"-->
+    <!--        android:orientation="horizontal"-->
+    <!--        android:weightSum="100">-->
+
+    <!--        <com.google.android.material.textfield.TextInputLayout-->
+    <!--            android:id="@+id/currentUserFirstname"-->
+    <!--            style="@style/TextInputLayoutStyle"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginStart="30dp"-->
+    <!--            android:layout_weight="50"-->
+    <!--            android:enabled="false"-->
+    <!--            android:hint="@string/firstName"-->
+    <!--            android:textSize="15sp">-->
+
+    <!--            <com.google.android.material.textfield.TextInputEditText-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:singleLine="true"-->
+    <!--                android:textColor="@color/black_russian" />-->
+    <!--        </com.google.android.material.textfield.TextInputLayout>-->
+
+    <!--        <com.google.android.material.textfield.TextInputLayout-->
+    <!--            android:id="@+id/currentUserLastname"-->
+    <!--            style="@style/TextInputLayoutStyle"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginEnd="30dp"-->
+    <!--            android:layout_toRightOf="@id/newFirstname"-->
+    <!--            android:layout_weight="50"-->
+    <!--            android:enabled="false"-->
+    <!--            android:hint="@string/lastName"-->
+    <!--            android:textSize="15sp">-->
+
+    <!--            <com.google.android.material.textfield.TextInputEditText-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:singleLine="true"-->
+    <!--                android:textColor="@color/black_russian" />-->
+    <!--        </com.google.android.material.textfield.TextInputLayout>-->
+    <!--    </LinearLayout>-->
+
+    <TextView
+        android:id="@+id/selectDevice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/text_view_border"
+        android:gravity="center_vertical"
+        android:hint="Selectează aparat"
+        android:padding="15dp"
+        android:textColor="@color/black_russian"
+        android:textColorHint="@color/black_russian"
+        android:textSize="15sp"
+        app:drawableEndCompat="@drawable/arrow_down_icon"
+        app:endIconTint="@color/black_russian"
+        app:errorEnabled="true"
+        app:errorIconDrawable="@null" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/errorDescription"
+        style="@style/TextInputLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/selectDevice"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="-1dp"
+        android:layout_marginRight="30dp"
+        android:drawablePadding="10dp"
+        android:hint="Descriere"
+        android:textSize="15sp"
+        app:endIconMode="clear_text"
+        app:endIconTint="@color/black_russian"
+        app:errorEnabled="true"
+        app:errorIconDrawable="@null">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:maxLines="5"
+            android:scrollbars="vertical"
+            android:textColor="@color/black_russian" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/deviceLocation"
+        style="@style/TextInputLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/errorDescription"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="-1dp"
+        android:layout_marginEnd="30dp"
+        android:drawablePadding="10dp"
+        android:hint="Locație aparat"
+        android:textSize="15sp"
+        app:endIconMode="clear_text"
+        app:endIconTint="@color/black_russian"
+        app:errorEnabled="true"
+        app:errorIconDrawable="@null">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/black_russian" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:id="@+id/importImages"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_below="@id/deviceLocation"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:gravity="center|start"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/photosLinearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"></LinearLayout>
+
+        <ImageButton
+            android:id="@+id/takePicture"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/photo_camera_icon" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/addNewDeviceButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/importImages"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/black_russian"
+        android:outlineSpotShadowColor="@color/black_russian"
+        android:text="Adaugă"
+        android:textColor="#FFF7EC"
+        app:cornerRadius="3dp" />
+
+</RelativeLayout>
