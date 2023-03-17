@@ -1,10 +1,12 @@
 package com.gt.zega;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
@@ -24,6 +26,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -34,15 +38,23 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.gt.zega.fragment.AboutUsFragment;
+import com.gt.zega.fragment.AddNewErrorFragment;
 import com.gt.zega.fragment.HomeFragment;
 import com.gt.zega.fragment.LoginFragment;
-import com.gt.zega.fragment.NotificationFragment;
 import com.gt.zega.fragment.ProfileFragment;
+import com.gt.zega.fragment.ReportFragment;
 import com.gt.zega.fragment.SettingsFragment;
 import com.gt.zega.internetConnection.NetworkChangeListener;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+
+    private static final String[] PERMISSIONS = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.MANAGE_EXTERNAL_STORAGE
+    };
+    private static final int PERMISSIONS_REQUEST_CODE = 777;
+
     NetworkChangeListener networkChangeListener = new NetworkChangeListener();
 
     private static final float END_SCALE = 0.7f;
@@ -86,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
 
-
         toolbar.setContentInsetStartWithNavigation(0);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -99,63 +110,95 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.getMenu().getItem(0).setChecked(true);
 
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (drawerLayout.isDrawerOpen(navigationView)) {
-                    drawerLayout.closeDrawer(navigationView);
-                } else {
-                    drawerLayout.openDrawer(navigationView);
+        if (hasPermissions()) {
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (drawerLayout.isDrawerOpen(navigationView)) {
+                        drawerLayout.closeDrawer(navigationView);
+                    } else {
+                        drawerLayout.openDrawer(navigationView);
+                    }
                 }
-            }
-        });
+            });
 
-        drawerLayout.setScrimColor(Color.TRANSPARENT);
-        drawerLayout.setDrawerElevation(0);
-//        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drower_open, R.string.navigation_drower_close);
-//        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                //labelView.setVisibility(slideOffset > 0 ? View.VISIBLE : View.GONE);
+            drawerLayout.setScrimColor(Color.TRANSPARENT);
+            drawerLayout.setDrawerElevation(0);
 
-                // Scale the View based on current slide offset
-                final float diffScaledOffset = slideOffset * (1f - END_SCALE);
-                final float offsetScale = 1 - diffScaledOffset;
-                contentView.setScaleX(offsetScale);
-                contentView.setScaleY(offsetScale);
+            drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+                @Override
+                public void onDrawerSlide(View drawerView, float slideOffset) {
+                    //labelView.setVisibility(slideOffset > 0 ? View.VISIBLE : View.GONE);
+                    // Scale the View based on current slide offset
+                    final float diffScaledOffset = slideOffset * (1f - END_SCALE);
+                    final float offsetScale = 1 - diffScaledOffset;
+                    contentView.setScaleX(offsetScale);
+                    contentView.setScaleY(offsetScale);
 
+                    // Translate the View, accounting for the scaled width
+                    final float xOffset = drawerView.getWidth() * slideOffset;
+                    final float xOffsetDiff = contentView.getWidth() * diffScaledOffset / 2;
+                    final float xTranslation = xOffset - xOffsetDiff;
+                    contentView.setTranslationX(xTranslation);
+                }
 
-                // Translate the View, accounting for the scaled width
-                final float xOffset = drawerView.getWidth() * slideOffset;
-                final float xOffsetDiff = contentView.getWidth() * diffScaledOffset / 2;
-                final float xTranslation = xOffset - xOffsetDiff;
-                contentView.setTranslationX(xTranslation);
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                // labelView.setVisibility(View.GONE);
-            }
-        });
+                @Override
+                public void onDrawerClosed(View drawerView) {
+                    // labelView.setVisibility(View.GONE);
+                }
+            });
 
 
 //        userPhoto = navigationView.getHeaderView(0).findViewById(R.id.userPictureMenuHeader);
 //        userPhoto.setOnClickListener(this);
 
-        if (login != null) {
-            HomeFragment loginFragment = new HomeFragment();
-            setFragment(loginFragment);
+            if (login != null) {
+                HomeFragment loginFragment = new HomeFragment();
+                setFragment(loginFragment);
+            } else {
+                LoginFragment loginFragment = new LoginFragment();
+                setFragment(loginFragment);
+            }
         } else {
-            LoginFragment loginFragment = new LoginFragment();
-            setFragment(loginFragment);
+            requestPermissions();
         }
     }
 
     public void setFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+    }
+
+    private boolean hasPermissions() {
+        if (getApplicationContext() != null && PERMISSIONS != null) {
+            for (String permission : PERMISSIONS) {
+                if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSIONS_REQUEST_CODE);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSIONS_REQUEST_CODE) {
+            boolean allGranted = true;
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    allGranted = false;
+                    break;
+                }
+            }
+        }
+
     }
 
     @Override
@@ -195,7 +238,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case (R.id.nav_home):
                 fragmentSelected = true;
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new HomeFragment()).commit();
-//                Toast.makeText(this, R.string.maintenance_works, Toast.LENGTH_SHORT).show();
+                break;
+
+            case (R.id.nav_error):
+                fragmentSelected = true;
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new AddNewErrorFragment()).commit();
                 break;
 
             case (R.id.nav_profile):
@@ -203,10 +250,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new ProfileFragment()).commit();
                 break;
 
-            case (R.id.nav_notification):
+            case (R.id.nav_report):
                 fragmentSelected = true;
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new NotificationFragment()).commit();
-//                Toast.makeText(this, R.string.maintenance_works, Toast.LENGTH_SHORT).show();
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new ReportFragment()).commit();
                 break;
 
             case (R.id.nav_settings):
@@ -214,10 +260,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new SettingsFragment()).commit();
                 break;
 
-            case (R.id.nav_aboutUs):
-                fragmentSelected = true;
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new AboutUsFragment()).commit();
-                break;
+//            case (R.id.nav_aboutUs):
+//                fragmentSelected = true;
+//                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new AboutUsFragment()).commit();
+//                break;
 
             case (R.id.nav_logout):
                 confirmLogout();
