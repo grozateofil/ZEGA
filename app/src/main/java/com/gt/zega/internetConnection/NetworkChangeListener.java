@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +19,15 @@ public class NetworkChangeListener extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (!InternetConnection.checkInternetConnection(context)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            View view = LayoutInflater.from(context).inflate(R.layout.no_internet_connection, null);
+            View view = LayoutInflater.from(context).inflate(R.layout.internet_connection_warning, null);
             builder.setView(view);
+
 
             Button retryButton = view.findViewById(R.id.btn_retry);
 
 
             AlertDialog dialog = builder.create();
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
             dialog.show();
             dialog.setCancelable(false);
             dialog.getWindow().setGravity(Gravity.CENTER);

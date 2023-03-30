@@ -12,13 +12,6 @@ public class User {
 
     }
 
-    public User(String firstName, String lastName, String phoneNumber, UserAccount userAccount) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phoneNumber = phoneNumber;
-        this.userAccount = userAccount;
-    }
-
 
     public User(String firstName, String lastName, String phoneNumber, String imageUrl) {
         this.firstName = firstName;

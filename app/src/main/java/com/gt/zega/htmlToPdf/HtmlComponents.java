@@ -1,19 +1,142 @@
 package com.gt.zega.htmlToPdf;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
+
+import com.gt.zega.entity.User;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Base64;
+
 public class HtmlComponents {
 
-    public static String createHtml(String userName, String deviceName, String errorDescription, String deviceLocation) {
+    public static String createHtml(Context context, User user, String deviceName, String errorDescription, String deviceLocation, String date, String time, ArrayList<Uri> list) throws IOException {
+        String userName = user.getFirstName() + " " + user.getLastName();
+        String phoneNumber = user.getPhoneNumber();
         String htmlHead = "<!DOCTYPE html>\n" +
                 "<html>\n" +
-                "<head>" + "<link href=\"htmlToPdf//style.css\" rel=\"stylesheet\" type=\"text/css\">" + "</head>";
+                "<head>" + "<style>" + ".center {\n" +
+                "  margin-left: auto;\n" +
+                "  margin-right: auto;\n" +
+                "}\n" +
+                "\n" +
+                "table{\n" +
+                "  width:100%;\n" +
+                "}\n" +
+                "\n" +
+                "th{\n" +
+                "  width:20%;\n" +
+                "  background-color:#c2f4fc;\n" +
+                "}\n" +
+                "\n" +
+                "td{\n" +
+                "  width:80%;\n" +
+                "  word-wrap: break-word;\n" +
+                "}\n" +
+                "\n" +
+                "tbody tr:nth-child(even) td{\n" +
+                "    background-color:#cdd0d1;\n" +
+                "}\n" +
+                "tbody tr:nth-child(odd) td{\n" +
+                "}\n" +
+                "\n" +
+                "table, th, td {\n" +
+                "  border: 1px solid black;\n" +
+                "  border-collapse: collapse;\n" +
+                "}\n" +
+                "\n" +
+                "th {\n" +
+                "  text-align: left;\n" +
+                "}" + "</style>" + "</head>";
 
-        String htmlBody = "\n<body>\n" + "<p>Nume utilizator: " + userName + "</p>\n" +
-                "<p>Aparat: " + deviceName + "</p>\n" +
-                "<p>Descriere problemă: " + errorDescription + "</p>\n" +
-                "<p>Locația aparatului: " + deviceLocation + "</p>\n" + "</body>\n" + "</html>";
+        StringBuilder htmlBody = new StringBuilder("\n<body>\n" +
+                "<table class=\"center\" border=\"1\">\n" +
+                "<tbody>\n" +
+                "<tr>\n" +
+                "<th>Data</th>\n" +
+                "<td>" + date + "</td>\n" +
+                "</tr>\n" +
 
+                "<tr>\n" +
+                "<th>Data</th>\n" +
+                "<td>" + time + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Nume utilizator</th>\n" +
+                "<td>" + userName + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Telefon</th>\n" +
+                "<td>" + phoneNumber + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Aparat</th>\n" +
+                "<td>" + deviceName + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Descriere problema</th>\n" +
+                "<td>" + errorDescription + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Locatia aparatului</th>\n" +
+                "<td>" + deviceLocation + "</td>\n" +
+                "</tr>\n");
+
+        if (list.size() > 0) {
+            htmlBody.append(
+                    "<tr>\n" +
+                            "<th>Poza</th>\n" + "<td>");
+            for (Uri uri : list) {
+
+                byte[] fileBytes = Files.readAllBytes(getImageFilePath(context, uri));
+                htmlBody.append("<img src=\"data:image/").append(getImageExtension(getImageFilePath(context, uri))).append(";base64,").append(Base64.getEncoder().encodeToString(fileBytes)).append("\" width=\"400\" height=\"300\"/><br>");
+            }
+            htmlBody.append("</td>\n");
+            htmlBody.append("</tr>\n");
+        }
+        htmlBody.append("</tbody>\n" + "</table>\n" + "</body>\n" + "</html>");
         return htmlHead + htmlBody;
 
+    }
+
+    public static String getImageExtension(Path path) {
+        String extension;
+        String fileName = path.getFileName().toString();
+        extension = fileName.substring(fileName.indexOf(".") + 1);
+        return extension;
+    }
+
+    public static Path getImageFilePath(Context context, Uri uri) {
+        File file = new File(uri.getPath());
+        String[] filePath = file.getPath().split(":");
+        String image_id = filePath[filePath.length - 1];
+        Path imagePath = null;
+
+        Cursor cursor = context.getContentResolver().query(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, MediaStore.Images.Media._ID + " = ? ", new String[]{image_id}, null);
+        if (cursor != null) {
+            int columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+            if (columnIndex >= 0) {
+                cursor.moveToFirst();
+                imagePath = Paths.get(cursor.getString(columnIndex));
+            } else {
+                System.out.println("Column " + columnIndex + " does not exist in the cursor");
+            }
+            cursor.close();
+            return imagePath;
+        }
+        return null;
     }
 
 }

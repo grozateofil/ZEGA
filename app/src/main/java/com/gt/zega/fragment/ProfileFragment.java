@@ -28,7 +28,9 @@ import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
 import com.hbb20.CountryCodePicker;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
@@ -40,6 +42,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private TextInputLayout lastname;
     private CountryCodePicker ccp;
     private TextInputLayout phoneNumber;
+    private TextInputLayout emailAddress;
 
     private Button resetPassword;
     private Button save;
@@ -54,6 +57,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     private Validations validations;
     private User user;
+    private ArrayList<String> changedElementsList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,6 +70,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         lastname = view.findViewById(R.id.newLastname);
         ccp = view.findViewById(R.id.newCcp);
         phoneNumber = view.findViewById(R.id.newPhoneNumber);
+        emailAddress = view.findViewById(R.id.newEmail);
 
         resetPassword = view.findViewById(R.id.resetPasswordButton);
         save = view.findViewById(R.id.saveChangesButton);
@@ -99,7 +104,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 resetPassword();
                 break;
             case (R.id.saveChangesButton):
-                updateData(firstname, lastname, phoneNumber, ccp);
+                updateData(firstname, lastname, phoneNumber, ccp, emailAddress);
                 break;
         }
 
@@ -129,10 +134,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 //                }
 //            });
 
-    private boolean validation(TextInputLayout firstname, TextInputLayout lastname, TextInputLayout phoneNumber, CountryCodePicker ccp) {
-        return (validations.firstNameValidation(firstname) &
-                validations.lastNameValidation(lastname) &
-                validations.phoneNumberValidation(phoneNumber, ccp));
+    private boolean validation(TextInputLayout firstname, TextInputLayout lastname, TextInputLayout phoneNumber, CountryCodePicker ccp, TextInputLayout email) {
+        return (validations.textInputLayoutValidation(firstname) &
+                validations.textInputLayoutValidation(lastname) &
+                validations.phoneNumberValidation(phoneNumber, ccp) &
+                validations.emailValidation(email));
     }
 
     private void getUserData(String userKey) {
@@ -145,8 +151,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     firstname.getEditText().setText(user.getFirstName());
                     lastname.getEditText().setText(user.getLastName());
                     ccp.setFullNumber(user.getPhoneNumber());
-                } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "A apărut o eroare la citirea datelor", Toast.LENGTH_SHORT).show();
+                    emailAddress.getEditText().setText(firebaseAuth.getCurrentUser().getEmail());
                 }
             }
 
@@ -170,25 +175,65 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 });
     }
 
-    private void updateData(TextInputLayout firstname, TextInputLayout lastname, TextInputLayout phoneNumber, CountryCodePicker ccp) {
-        if (validation(firstname, lastname, phoneNumber, ccp)) {
-            HashMap<String, Object> user = new HashMap();
-            user.put("firstName", firstname.getEditText().getText().toString());
-            user.put("lastName", lastname.getEditText().getText().toString());
-            user.put("phoneNumber", ccp.getFullNumberWithPlus());
-            databaseReference.child(userKey).updateChildren(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
+    private void updateData(TextInputLayout firstname, TextInputLayout lastname, TextInputLayout phoneNumber, CountryCodePicker ccp, TextInputLayout email) {
+        if (validation(firstname, lastname, phoneNumber, ccp, email)) {
+            HashMap<String, Object> hashMap = new HashMap();
+            changedElementsList = new ArrayList<>();
+            if (!user.getFirstName().equals(firstname.getEditText().getText().toString())) {
+                changedElementsList.add(firstname.getHint().toString());
+                hashMap.put("firstName", firstname.getEditText().getText().toString());
+            }
+            if (!user.getLastName().equals(lastname.getEditText().getText().toString())) {
+                changedElementsList.add(lastname.getHint().toString());
+                hashMap.put("lastName", lastname.getEditText().getText().toString());
+            }
+            if (!user.getPhoneNumber().equals(ccp.getFullNumberWithPlus())) {
+                changedElementsList.add(phoneNumber.getHint().toString());
+                hashMap.put("phoneNumber", ccp.getFullNumberWithPlus());
+            }
+            if (!emailAddress.getEditText().getText().toString().equals(firebaseAuth.getCurrentUser().getEmail())) {
+                changedElementsList.add(email.getHint().toString());
+//                hashMap.put("phoneNumber", ccp.getFullNumberWithPlus());
+            }
+
+
+            if (hashMap.size() > 0) {
+                databaseReference.child(userKey).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+
 //                        saveProfilePicture();
-                        Toast.makeText(getActivity().getApplicationContext(), "Date actualizate cu succes", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity().getApplicationContext(), "Actualizarea datelor a eșuat", Toast.LENGTH_SHORT).show();
+                            if (changedElementsList.size() == 1) {
+                                Toast.makeText(getActivity().getApplicationContext(), changedElementsList.get(0) + " actualizat cu succes", Toast.LENGTH_SHORT).show();
+                            } else if (changedElementsList.size() == 2) {
+                                Toast.makeText(getActivity().getApplicationContext(), changedElementsList.get(0) + ", " + changedElementsList.get(1).toLowerCase(Locale.ROOT) + " actualizate cu succes", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getActivity().getApplicationContext(), "Date actualizate cu succes", Toast.LENGTH_SHORT).show();
+                            }
+
+                        } else {
+                            Toast.makeText(getActivity().getApplicationContext(), "Actualizarea datelor a eșuat", Toast.LENGTH_SHORT).show();
+
+                        }
 
                     }
+                });
+            }
+            if (changedElementsList.contains("Email")) {
+                firebaseUser.updateEmail(email.getEditText().getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getActivity().getApplicationContext(), "Email actualizat cu succes", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity().getApplicationContext(), "Date actualizate cu succes - nu", Toast.LENGTH_SHORT).show();
 
-                }
-            });
+                        }
+                    }
+                });
+            }
+
         }
 
 

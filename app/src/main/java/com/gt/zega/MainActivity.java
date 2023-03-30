@@ -44,6 +44,7 @@ import com.gt.zega.fragment.LoginFragment;
 import com.gt.zega.fragment.ProfileFragment;
 import com.gt.zega.fragment.ReportFragment;
 import com.gt.zega.fragment.SettingsFragment;
+import com.gt.zega.fragment.SuppliesFragment;
 import com.gt.zega.internetConnection.NetworkChangeListener;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String[] PERMISSIONS = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA,
             Manifest.permission.MANAGE_EXTERNAL_STORAGE
     };
     private static final int PERMISSIONS_REQUEST_CODE = 777;
@@ -98,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
 
+
         toolbar.setContentInsetStartWithNavigation(0);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -110,58 +113,60 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.getMenu().getItem(0).setChecked(true);
 
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (drawerLayout.isDrawerOpen(navigationView)) {
+                    drawerLayout.closeDrawer(navigationView);
+                } else {
+                    drawerLayout.openDrawer(navigationView);
+                }
+            }
+        });
+
+        drawerLayout.setScrimColor(Color.TRANSPARENT);
+        drawerLayout.setDrawerElevation(0);
+
+        drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                //labelView.setVisibility(slideOffset > 0 ? View.VISIBLE : View.GONE);
+                // Scale the View based on current slide offset
+                final float diffScaledOffset = slideOffset * (1f - END_SCALE);
+                final float offsetScale = 1 - diffScaledOffset;
+                contentView.setScaleX(offsetScale);
+                contentView.setScaleY(offsetScale);
+
+                // Translate the View, accounting for the scaled width
+                final float xOffset = drawerView.getWidth() * slideOffset;
+                final float xOffsetDiff = contentView.getWidth() * diffScaledOffset / 2;
+                final float xTranslation = xOffset - xOffsetDiff;
+                contentView.setTranslationX(xTranslation);
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                // labelView.setVisibility(View.GONE);
+            }
+        });
+
         if (hasPermissions()) {
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (drawerLayout.isDrawerOpen(navigationView)) {
-                        drawerLayout.closeDrawer(navigationView);
-                    } else {
-                        drawerLayout.openDrawer(navigationView);
-                    }
-                }
-            });
 
-            drawerLayout.setScrimColor(Color.TRANSPARENT);
-            drawerLayout.setDrawerElevation(0);
-
-            drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
-                @Override
-                public void onDrawerSlide(View drawerView, float slideOffset) {
-                    //labelView.setVisibility(slideOffset > 0 ? View.VISIBLE : View.GONE);
-                    // Scale the View based on current slide offset
-                    final float diffScaledOffset = slideOffset * (1f - END_SCALE);
-                    final float offsetScale = 1 - diffScaledOffset;
-                    contentView.setScaleX(offsetScale);
-                    contentView.setScaleY(offsetScale);
-
-                    // Translate the View, accounting for the scaled width
-                    final float xOffset = drawerView.getWidth() * slideOffset;
-                    final float xOffsetDiff = contentView.getWidth() * diffScaledOffset / 2;
-                    final float xTranslation = xOffset - xOffsetDiff;
-                    contentView.setTranslationX(xTranslation);
-                }
-
-                @Override
-                public void onDrawerClosed(View drawerView) {
-                    // labelView.setVisibility(View.GONE);
-                }
-            });
-
+        } else
+            requestPermissions();
 
 //        userPhoto = navigationView.getHeaderView(0).findViewById(R.id.userPictureMenuHeader);
 //        userPhoto.setOnClickListener(this);
 
-            if (login != null) {
-                HomeFragment loginFragment = new HomeFragment();
-                setFragment(loginFragment);
-            } else {
-                LoginFragment loginFragment = new LoginFragment();
-                setFragment(loginFragment);
-            }
+        if (login != null) {
+            HomeFragment loginFragment = new HomeFragment();
+            setFragment(loginFragment);
         } else {
-            requestPermissions();
+            LoginFragment loginFragment = new LoginFragment();
+            setFragment(loginFragment);
         }
+
     }
 
     public void setFragment(Fragment fragment) {
@@ -243,6 +248,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case (R.id.nav_error):
                 fragmentSelected = true;
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new AddNewErrorFragment()).commit();
+                break;
+
+            case (R.id.nav_supplies):
+                fragmentSelected = true;
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new SuppliesFragment()).commit();
                 break;
 
             case (R.id.nav_profile):

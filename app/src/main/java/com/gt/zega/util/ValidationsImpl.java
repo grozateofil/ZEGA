@@ -1,6 +1,7 @@
 package com.gt.zega.util;
 
 import android.content.Context;
+import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.gt.zega.R;
@@ -11,32 +12,19 @@ import java.util.regex.Pattern;
 public class ValidationsImpl implements Validations {
 
     @Override
-    public boolean firstNameValidation(TextInputLayout firstName) {
-        Context context = firstName.getContext();
-        String firstNameString = firstName.getEditText().getText().toString();
+    public boolean textInputLayoutValidation(TextInputLayout textInputLayout) {
+        Context context = textInputLayout.getContext();
+        String firstNameString = textInputLayout.getEditText().getText().toString();
         if (firstNameString.isEmpty() || firstNameString.matches("\\s*")) {
-            firstName.setError(context.getResources().getText(R.string.required));
+            textInputLayout.setError(context.getResources().getText(R.string.required));
             return false;
         } else {
-            firstName.setError(null);
-            firstName.setErrorEnabled(false);
+            textInputLayout.setError(null);
+            textInputLayout.setErrorEnabled(false);
             return true;
         }
     }
 
-    @Override
-    public boolean lastNameValidation(TextInputLayout lastName) {
-        Context context = lastName.getContext();
-        String lastNameString = lastName.getEditText().getText().toString();
-        if (lastNameString.isEmpty() || lastNameString.matches("\\s*")) {
-            lastName.setError(context.getResources().getText(R.string.required));
-            return false;
-        } else {
-            lastName.setError(null);
-            lastName.setErrorEnabled(false);
-            return true;
-        }
-    }
 
     @Override
     public boolean phoneNumberValidation(TextInputLayout phoneNumber, CountryCodePicker ccp) {
@@ -118,6 +106,18 @@ public class ValidationsImpl implements Validations {
         else {
             password.setError(null);
             password.setErrorEnabled(false);
+            return true;
+        }
+    }
+
+    public boolean textViewValidation(TextView materialTextView) {
+        Context context = materialTextView.getContext();
+        String firstNameString = materialTextView.getText().toString();
+        if (firstNameString.isEmpty() || firstNameString.matches("\\s*")) {
+            materialTextView.setError(context.getResources().getText(R.string.required));
+            return false;
+        } else {
+            materialTextView.setError(null);
             return true;
         }
     }
