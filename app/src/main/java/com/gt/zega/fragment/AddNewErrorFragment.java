@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
@@ -34,13 +36,28 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.gt.zega.R;
+import com.gt.zega.entity.User;
+import com.gt.zega.htmlToPdf.HtmlToPdf;
+import com.gt.zega.util.Validations;
+import com.gt.zega.util.ValidationsImpl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 
 public class AddNewErrorFragment extends Fragment {
+
+    private int MAX_NUMBER_OF_PHOTOS = 3;
+    private File photoFile;
 
     private TextInputLayout firstName;
     private TextInputLayout lastName;
@@ -51,11 +68,23 @@ public class AddNewErrorFragment extends Fragment {
     private Dialog dialog;
 
     private LinearLayout linearLayout;
-    private ImageButton takePictureButton;
+    private ImageButton addPictureButton;
     private Button addButton;
-    private int GALLERY = 1, CAMERA = 2;
     private Uri imageUri;
     private ArrayList<Uri> listOfImages = new ArrayList<>();
+
+    private DatabaseReference databaseReference;
+    private FirebaseUser firebaseUser;
+
+    private Validations validations;
+
+    private User user;
+    private String firstname;
+    private String lastname;
+    private String phoneNumber;
+    private String userKey;
+
+    private HtmlToPdf htmlToPdf;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -68,15 +97,25 @@ public class AddNewErrorFragment extends Fragment {
         description = view.findViewById(R.id.errorDescription);
         deviceLocation = view.findViewById(R.id.deviceLocation);
         linearLayout = view.findViewById(R.id.photosLinearLayout);
-        takePictureButton = view.findViewById(R.id.takePicture);
+        addPictureButton = view.findViewById(R.id.addPicture);
+        addButton = view.findViewById(R.id.addNewDeviceButton);
 
         description.getEditText().setMovementMethod(new ScrollingMovementMethod());
+
+        validations = new ValidationsImpl();
+
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            userKey = firebaseUser.getUid();
+            getUserData(userKey);
+        }
 
         selectDevice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog = new Dialog(getContext());
-                dialog.setContentView(R.layout.dialog_searchable_spinner);
+                dialog.setContentView(R.layout.devices_list_view);
 
                 // set custom height and width
                 dialog.getWindow().setLayout(950, 1000);
@@ -153,14 +192,31 @@ public class AddNewErrorFragment extends Fragment {
             }
         });
 
-        takePictureButton.setOnClickListener(new View.OnClickListener() {
+        addPictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (linearLayout.getChildCount() < 4)
+                if (linearLayout.getChildCount() < MAX_NUMBER_OF_PHOTOS)
 //                    showPictureDialog();
                     choosePhotoFromGallary();
                 else
-                    Toast.makeText(getActivity().getApplicationContext(), "Numarul maxim de poze a fost atins", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "Maxim " + MAX_NUMBER_OF_PHOTOS + " imagini", Toast.LENGTH_SHORT).show();
+            }
+        });
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                if (validation()) {
+
+                htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectDevice.getText().toString(), description.getEditText().getText().toString(), deviceLocation.getEditText().getText().toString(), listOfImages);
+
+                if (htmlToPdf.writeHTML()) {
+                    selectDevice.setText(null);
+                    description.getEditText().setText(null);
+                    deviceLocation.getEditText().setText(null);
+                    linearLayout.removeAllViews();
+                    listOfImages.clear();
+                }
+//                }
             }
         });
 
@@ -170,23 +226,21 @@ public class AddNewErrorFragment extends Fragment {
     private void showPictureDialog() {
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(getContext());
         pictureDialog.setTitle("Select Action");
-        String[] pictureDialogItems = {
-                "Selectați imagine din galerie",
-                "Deschide-ți camera"};
-        pictureDialog.setItems(pictureDialogItems,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case 0:
-                                choosePhotoFromGallary();
-                                break;
-                            case 1:
-                                takePhotoFromCamera();
-                                break;
-                        }
-                    }
-                });
+        String[] pictureDialogItems = {"Selectați imagine din galerie", "Deschide-ți camera"};
+        pictureDialog.setItems(pictureDialogItems, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        choosePhotoFromGallary();
+                        break;
+                    case 1:
+
+                        takePhotoFromCamera();
+                        break;
+                }
+            }
+        });
         pictureDialog.show();
     }
 
@@ -195,20 +249,25 @@ public class AddNewErrorFragment extends Fragment {
         photo.setType("image/*");
 
         photo.setAction(Intent.ACTION_GET_CONTENT);
-        activityResultLaunch.launch(photo);
+        pickImage.launch(photo);
     }
 
     private void takePhotoFromCamera() {
-        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        activityResultLaunch.launch(intent);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File photo = new File(Environment.getExternalStorageDirectory(), "dir/pic.jpg");
+        imageUri = Uri.fromFile(photo);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        takePicture.launch(imageUri);
     }
 
-    ActivityResultLauncher<Intent> activityResultLaunch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    ActivityResultLauncher<Intent> pickImage = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 
         @Override
         public void onActivityResult(ActivityResult result) {
             if (result.getResultCode() == Activity.RESULT_OK) {
                 Intent data = result.getData();
+                Uri uri = data.getData();
+
 //                if (data.getClipData() != null) {
 //                    int count = data.getClipData().getItemCount();
 //
@@ -224,13 +283,16 @@ public class AddNewErrorFragment extends Fragment {
 //                    }
 //
 //                } else
-                if (data.getData() != null) {
+                if (uri != null) {
                     ImageView imageView = new ImageView(getActivity().getApplicationContext());
                     imageView.setImageURI(data.getData());
+                    listOfImages.add(data.getData());
                     imageView.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View view) {
                             ViewGroup parentView = (ViewGroup) view.getParent();
+
+                            listOfImages.remove(parentView.indexOfChild(view));
                             parentView.removeView(view);
                             return true;
                         }
@@ -242,11 +304,22 @@ public class AddNewErrorFragment extends Fragment {
 //                            parentView.removeView(view);
 //                        }
 //                    });
-                    addview(imageView, 150, linearLayout.getHeight());
+                    addview(imageView, linearLayout.getWidth() / 3, linearLayout.getHeight());
                 }
             }
         }
     });
+
+    ActivityResultLauncher<Uri> takePicture = registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
+        if (success) {
+            ImageView imageView = new ImageView(getActivity().getApplicationContext());
+            imageView.setImageURI(imageUri);
+            addview(imageView, linearLayout.getWidth() / 3, linearLayout.getHeight());
+
+        }
+
+    });
+
 
     private void addview(ImageView imageView, int width, int height) {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
@@ -255,4 +328,27 @@ public class AddNewErrorFragment extends Fragment {
 
         linearLayout.addView(imageView);
     }
+
+    private boolean validation() {
+        return (validations.textInputLayoutValidation(description) & validations.textInputLayoutValidation(deviceLocation) & validations.textViewValidation(selectDevice));
+    }
+
+    private void getUserData(String userKey) {
+        databaseReference.child(userKey).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                user = dataSnapshot.getValue(User.class);
+                if (user != null) {
+                    firstname = user.getFirstName();
+                    lastname = user.getLastName();
+                    phoneNumber = user.getPhoneNumber();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
 }

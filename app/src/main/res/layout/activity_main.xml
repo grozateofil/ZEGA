@@ -41,7 +41,7 @@
         android:background="@color/black_russian"
         app:headerLayout="@layout/menu_header"
         app:itemTextColor="@drawable/selector"
-        app:itemIconTint="@color/item_icon_tint"
+        app:itemIconTint="@color/navigation_view_item_icon_color"
         app:itemBackground="@drawable/selected_item_color"
         app:menu="@menu/main_menu">
 

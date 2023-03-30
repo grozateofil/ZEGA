@@ -1,69 +1,115 @@
 package com.gt.zega.htmlToPdf;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
-import android.os.Environment;
-import android.provider.Settings;
+import android.net.Uri;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.gt.zega.R;
+import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnPausedListener;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.gt.zega.R;
+import com.gt.zega.entity.User;
+
+import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
 public class HtmlToPdf {
-    private static String DIRECTORY = "ZEGA";
-    private static String PDF_DIRECTORY = "Pdf";
+    private final int REQUEST_CODE_MANAGE_EXTERNAL_STORAGE = 777;
+    private String DIRECTORY = "ZEGA";
+    private String PDF_DIRECTORY = "Pdf";
+    private String htmlFileName;
+    private String pdfFileName;
 
-    public static void writeHTML(Context context, String userName, String deviceName, String errorDescription, String deviceLocation) {
 
-        String htmlName = new SimpleDateFormat("dd.MM.yyyy_HH.mm.ss", Locale.forLanguageTag("ro")).format(new Date());
+    private Activity activity;
+    private Context context;
+    private User user;
+    private String deviceName;
+    private String errorDescription;
+    private String deviceLocation;
+    private ArrayList<Uri> listOfImages;
+
+
+    public HtmlToPdf(Activity activity, Context context, User user, String deviceName, String errorDescription, String deviceLocation, ArrayList<Uri> listOfImages) {
+        this.activity = activity;
+        this.context = context;
+        this.user = user;
+        this.deviceName = deviceName;
+        this.errorDescription = errorDescription;
+        this.deviceLocation = deviceLocation;
+        this.listOfImages = listOfImages;
+    }
+
+    public boolean writeHTML() {
+        boolean wasCreated = false;
+        String time = new SimpleDateFormat("HH:mm:ss", Locale.forLanguageTag("ro")).format(new Date());
+        String date = new SimpleDateFormat("dd.MM.yyyy", Locale.forLanguageTag("ro")).format(new Date());
+        String fileName = new SimpleDateFormat(date + "_HH.mm.ss", Locale.forLanguageTag("ro")).format(new Date());
 //        File directory=context.getExternalFilesDir("MYDIR17"); // works
 //        File directory=new File(context.getExternalFilesDir("2023"),"2024"); // works
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (Environment.isExternalStorageManager()) {
-                File directory = new File(Environment.getExternalStoragePublicDirectory("").getPath() + File.separator + DIRECTORY + File.separator + PDF_DIRECTORY); // works
-                if (!directory.exists()) {
-                    if (!directory.mkdirs())
-                        System.out.println("---------------------------------->failed to create directory");
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//            if (Environment.isExternalStorageManager()) {
+//                File directory = new File(Environment.getExternalStoragePublicDirectory("").getPath() + File.separator + DIRECTORY + File.separator + PDF_DIRECTORY); // works
+        File directory = context.getExternalFilesDir(PDF_DIRECTORY);
+        System.out.println("-------------------------------------->" + directory.getAbsolutePath());
+        if (!directory.exists()) {
+            if (!directory.mkdirs())
+                System.out.println("---------------------------------->failed to create directory");
 
-                }
-                File file = null;
-                try {
-                    Document document = Jsoup.parse(HtmlComponents.createHtml(userName, deviceName, errorDescription, deviceLocation), "UTF-8");
-                    if (!htmlName.endsWith(".html"))
-                        file = new File(directory + File.separator + htmlName + ".html");
-                    if (file != null) {
-                        if (file.createNewFile()) {
-//                    FileUtils.writeStringToFile(file, document.outerHtml(), StandardCharsets.UTF_8);
-                            FileOutputStream fileOutputStream = new FileOutputStream(file);
-                            fileOutputStream.write(document.outerHtml().getBytes(StandardCharsets.UTF_8));
-                            Toast.makeText(context, file.getName() + " a fost salvat", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                context.startActivity(intent);
-            }
         }
+        File file = null;
+
+        try {
+            Document document = Jsoup.parse(HtmlComponents.createHtml(context, user, deviceName, errorDescription, deviceLocation, date, time, listOfImages), "UTF-8");
+            System.out.println(document.outerHtml());
+            if (!fileName.endsWith(".html")) {
+                htmlFileName = fileName + ".html";
+
+                file = new File(directory + File.separator + htmlFileName);
+
+            }
+            if (file != null) {
+                if (file.createNewFile()) {
+                    FileUtils.writeStringToFile(file, document.outerHtml(), StandardCharsets.UTF_8);
+
+                    uploadUserFileToFirebaseStorage(file, context, activity);
+
+                    wasCreated = true;
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//            } else {
+//                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+//                context.startActivity(intent);
+//            }
+//        }
+        return wasCreated;
     }
 
     private void AllFilesAccessPermissionDialog(Context context) {
@@ -83,10 +129,82 @@ public class HtmlToPdf {
 
         okButton.setOnClickListener(view2 -> {
             dialog.cancel();
-
-
         });
     }
+
+    private void uploadUserFileToFirebaseStorage(File file, Context context, Activity activity) {
+
+//        View customProgressDialogView = LayoutInflater.from(context).inflate(R.layout.loading_dialog, null);
+//        ProgressBar progressBar = customProgressDialogView.findViewById(R.id.progress_bar);
+        ProgressBar progressBar = new ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal);
+        progressBar.setIndeterminate(false);
+        progressBar.setProgress(0);
+//        TextView progressTextView = customProgressDialogView.findViewById(R.id.loading_text);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setView(progressBar);
+        builder.setCancelable(false);
+        AlertDialog progressDialog = builder.create();
+        progressDialog.show();
+
+        // Show the progress dialog
+//        activity.runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                progressDialog.show();
+//            }
+//        });
+
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        StorageReference fileRef = storage.getReference().child("users/" + userId + "/" + file.getName());
+
+        fileRef.putFile(Uri.fromFile(file)).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+
+                double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+                progressBar.setProgress((int) progress);
+            }
+        }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onPaused(@NonNull UploadTask.TaskSnapshot snapshot) {
+                System.out.println("Upload is paused!");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressDialog.dismiss();
+                System.out.println("Error uploading file: " + e.getMessage());
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                file.delete();
+                progressDialog.dismiss();
+                Toast.makeText(context, htmlFileName + " a fost salvat", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+//    private boolean requestAllFilesAccessPermission(Context context) {
+//        // Check if the permission is already granted
+//        boolean bool = false;
+//        if (ContextCompat.checkSelfPermission(context, Manifest.permission.MANAGE_EXTERNAL_STORAGE)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            // Permission is not granted, request it
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.MANAGE_EXTERNAL_STORAGE},
+//                    REQUEST_CODE_MANAGE_EXTERNAL_STORAGE);
+//
+//        } else {
+//            bool = true;
+//            // Permission is already granted, access the external storage
+//            // ...
+//        }
+//        return bool;
+//    }
 
 
 }

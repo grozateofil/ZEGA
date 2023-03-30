@@ -7,27 +7,120 @@
     android:background="@color/floral_white"
     tools:context=".fragment.HomeFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="350dp"
-        android:layout_marginBottom="10dp"
-        android:text="HOME"
-        android:textColor="@color/darkYellow"
-        android:textSize="23sp" />
+    <!--    <ImageView-->
+    <!--        android:id="@+id/selectedPhotoFromGalery"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="350dp"-->
+    <!--        android:layout_marginStart="20dp"-->
+    <!--        android:layout_marginTop="50dp"-->
+    <!--        android:layout_marginEnd="20dp" />-->
 
 
     <!--    <Button-->
-    <!--        android:id="@+id/logOutButton"-->
-    <!--        android:layout_width="match_parent"-->
+    <!--        android:id="@+id/addImageButton"-->
+    <!--        android:layout_width="wrap_content"-->
     <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginLeft="30dp"-->
-    <!--        android:layout_marginTop="450dp"-->
-    <!--        android:layout_marginRight="30dp"-->
-    <!--        android:backgroundTint="@color/darkYellow"-->
-    <!--        android:text="DECONECTEAZĂ-TE"-->
-    <!--        android:textColor="@android:color/white"-->
-    <!--        app:cornerRadius="20dp" />-->
+    <!--        android:layout_below="@+id/selectedPhotoFromGalery"-->
+    <!--        android:layout_marginStart="20dp"-->
+    <!--        android:backgroundTint="@color/black_russian"-->
+    <!--        android:outlineSpotShadowColor="@color/black_russian"-->
+    <!--        android:text="ADAUGĂ"-->
+    <!--        android:textColor="@color/floral_white"-->
+    <!--        app:cornerRadius="3dp" />-->
+
+    <!--    <LinearLayout-->
+    <!--        android:id="@+id/brightnessLayout"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_below="@id/addImageButton"-->
+    <!--        android:layout_marginStart="20dp"-->
+    <!--        android:layout_marginTop="10dp">-->
+
+    <!--        <TextView-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginEnd="10dp"-->
+    <!--            android:text="Brightness:"-->
+    <!--            android:textColor="@color/black_russian" />-->
+
+    <!--        <EditText-->
+    <!--            android:id="@+id/brightnessEditText"-->
+    <!--            android:layout_width="50dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:inputType="numberDecimal"-->
+    <!--            android:maxLength="3" />-->
+
+    <!--    </LinearLayout>-->
+
+    <!--    <LinearLayout-->
+    <!--        android:id="@+id/contrastLayout"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_below="@id/brightnessLayout"-->
+    <!--        android:layout_marginStart="20dp">-->
+
+    <!--        <TextView-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginEnd="10dp"-->
+    <!--            android:text="Contrast:"-->
+    <!--            android:textColor="@color/black_russian" />-->
+
+    <!--        <EditText-->
+    <!--            android:id="@+id/contrastEditText"-->
+    <!--            android:layout_width="50dp"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:inputType="numberDecimal"-->
+    <!--            android:maxLength="3" />-->
+
+    <!--    </LinearLayout>-->
+
+    <!--    <LinearLayout-->
+    <!--        android:id="@+id/blurLayout"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_below="@id/contrastLayout"-->
+    <!--        android:layout_marginStart="20dp">-->
+
+    <!--        <TextView-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginEnd="10dp"-->
+    <!--            android:text="Blur:"-->
+    <!--            android:textColor="@color/black_russian" />-->
+
+    <!--        <CheckBox-->
+    <!--            android:id="@+id/blurCheckBox"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_below="@id/applyFilterButton"/>-->
+
+    <!--        <TextView-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginEnd="10dp"-->
+    <!--            android:text="Sepia:"-->
+    <!--            android:textColor="@color/black_russian" />-->
+
+    <!--        <CheckBox-->
+    <!--            android:id="@+id/sepiaCheckBox"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_below="@id/applyFilterButton"/>-->
+
+    <!--    </LinearLayout>-->
+
+    <!--    <Button-->
+    <!--        android:id="@+id/applyFilterButton"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_below="@+id/blurLayout"-->
+    <!--        android:layout_marginStart="20dp"-->
+    <!--        android:backgroundTint="@color/black_russian"-->
+    <!--        android:outlineSpotShadowColor="@color/black_russian"-->
+    <!--        android:text="Aplică"-->
+    <!--        android:textColor="@color/floral_white"-->
+    <!--        app:cornerRadius="3dp" />-->
+
 
 </RelativeLayout>

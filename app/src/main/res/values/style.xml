@@ -33,5 +33,10 @@
         <item name="android:outlineSpotShadowColor">@color/black_russian</item>
     </style>
 
+    <style name="SpinnerButtonStyle" parent="android:Widget.Holo.Spinner">
+        <item name="android:textColor">@color/red</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    </style>
+
 
 </resources>

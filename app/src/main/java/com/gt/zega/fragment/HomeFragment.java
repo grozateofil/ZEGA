@@ -1,35 +1,25 @@
 package com.gt.zega.fragment;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.gt.zega.R;
-import com.gt.zega.entity.User;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements View.OnClickListener {
 
-    private NavigationView navigationView;
-
-    private FirebaseAuth firebaseAuth;
-    private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference databaseReference;
-    private FirebaseUser firebaseUser;
-
-    private SharedPreferences sharedPreferences;
+//    private ImageView imageView;
+//    private Button button;
+//    private Button addFilter1Button;
+//    private CheckBox blurCheckBox;
+//    private CheckBox sepiaCheckBox;
+//    private Uri imageUri;
+//
+//    private EditText brightness;
+//    private EditText contrast;
 
 
     @Override
@@ -38,37 +28,74 @@ public class HomeFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        sharedPreferences = getContext().getSharedPreferences("Preferences", 0);
+//        imageView = view.findViewById(R.id.selectedPhotoFromGalery);
+//        button = view.findViewById(R.id.addImageButton);
+//        addFilter1Button = view.findViewById(R.id.applyFilterButton);
+//        blurCheckBox = view.findViewById(R.id.blurCheckBox);
+//        sepiaCheckBox = view.findViewById(R.id.sepiaCheckBox);
+//
+//        brightness = view.findViewById(R.id.brightnessEditText);
+//        contrast = view.findViewById(R.id.contrastEditText);
+//
+//        button.setOnClickListener(this);
+//        addFilter1Button.setOnClickListener(this);
+//        blurCheckBox.setOnClickListener(this);
+//        sepiaCheckBox.setOnClickListener(this);
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference();
-        firebaseUser = firebaseAuth.getCurrentUser();
-        if (firebaseUser != null) {
-            String userKey = firebaseUser.getUid();
-
-            databaseReference.child("users").child(userKey).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    String firstName = dataSnapshot.child("firstName").getValue(String.class);
-                    String lastName = dataSnapshot.child("lastName").getValue(String.class);
-                    String phoneNumber = dataSnapshot.child("phoneNumber").getValue(String.class);
-                    User user = new User(firstName, lastName, phoneNumber);
-
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("currentUserName", user.getFirstName() + " " + user.getLastName());
-                    editor.commit();
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
-
-            });
-        }
         return view;
 
     }
 
+//    public void openGallery() {
+//        Intent photo = new Intent(Intent.ACTION_PICK);
+//        photo.setType("image/*");
+//        activityResultLaunch.launch(photo);
+//    }
+//
+//
+//    ActivityResultLauncher<Intent> activityResultLaunch = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+//        @Override
+//        public void onActivityResult(ActivityResult result) {
+//            if (result.getResultCode() == Activity.RESULT_OK) {
+//                Intent data = result.getData();
+//                if (data != null) {
+//                    imageUri = data.getData();
+//                    imageView.setImageURI(imageUri);
+//                }
+//            }
+//        }
+//    });
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+//            case (R.id.addImageButton):
+//                openGallery();
+//                break;
+//            case (R.id.applyFilterButton):
+//                if (!brightness.getText().toString().equals("") && !contrast.getText().toString().equals("")) {
+//                    if (blurCheckBox.isChecked()) {
+//
+//                    }
+//                }
+//                break;
+//            case (R.id.blurCheckBox):
+//                blurTransformation = new BlurTransformation(getActivity());
+//                if (blurCheckBox.isChecked())
+//                    Picasso.get().load(imageUri).transform(blurTransformation).into(imageView);
+//                else
+//                    Picasso.get().load(imageUri).into(imageView);
+//                break;
+//
+//            case (R.id.sepiaCheckBox):
+//
+//                sepiaFilterTransformation = new SepiaFilterTransformation(getActivity().getApplicationContext());
+//                if (sepiaCheckBox.isChecked())
+//                    Picasso.get().load(imageUri).transform(sepiaFilterTransformation).into(imageView);
+//                else
+//                    Picasso.get().load(imageUri).into(imageView);
+//                break;
+        }
+
+    }
 }

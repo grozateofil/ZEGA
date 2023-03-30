@@ -27,7 +27,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
 }
+
 
 dependencies {
 
@@ -44,5 +46,14 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:31.2.2')
     implementation 'com.google.firebase:firebase-storage'
     implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'org.jsoup:jsoup:1.8.1'
+    implementation 'commons-io:commons-io:2.11.0'
+
+
+    //implementation 'jp.wasabeef:picasso-transformations:2.4.0'
+    // If you want to use the GPU Filters
+    //implementation 'jp.co.cyberagent.android:gpuimage:2.1.0'
+
+    implementation 'jp.co.cyberagent.android:gpuimage:2.1.0'
 
 }
