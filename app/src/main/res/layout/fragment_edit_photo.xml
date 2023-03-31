@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.EditPhotoFragment">
+
+    <ImageView
+        android:id="@+id/selectedPhotoFromGalery"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="20dp" />
+
+
+    <Button
+        android:id="@+id/addImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/selectedPhotoFromGalery"
+        android:layout_marginStart="20dp"
+        android:backgroundTint="@color/black_russian"
+        android:outlineSpotShadowColor="@color/black_russian"
+        android:text="ADAUGĂ"
+        android:textColor="@color/floral_white"
+        app:cornerRadius="3dp" />
+
+    <LinearLayout
+        android:id="@+id/brightnessSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/addImageButton"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Brightness: "
+            android:textColor="@color/black_russian" />
+
+        <SeekBar
+            android:id="@+id/brightnessBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:thumbTint="@color/black_russian"
+            android:tickMark="@color/black_russian" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/contrastSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/brightnessSection"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Contrast: "
+            android:textColor="@color/black_russian" />
+
+        <SeekBar
+            android:id="@+id/contrastBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="50"
+            android:thumbTint="@color/black_russian"
+            android:tickMark="@color/black_russian" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/filters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/contrastSection"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/sepiaFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/black_russian"
+            android:outlineSpotShadowColor="@color/black_russian"
+            android:text="Sepia"
+            android:textColor="@color/floral_white" />
+
+        <Button
+            android:id="@+id/grayFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/black_russian"
+            android:outlineSpotShadowColor="@color/black_russian"
+            android:text="Gray"
+            android:textColor="@color/floral_white" />
+
+        <Button
+            android:id="@+id/invertFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/black_russian"
+            android:outlineSpotShadowColor="@color/black_russian"
+            android:text="Invert"
+            android:textColor="@color/floral_white" />
+
+        <Button
+            android:id="@+id/blurFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/black_russian"
+            android:outlineSpotShadowColor="@color/black_russian"
+            android:text="Blur"
+            android:textColor="@color/floral_white" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/saveImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/filters"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/black_russian"
+        android:outlineSpotShadowColor="@color/black_russian"
+        android:text="Salvare"
+        android:textColor="@color/floral_white" />
+
+</RelativeLayout>
