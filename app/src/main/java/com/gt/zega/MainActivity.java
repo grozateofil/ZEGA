@@ -3,6 +3,7 @@ package com.gt.zega;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -13,6 +14,7 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -38,16 +39,19 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.gt.zega.fragment.AboutUsFragment;
 import com.gt.zega.fragment.AddNewErrorFragment;
+import com.gt.zega.fragment.AllReportsFragment;
 import com.gt.zega.fragment.HomeFragment;
 import com.gt.zega.fragment.LoginFragment;
 import com.gt.zega.fragment.ProfileFragment;
-import com.gt.zega.fragment.ReportFragment;
 import com.gt.zega.fragment.SettingsFragment;
+import com.gt.zega.fragment.StatisticsFragment;
 import com.gt.zega.fragment.SuppliesFragment;
+import com.gt.zega.fragment.UserReportFragment;
 import com.gt.zega.internetConnection.NetworkChangeListener;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, LoginFragment.OnUserRoleSelectedListener {
 
     private static final String[] PERMISSIONS = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -65,20 +69,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private View navigationHeader;
 
     private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPref;
 
     private TextView userNameHeader;
 
     private ImageView userPhoto;
 
+    private LoginFragment loginFragment;
+
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
-    private ActionBarDrawerToggle actionBarDrawerToggle;
+
+    private Menu menu;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private FirebaseUser firebaseUser;
+    private String userRole;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +102,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         sharedPreferences = getApplicationContext().getSharedPreferences("Preferences", 0);
         String login = sharedPreferences.getString("LOGIN", null);
-        String userName = sharedPreferences.getString("userData", null);
+//        String userName = sharedPreferences.getString("userData", null);
+
+        sharedPref = getApplicationContext().getSharedPreferences("myPrefs", 0);
+        userRole = sharedPref.getString("userRole", "user");
 
         contentView = findViewById(R.id.holder);
         drawerLayout = findViewById(R.id.drawerLayout);
@@ -106,13 +118,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         navigationHeader = navigationView.getHeaderView(0);
+        menu = navigationView.getMenu();
 
+        hideAndShowMenuItems();
 
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
-
-        navigationView.getMenu().getItem(0).setChecked(true);
-
+        menu.getItem(0).setChecked(true);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,7 +143,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-                //labelView.setVisibility(slideOffset > 0 ? View.VISIBLE : View.GONE);
                 // Scale the View based on current slide offset
                 final float diffScaledOffset = slideOffset * (1f - END_SCALE);
                 final float offsetScale = 1 - diffScaledOffset;
@@ -147,7 +158,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onDrawerClosed(View drawerView) {
-                // labelView.setVisibility(View.GONE);
             }
         });
 
@@ -163,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             HomeFragment loginFragment = new HomeFragment();
             setFragment(loginFragment);
         } else {
-            LoginFragment loginFragment = new LoginFragment();
+            loginFragment = new LoginFragment();
             setFragment(loginFragment);
         }
 
@@ -260,9 +270,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new ProfileFragment()).commit();
                 break;
 
+//            case (R.id.nav_edit):
+//                fragmentSelected = true;
+//                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new EditPhotoFragment()).commit();
+//                break;
+
             case (R.id.nav_report):
                 fragmentSelected = true;
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new ReportFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new UserReportFragment()).commit();
+                break;
+
+            case (R.id.nav_folder):
+                fragmentSelected = true;
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new AllReportsFragment()).commit();
+                break;
+
+            case (R.id.nav_statistics):
+                fragmentSelected = true;
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new StatisticsFragment()).commit();
                 break;
 
             case (R.id.nav_settings):
@@ -270,10 +295,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new SettingsFragment()).commit();
                 break;
 
-//            case (R.id.nav_aboutUs):
-//                fragmentSelected = true;
-//                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new AboutUsFragment()).commit();
-//                break;
+            case (R.id.nav_aboutUs):
+                fragmentSelected = true;
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new AboutUsFragment()).commit();
+                break;
 
             case (R.id.nav_logout):
                 confirmLogout();
@@ -297,6 +322,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         dialog.show();
         dialog.setCancelable(false);
         dialog.getWindow().setGravity(Gravity.CENTER);
+        dialog.setCanceledOnTouchOutside(true);
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -309,7 +335,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View view) {
                 dialog.cancel();
-                LoginFragment loginFragment = new LoginFragment();
+
+                logout();
+                loginFragment = new LoginFragment();
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 fragmentManager.beginTransaction().replace(R.id.content_frame, loginFragment).commit();
 
@@ -317,11 +345,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.remove("LOGIN");
                 editor.apply();
+
+                SharedPreferences.Editor editor2 = sharedPref.edit();
+                editor2.remove("userRole");
+                editor2.apply();
+
                 navigationView.getMenu().getItem(0).setChecked(true);
 
             }
         });
 
+    }
+
+    public void logout() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -346,6 +386,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    @Override
+    public void onUserRoleSelected(String role) {
+        this.userRole = role;
 
+        hideAndShowMenuItems();
+
+//        SharedPreferences prefs = getApplicationContext().getSharedPreferences("myPrefs", 0);
+//        SharedPreferences.Editor editor = prefs.edit();
+//        editor.putString("userRole", userRole);
+//        editor.apply();
+    }
+
+
+    public void hideAndShowMenuItems() {
+
+        if (userRole.equals("admin")) {
+            menu.findItem(R.id.nav_folder).setVisible(true);
+            menu.findItem(R.id.nav_report).setVisible(true);
+        } else if (userRole.equals("inginer")) {
+            menu.findItem(R.id.nav_folder).setVisible(true);
+            menu.findItem(R.id.nav_report).setVisible(false);
+        } else if (userRole.equals("medic")) {
+            menu.findItem(R.id.nav_folder).setVisible(false);
+            menu.findItem(R.id.nav_report).setVisible(true);
+        }
+    }
 }
 

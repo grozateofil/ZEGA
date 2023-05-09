@@ -8,35 +8,48 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.gt.zega.R;
+import com.gt.zega.database.HideAndShow;
+import com.gt.zega.entity.User;
 
-public class SettingsFragment extends Fragment implements View.OnClickListener {
+public class SettingsFragment extends Fragment implements View.OnClickListener, HideAndShow {
 
-    private Button deleteAccountButton;
+    private TextView deleteAccount;
+    private TextView addNewDevice;
     private SharedPreferences sharedPreferences;
     private FirebaseUser firebaseUser;
 
     private DatabaseReference databaseReference;
+    private String userRole;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         sharedPreferences = getContext().getSharedPreferences("Preferences", 0);
-        deleteAccountButton = view.findViewById(R.id.deleteAccountButton);
+        deleteAccount = view.findViewById(R.id.deleteAccount);
+        addNewDevice = view.findViewById(R.id.addNewDevice);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
-        deleteAccountButton.setOnClickListener(this);
+        getUserData(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        deleteAccount.setOnClickListener(this);
+        addNewDevice.setOnClickListener(this);
 
         return view;
     }
@@ -44,10 +57,15 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case (R.id.deleteAccountButton): {
+            case (R.id.addNewDevice):
+                requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new NewMedicalDeviceFragment()).addToBackStack(null).commit();
+                break;
+
+
+            case (R.id.deleteAccount):
                 confirmDeleteAccount();
                 break;
-            }
+
         }
     }
 
@@ -64,6 +82,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         dialog.show();
         dialog.setCancelable(false);
         dialog.getWindow().setGravity(Gravity.CENTER);
+        dialog.setCanceledOnTouchOutside(true);
 
         cancelButton.setOnClickListener(view1 -> dialog.cancel());
 
@@ -96,5 +115,30 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         });
 
     }
+
+    private void getUserData(String userKey) {
+        databaseReference.child(userKey).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if (user != null) {
+                    userRole = user.getRole();
+                    hideTextView(getView().findViewById(R.id.addNewDevice), !userRole.equals("medic"));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    @Override
+    public void hideTextView(TextView textView, boolean isAdmin) {
+        if (!isAdmin) {
+            textView.setVisibility(View.GONE);
+        }
+    }
+
 
 }

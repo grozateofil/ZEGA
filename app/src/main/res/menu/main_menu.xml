@@ -24,19 +24,36 @@
             android:icon="@drawable/user_icon"
             android:title="Profil" />
 
+        <!--        <item-->
+        <!--            android:id="@+id/nav_edit"-->
+        <!--            android:icon="@drawable/edit_icon"-->
+        <!--            android:title="Editare" />-->
+
         <item
             android:id="@+id/nav_report"
-            android:icon="@drawable/file_icon"
-            android:title="Istoric raport" />
+            android:icon="@drawable/my_reports"
+            android:title="My raports" />
+
+        <item
+            android:id="@+id/nav_folder"
+            android:icon="@drawable/folder"
+            android:title="Reports" />
+
+        <item
+            android:id="@+id/nav_statistics"
+            android:icon="@drawable/statistics"
+            android:title="Statistici" />
 
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/settings_icon"
             android:title="Setări" />
-        <!--        <item-->
-        <!--            android:id="@+id/nav_aboutUs"-->
-        <!--            android:icon="@drawable/information_icon"-->
-        <!--            android:title="Despre noi" />-->
+
+        <item
+            android:id="@+id/nav_aboutUs"
+            android:icon="@drawable/information_icon"
+            android:title="Despre noi" />
+
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/logout_icon"

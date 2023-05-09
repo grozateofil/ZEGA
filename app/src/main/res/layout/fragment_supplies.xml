@@ -3,8 +3,83 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/floral_white"
     tools:context=".fragment.SuppliesFragment">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="50dp"
+        android:text="Consumabile"
+        android:textColor="@color/black_russian"
+        android:textSize="26sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/selectSupplies"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/text_view_border"
+        android:gravity="center_vertical"
+        android:hint="Selecteaza consumabilele lipsa"
+        android:padding="15dp"
+        android:textColor="@color/black_russian"
+        android:textColorHint="@color/black_russian"
+        android:textSize="15sp"
+        app:drawableEndCompat="@drawable/arrow_down_icon"
+        app:endIconTint="@color/black_russian"
+        app:errorEnabled="true"
+        app:errorIconDrawable="@null" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/errorDescription"
+        style="@style/TextInputLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/selectSupplies"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="-1dp"
+        android:layout_marginRight="30dp"
+        android:drawablePadding="10dp"
+        android:hint="Locatia aparatului"
+        android:textSize="15sp"
+        app:endIconMode="clear_text"
+        app:endIconTint="@color/black_russian"
+        app:errorEnabled="true"
+        app:errorIconDrawable="@null">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine|textLongMessage"
+            android:maxLines="5"
+            android:scrollbarThumbVertical="@android:color/transparent"
+            android:scrollbars="vertical"
+            android:textColor="@color/black_russian" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/addNewDeviceButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/errorDescription"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/black_russian"
+        android:outlineSpotShadowColor="@color/black_russian"
+        android:text="TRIMITE"
+        android:textColor="#FFF7EC"
+        app:cornerRadius="3dp" />
 
 
 </RelativeLayout>

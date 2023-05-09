@@ -7,17 +7,34 @@
     android:background="@color/floral_white"
     tools:context=".fragment.ProfileFragment">
 
-    <TextView
+    <LinearLayout
         android:id="@+id/title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="35dp"
-        android:text="Editare profil"
-        android:textColor="@color/black_russian"
-        android:textSize="35sp"
-        android:textStyle="bold" />
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="9dp"
+            android:text="Profil"
+            android:textColor="@color/black_russian"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/role"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:layout_marginTop="7dp"
+            android:layout_marginStart="10dp"
+            android:text=""
+            android:textColor="@color/lightGray"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
 
     <!--    <com.google.android.material.imageview.ShapeableImageView-->
     <!--        android:id="@+id/profilePicture"-->
@@ -31,6 +48,7 @@
     <!--        android:clickable="true"-->
     <!--        android:scaleType="fitXY"-->
     <!--        app:shapeAppearanceOverlay="@style/circleImageView" />-->
+
 
     <LinearLayout
         android:id="@+id/fullName"
@@ -93,7 +111,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/fullName"
-        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <com.hbb20.CountryCodePicker
@@ -101,7 +118,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:layout_marginTop="-8dp"
             app:ccpDialog_backgroundColor="@color/black"
             app:ccpDialog_fastScroller_bubbleColor="@color/desert_storm"
             app:ccpDialog_fastScroller_bubbleTextAppearance="@style/bubbleText"
@@ -112,6 +128,7 @@
             app:ccp_autoFormatNumber="true"
             app:ccp_contentColor="@color/black_russian"
             app:ccp_countryPreference="ro"
+            android:layout_gravity="center_vertical"
             app:ccp_defaultNameCode="ro"
             app:ccp_showArrow="false"
             app:ccp_showNameCode="false" />
@@ -122,6 +139,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="30dp"
+            android:layout_gravity="center_vertical"
             android:hint="Telefon"
             android:textSize="15sp"
             app:endIconMode="clear_text"
@@ -177,7 +195,7 @@
         android:textColor="#FFF7EC"
         app:cornerRadius="3dp" />
 
-    <Button
+    <ToggleButton
         android:id="@+id/saveChangesButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -188,7 +206,7 @@
         android:layout_marginBottom="30dp"
         android:backgroundTint="@color/black_russian"
         android:outlineSpotShadowColor="@color/black_russian"
-        android:text="Salvare"
+        android:text=""
         android:textColor="#FFF7EC"
         app:cornerRadius="3dp" />
 

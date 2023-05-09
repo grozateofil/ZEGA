@@ -69,18 +69,6 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!--    <CheckBox-->
-    <!--        android:id="@+id/rememberMeCheckBox"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_below="@id/loginPassword"-->
-    <!--        android:layout_alignParentStart="true"-->
-    <!--        android:layout_alignParentLeft="true"-->
-    <!--        android:layout_centerInParent="true"-->
-    <!--        android:layout_marginStart="23dp"-->
-    <!--        android:layout_marginTop="1dp"-->
-    <!--        android:text="Răman conectat" />-->
-
     <Button
         android:id="@+id/forgotPasswordButton"
         android:layout_width="wrap_content"

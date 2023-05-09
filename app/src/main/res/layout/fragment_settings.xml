@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,31 +7,35 @@
     tools:context=".fragment.SettingsFragment">
 
     <LinearLayout
-        android:id="@+id/deleteAccountSection"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
         android:layout_marginTop="50dp"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/addNewDevice"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ștergere cont:"
-            android:layout_gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:text="Adauga aparat"
             android:textColor="@color/black_russian"
-            android:textSize="20sp" />
+            android:textSize="25sp" />
 
-        <Button
-            android:id="@+id/deleteAccountButton"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/deleteAccount"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:backgroundTint="@color/black_russian"
-            android:outlineSpotShadowColor="@color/black_russian"
-            android:text="Șterge"
-            android:textColor="#FFF7EC"
-            app:cornerRadius="3dp" />
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:text="Ștergere cont"
+            android:textColor="@color/black_russian"
+            android:textSize="25sp" />
     </LinearLayout>
-
-</RelativeLayout>
+</ScrollView>

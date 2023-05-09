@@ -95,16 +95,16 @@
         android:id="@+id/phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:layout_below="@id/fullName"
-        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <com.hbb20.CountryCodePicker
             android:id="@+id/ccpRegistration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="30dp"
-            android:layout_marginTop="-8dp"
             app:ccpDialog_backgroundColor="@color/black"
             app:ccpDialog_fastScroller_bubbleColor="@color/desert_storm"
             app:ccpDialog_fastScroller_bubbleTextAppearance="@style/bubbleText"
@@ -124,6 +124,7 @@
             style="@style/TextInputLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginRight="30dp"
             android:hint="Telefon"
             android:textSize="15sp"
@@ -191,11 +192,25 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
+    <Spinner
+        android:id="@+id/role"
+        style="@style/SpinnerButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/password"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:backgroundTint="@color/black_russian"
+        android:entries="@array/my_spinner_options"
+        android:prompt="@string/select_an_option"
+        android:spinnerMode="dropdown" />
+
+
     <Button
         android:id="@+id/createButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/password"
+        android:layout_below="@id/role"
         android:layout_centerInParent="true"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"

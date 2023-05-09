@@ -25,4 +25,10 @@
     <string name="navigation_drower_open">Open</string>
     <string name="navigation_drower_close">Close</string>
 
+    <string name="select_an_option">Select an option</string>
+    <string-array name="my_spinner_options">
+        <item>inginer</item>
+        <item>medic</item>
+    </string-array>
+
 </resources>

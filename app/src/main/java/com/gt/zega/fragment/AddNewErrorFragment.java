@@ -44,6 +44,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.gt.zega.R;
+import com.gt.zega.database.HideAndShow;
+import com.gt.zega.entity.Device;
 import com.gt.zega.entity.User;
 import com.gt.zega.htmlToPdf.HtmlToPdf;
 import com.gt.zega.util.Validations;
@@ -51,21 +53,20 @@ import com.gt.zega.util.ValidationsImpl;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
-public class AddNewErrorFragment extends Fragment {
+public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginFragment.OnUserRoleSelectedListener {
 
     private int MAX_NUMBER_OF_PHOTOS = 3;
     private File photoFile;
 
-    private TextInputLayout firstName;
-    private TextInputLayout lastName;
     private TextView selectDevice;
     private TextInputLayout description;
     private TextInputLayout deviceLocation;
-    private ArrayList<String> arrayList = new ArrayList<>(Arrays.asList("Aparat 1", "Aparat 2", "Aparat 3", "Aparat 4", "Aparat 5", "Aparat 6", "Aparat 7", "Aparat 8", "Aparat 9", "Aparat 10"));
+    private TextInputLayout hospital;
     private Dialog dialog;
+
+    private ArrayList<Device> deviceArrayList;
 
     private LinearLayout linearLayout;
     private ImageButton addPictureButton;
@@ -74,6 +75,7 @@ public class AddNewErrorFragment extends Fragment {
     private ArrayList<Uri> listOfImages = new ArrayList<>();
 
     private DatabaseReference databaseReference;
+    private DatabaseReference databaseRef;
     private FirebaseUser firebaseUser;
 
     private Validations validations;
@@ -85,17 +87,18 @@ public class AddNewErrorFragment extends Fragment {
     private String userKey;
 
     private HtmlToPdf htmlToPdf;
+    private String userRole;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_add_new_error, container, false);
 
-//        firstName = view.findViewById(R.id.currentUserFirstname);
-//        lastName = view.findViewById(R.id.currentUserLastname);
         selectDevice = view.findViewById(R.id.selectDevice);
         description = view.findViewById(R.id.errorDescription);
         deviceLocation = view.findViewById(R.id.deviceLocation);
+        hospital = view.findViewById(R.id.hospital);
+
         linearLayout = view.findViewById(R.id.photosLinearLayout);
         addPictureButton = view.findViewById(R.id.addPicture);
         addButton = view.findViewById(R.id.addNewDeviceButton);
@@ -105,6 +108,12 @@ public class AddNewErrorFragment extends Fragment {
         validations = new ValidationsImpl();
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
+        databaseRef = FirebaseDatabase.getInstance().getReference().child("devices");
+
+        deviceArrayList = new ArrayList<>();
+
+        getDevices();
+
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
             userKey = firebaseUser.getUid();
@@ -118,14 +127,14 @@ public class AddNewErrorFragment extends Fragment {
                 dialog.setContentView(R.layout.devices_list_view);
 
                 // set custom height and width
-                dialog.getWindow().setLayout(950, 1000);
+                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 1500);
                 dialog.show();
 
                 // Initialize and assign variable
                 EditText editText = dialog.findViewById(R.id.edit_text);
                 ListView listView = dialog.findViewById(R.id.list_view);
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, arrayList) {
+                ArrayAdapter<Device> adapter = new ArrayAdapter<Device>(getContext(), android.R.layout.simple_list_item_1, deviceArrayList) {
                     @NonNull
                     @Override
                     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -159,7 +168,7 @@ public class AddNewErrorFragment extends Fragment {
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         // when item selected from list
                         // set selected item on textView
-                        selectDevice.setText(adapter.getItem(position));
+                        selectDevice.setText(adapter.getItem(position).toString());
                         selectDevice.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
 
                         dialog.dismiss();
@@ -192,6 +201,18 @@ public class AddNewErrorFragment extends Fragment {
             }
         });
 
+        hospital.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (b) {
+                    hospital.getEditText().setHintTextColor(ContextCompat.getColor(getContext(), R.color.lightGray));
+                    hospital.getEditText().setHint("Numele spitalului/clinicii");
+                } else {
+                    hospital.getEditText().setHint("");
+                }
+            }
+        });
+
         addPictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -205,18 +226,19 @@ public class AddNewErrorFragment extends Fragment {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (validation()) {
+                if (validation()) {
 
-                htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectDevice.getText().toString(), description.getEditText().getText().toString(), deviceLocation.getEditText().getText().toString(), listOfImages);
+                    htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectDevice.getText().toString(), description.getEditText().getText().toString(), hospital.getEditText().getText().toString(), deviceLocation.getEditText().getText().toString(), listOfImages);
 
-                if (htmlToPdf.writeHTML()) {
-                    selectDevice.setText(null);
-                    description.getEditText().setText(null);
-                    deviceLocation.getEditText().setText(null);
-                    linearLayout.removeAllViews();
-                    listOfImages.clear();
+                    if (htmlToPdf.writeHTML()) {
+                        selectDevice.setText(null);
+                        description.getEditText().setText(null);
+                        deviceLocation.getEditText().setText(null);
+                        hospital.getEditText().setText(null);
+                        linearLayout.removeAllViews();
+                        listOfImages.clear();
+                    }
                 }
-//                }
             }
         });
 
@@ -330,7 +352,10 @@ public class AddNewErrorFragment extends Fragment {
     }
 
     private boolean validation() {
-        return (validations.textInputLayoutValidation(description) & validations.textInputLayoutValidation(deviceLocation) & validations.textViewValidation(selectDevice));
+        return (validations.textInputLayoutValidation(description) &
+                validations.textInputLayoutValidation(hospital) &
+                validations.textInputLayoutValidation(deviceLocation) &
+                validations.textViewValidation(selectDevice));
     }
 
     private void getUserData(String userKey) {
@@ -342,6 +367,7 @@ public class AddNewErrorFragment extends Fragment {
                     firstname = user.getFirstName();
                     lastname = user.getLastName();
                     phoneNumber = user.getPhoneNumber();
+//                    hideTextView(getView().findViewById(R.id.titleNewError),user.getRole().equals("admin"));
                 }
             }
 
@@ -351,4 +377,34 @@ public class AddNewErrorFragment extends Fragment {
         });
     }
 
+    private void getDevices() {
+        databaseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
+                    Device device = objectSnapshot.getValue(Device.class);
+                    deviceArrayList.add(device);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    @Override
+    public void hideTextView(TextView textView, boolean isAdmin) {
+        if (!isAdmin) {
+            textView.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void onUserRoleSelected(String userRole) {
+        this.userRole = userRole;
+
+    }
 }

@@ -2,6 +2,7 @@ package com.gt.zega.fragment;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.ActionMode;
@@ -51,6 +52,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private FirebaseUser firebaseUser;
 
     private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences1;
+
+    private Context context;
+
+    private OnUserRoleSelectedListener onUserRoleSelectedListener;
 
     private Validations validations;
     private String userKey;
@@ -73,6 +79,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         firebaseUser = fAuth.getCurrentUser();
 
         sharedPreferences = getContext().getSharedPreferences("Preferences", 0);
+//        sharedPreferences1 = getContext().getSharedPreferences("Preferences1", 0);
 
         validations = new ValidationsImpl();
 
@@ -152,6 +159,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         String emailAddress = email.getEditText().getText().toString().replaceAll("\\s", "");
         String pass = password.getEditText().getText().toString();
 
+//        fAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//                FirebaseUser userObject = firebaseAuth.getCurrentUser();
+//                if (userObject != null && userObject.isEmailVerified()) {
+
         fAuth.signInWithEmailAndPassword(emailAddress, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 
             @Override
@@ -170,7 +183,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                     databaseReference.child(fAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            user = dataSnapshot.getValue(User.class);
+                            User us = dataSnapshot.getValue(User.class);
+
+                            SharedPreferences prefs = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);//PreferenceManager.getDefaultSharedPreferences(getContext());
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putString("userRole", us.getRole());
+                            editor.apply();
+
+                            onUserRoleSelectedListener.onUserRoleSelected(us.getRole());
                         }
 
                         @Override
@@ -186,6 +206,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("LOGIN", emailAddress);
+//                    editor.putString("userUid",firebaseUser.getUid());
                     editor.commit();
 
 
@@ -197,6 +218,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
             }
         });
+
+//                } else {
+//                    Toast.makeText(getActivity().getApplicationContext(), "Adresa de email nu a fost confirmata", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+
+
     }
 
     @Override
@@ -215,7 +244,23 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED);
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
+        try {
+            onUserRoleSelectedListener = (OnUserRoleSelectedListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnUserRoleSelectedListener");
+        }
+    }
+
     public static User getCurrentUser() {
         return user;
     }
+
+    public interface OnUserRoleSelectedListener {
+        void onUserRoleSelected(String userRole);
+    }
 }
+

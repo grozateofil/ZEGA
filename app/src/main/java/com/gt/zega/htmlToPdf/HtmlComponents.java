@@ -17,7 +17,7 @@ import java.util.Base64;
 
 public class HtmlComponents {
 
-    public static String createHtml(Context context, User user, String deviceName, String errorDescription, String deviceLocation, String date, String time, ArrayList<Uri> list) throws IOException {
+    public static String createHtml(Context context, User user, String deviceName, String errorDescription, String hospitalName, String deviceLocation, String date, String time, ArrayList<Uri> list) throws IOException {
         String userName = user.getFirstName() + " " + user.getLastName();
         String phoneNumber = user.getPhoneNumber();
         String htmlHead = "<!DOCTYPE html>\n" +
@@ -65,7 +65,7 @@ public class HtmlComponents {
                 "</tr>\n" +
 
                 "<tr>\n" +
-                "<th>Data</th>\n" +
+                "<th>Ora</th>\n" +
                 "<td>" + time + "</td>\n" +
                 "</tr>\n" +
 
@@ -87,6 +87,11 @@ public class HtmlComponents {
                 "<tr>\n" +
                 "<th>Descriere problema</th>\n" +
                 "<td>" + errorDescription + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Spital/Clinică</th>\n" +
+                "<td>" + hospitalName + "</td>\n" +
                 "</tr>\n" +
 
                 "<tr>\n" +

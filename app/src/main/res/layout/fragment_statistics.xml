@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/floral_white"
+    tools:context=".fragment.StatisticsFragment">
+
+    <LinearLayout
+        android:id="@+id/firstGraph"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:orientation="vertical"
+        android:paddingStart="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Grafic 1"
+            android:textColor="@color/black_russian"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/graph1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Grafic"
+            android:textColor="@color/floral_white" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/firstGraph"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/darker_gray" />
+
+    <LinearLayout
+        android:id="@+id/secondGraph"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/line1"
+        android:orientation="vertical"
+        android:paddingStart="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Grafic 2"
+            android:textColor="@color/black_russian"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/graph2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Grafic"
+            android:textColor="@color/floral_white" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/secondGraph"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/darker_gray" />
+
+
+</RelativeLayout>

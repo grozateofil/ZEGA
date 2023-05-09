@@ -139,5 +139,4 @@ public class ConnectivityLiveData extends LiveData<Boolean> {
             this.networkRequestBuilder = (new NetworkRequest.Builder()).addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR).addTransportType(NetworkCapabilities.TRANSPORT_WIFI).addTransportType(NetworkCapabilities.TRANSPORT_VPN);
         }
     }
-
 }

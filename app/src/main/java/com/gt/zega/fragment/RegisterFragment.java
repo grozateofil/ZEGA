@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +47,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     private TextInputLayout phoneNumber;
     private TextInputLayout email;
     private TextInputLayout password;
+    private Spinner spinnerRole;
 
     private FirebaseAuth fAuth;
     private FirebaseDatabase firebaseDatabase;
@@ -72,6 +74,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         phoneNumber = view.findViewById(R.id.phoneNumberRegistration);
         email = view.findViewById(R.id.email);
         password = view.findViewById(R.id.password);
+        spinnerRole = view.findViewById(R.id.role);
         createButton = view.findViewById(R.id.createButton);
         backToLoginButton = view.findViewById(R.id.backToLoginButton);
 
@@ -178,9 +181,10 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         String phoneNumber = ccp.getFullNumberWithPlus();
         String emailAddress = email.getEditText().getText().toString();
         String pass = password.getEditText().getText().toString();
+        String role = spinnerRole.getSelectedItem().toString();
 
         UserAccount userAccount = new UserAccount(emailAddress, pass);
-        user = new User(firstName, lastName, phoneNumber);
+        user = new User(firstName, lastName, phoneNumber, role);
 
 
 //        storageReference = firebaseStorage.getReference("usersProfilePictures/" + emailAddress + "_profile_picture." + getPhotoExtension(imageUri));
@@ -208,12 +212,12 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
 
-                                Toast.makeText(getActivity().getApplicationContext(), "Cont creat cu succes", Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getActivity().getApplicationContext(), "Cont creat cu succes", Toast.LENGTH_SHORT).show();
 
 
-//                                fAuth.setLanguageCode("ro");
-//                                firebaseUser.sendEmailVerification();
-//                                Toast.makeText(getActivity().getApplicationContext(), "Ți-a fost trimis un email pentru a valida adresa de email", Toast.LENGTH_LONG).show();
+                                fAuth.setLanguageCode("ro");
+                                firebaseUser.sendEmailVerification();
+                                Toast.makeText(getActivity().getApplicationContext(), "Ți-a fost trimis un email pentru a valida adresa de email", Toast.LENGTH_LONG).show();
 
                                 getActivity().onBackPressed();
                             } else {

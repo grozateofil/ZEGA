@@ -8,7 +8,7 @@
     tools:context=".fragment.AddNewErrorFragment">
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/titleNewError"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -24,7 +24,7 @@
         android:id="@+id/selectDevice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/title"
+        android:layout_below="@id/titleNewError"
         android:layout_marginStart="30dp"
         android:layout_marginTop="18dp"
         android:layout_marginEnd="30dp"
@@ -40,6 +40,7 @@
         app:endIconTint="@color/black_russian"
         app:errorEnabled="true"
         app:errorIconDrawable="@null" />
+
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/errorDescription"
@@ -69,11 +70,38 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/deviceLocation"
+        android:id="@+id/hospital"
         style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/errorDescription"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="-1dp"
+        android:layout_marginRight="30dp"
+        android:drawablePadding="10dp"
+        android:hint="Spital/Clinică"
+        android:textSize="15sp"
+        app:endIconMode="clear_text"
+        app:endIconTint="@color/black_russian"
+        app:errorEnabled="true"
+        app:errorIconDrawable="@null">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine|textLongMessage"
+            android:maxLines="2"
+            android:scrollbarThumbVertical="@android:color/transparent"
+            android:scrollbars="vertical"
+            android:textColor="@color/black_russian" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/deviceLocation"
+        style="@style/TextInputLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/hospital"
         android:layout_marginStart="30dp"
         android:layout_marginTop="-1dp"
         android:layout_marginEnd="30dp"

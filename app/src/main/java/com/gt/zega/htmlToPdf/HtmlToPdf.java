@@ -49,16 +49,18 @@ public class HtmlToPdf {
     private User user;
     private String deviceName;
     private String errorDescription;
+    private String hospitalName;
     private String deviceLocation;
     private ArrayList<Uri> listOfImages;
 
 
-    public HtmlToPdf(Activity activity, Context context, User user, String deviceName, String errorDescription, String deviceLocation, ArrayList<Uri> listOfImages) {
+    public HtmlToPdf(Activity activity, Context context, User user, String deviceName, String errorDescription, String hospitalName, String deviceLocation, ArrayList<Uri> listOfImages) {
         this.activity = activity;
         this.context = context;
         this.user = user;
         this.deviceName = deviceName;
         this.errorDescription = errorDescription;
+        this.hospitalName = hospitalName;
         this.deviceLocation = deviceLocation;
         this.listOfImages = listOfImages;
     }
@@ -83,7 +85,7 @@ public class HtmlToPdf {
         File file = null;
 
         try {
-            Document document = Jsoup.parse(HtmlComponents.createHtml(context, user, deviceName, errorDescription, deviceLocation, date, time, listOfImages), "UTF-8");
+            Document document = Jsoup.parse(HtmlComponents.createHtml(context, user, deviceName, errorDescription, hospitalName, deviceLocation, date, time, listOfImages), "UTF-8");
             System.out.println(document.outerHtml());
             if (!fileName.endsWith(".html")) {
                 htmlFileName = fileName + ".html";
