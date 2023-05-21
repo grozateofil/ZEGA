@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,6 +59,8 @@ public class AllReportsFragment extends Fragment {
 
     private Dialog dialog;
 
+    private ProgressBar progressBar;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -69,9 +72,12 @@ public class AllReportsFragment extends Fragment {
         filterButton = view.findViewById(R.id.filtersButton);
         search = view.findViewById(R.id.search);
 
+        progressBar = view.findViewById(R.id.progress_bar1);
+
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
         storageReference = FirebaseStorage.getInstance().getReference("users");
 
+        progressBar.setVisibility(View.VISIBLE);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -113,11 +119,13 @@ public class AllReportsFragment extends Fragment {
                         }
                     });
                 }
+
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Handle errors here
+                progressBar.setVisibility(View.GONE);
             }
         });
 

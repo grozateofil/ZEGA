@@ -41,15 +41,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.gt.zega.fragment.AboutUsFragment;
 import com.gt.zega.fragment.AddNewErrorFragment;
-import com.gt.zega.fragment.AllReportsFragment;
 import com.gt.zega.fragment.HomeFragment;
 import com.gt.zega.fragment.LoginFragment;
 import com.gt.zega.fragment.ProfileFragment;
+import com.gt.zega.fragment.ReportsFragment;
 import com.gt.zega.fragment.SettingsFragment;
 import com.gt.zega.fragment.StatisticsFragment;
 import com.gt.zega.fragment.SuppliesFragment;
 import com.gt.zega.fragment.UserReportFragment;
 import com.gt.zega.internetConnection.NetworkChangeListener;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, LoginFragment.OnUserRoleSelectedListener {
 
@@ -89,6 +92,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FirebaseUser firebaseUser;
     private String userRole;
 
+    private ArrayList<String> superUsersList;
+    private ArrayList<String> usersList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
 
+        superUsersList = new ArrayList<>(Arrays.asList(getText(R.string.super_user).toString().split(",")));
+        usersList = new ArrayList<>(Arrays.asList(getText(R.string.user).toString().split(",")));
 
         toolbar.setContentInsetStartWithNavigation(0);
         setSupportActionBar(toolbar);
@@ -275,14 +283,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new EditPhotoFragment()).commit();
 //                break;
 
-            case (R.id.nav_report):
+            case (R.id.nav_myReport):
                 fragmentSelected = true;
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new UserReportFragment()).commit();
                 break;
 
-            case (R.id.nav_folder):
+            case (R.id.nav_allReports):
                 fragmentSelected = true;
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new AllReportsFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new ReportsFragment()).commit();
                 break;
 
             case (R.id.nav_statistics):
@@ -401,15 +409,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void hideAndShowMenuItems() {
 
-        if (userRole.equals("admin")) {
-            menu.findItem(R.id.nav_folder).setVisible(true);
-            menu.findItem(R.id.nav_report).setVisible(true);
-        } else if (userRole.equals("inginer")) {
-            menu.findItem(R.id.nav_folder).setVisible(true);
-            menu.findItem(R.id.nav_report).setVisible(false);
-        } else if (userRole.equals("medic")) {
-            menu.findItem(R.id.nav_folder).setVisible(false);
-            menu.findItem(R.id.nav_report).setVisible(true);
+        if (userRole.equals(getText(R.string.admin).toString()) || superUsersList.contains(userRole)) {
+            menu.findItem(R.id.nav_allReports).setVisible(true);
+            menu.findItem(R.id.nav_statistics).setVisible(true);
+            menu.findItem(R.id.nav_myReport).setVisible(false);
+        } else if (usersList.contains(userRole)) {
+            menu.findItem(R.id.nav_allReports).setVisible(false);
+            menu.findItem(R.id.nav_statistics).setVisible(false);
+            menu.findItem(R.id.nav_myReport).setVisible(true);
+
         }
     }
 }

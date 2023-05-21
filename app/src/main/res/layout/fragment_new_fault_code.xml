@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/floral_white"
-    tools:context=".fragment.NewMedicalDeviceFragment">
+    tools:context=".fragment.NewFaultCodeFragment">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:id="@+id/titleNewError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="9dp"
+        android:text="Adaugare cod defectiune noua"
+        android:textColor="@color/black_russian"
+        android:textSize="23sp"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,14 +24,35 @@
         android:layout_marginTop="50dp"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/searchFaultCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/titleNewError"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/text_view_border"
+            android:gravity="center_vertical"
+            android:hint="Cautare cod defectiune"
+            android:padding="15dp"
+            android:textColor="@color/black_russian"
+            android:textColorHint="@color/black_russian"
+            android:textSize="15sp"
+            app:drawableEndCompat="@drawable/arrow_down_icon"
+            app:endIconTint="@color/black_russian"
+            app:errorEnabled="true"
+            app:errorIconDrawable="@null" />
+
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/deviceCompany"
+            android:id="@+id/newFaultCode"
             style="@style/TextInputLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
-            android:hint="Compania aparatului"
+            android:hint="Cod defectiune noua"
             android:textSize="15sp"
             app:endIconMode="clear_text"
             app:endIconTint="@color/black_russian"
@@ -34,20 +62,20 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName|textCapWords"
+                android:inputType="number"
+                android:maxLength="5"
                 android:singleLine="true"
                 android:textColor="@color/black_russian" />
         </com.google.android.material.textfield.TextInputLayout>
 
-
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/deviceName"
+            android:id="@+id/faultCodeDescription"
             style="@style/TextInputLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
-            android:hint="Nume aparat"
+            android:hint="Descriere"
             android:textSize="15sp"
             app:endIconMode="clear_text"
             app:endIconTint="@color/black_russian"
@@ -57,36 +85,13 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName|textCapWords"
-                android:singleLine="true"
-                android:textColor="@color/black_russian" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/deviceCode"
-            style="@style/TextInputLayoutStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
-            android:hint="Cod aparat"
-            android:textSize="15sp"
-            app:endIconMode="clear_text"
-            app:endIconTint="@color/black_russian"
-            app:errorEnabled="true"
-            app:errorIconDrawable="@null">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textCapCharacters"
-                android:maxLength="7"
+                android:inputType="textCapSentences"
                 android:singleLine="true"
                 android:textColor="@color/black_russian" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:id="@+id/addNewMedicalDeviceButton"
+            android:id="@+id/addNewFaultCodeButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"

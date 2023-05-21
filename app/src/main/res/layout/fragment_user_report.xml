@@ -21,15 +21,16 @@
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/message">
+        android:layout_below="@+id/toolbar"
+        tools:ignore="NotSibling,UnknownIdInLayout">
 
         <ListView
             android:id="@+id/listOfFiles"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingEnd="0dp"
             android:paddingStart="0dp"
             android:paddingTop="0dp"
+            android:paddingEnd="0dp"
             android:paddingBottom="0dp" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

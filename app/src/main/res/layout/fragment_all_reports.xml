@@ -8,10 +8,12 @@
     tools:context=".fragment.AllReportsFragment">
 
     <LinearLayout
+        android:id="@+id/searchLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:orientation="horizontal">
+        android:layout_below="@id/toolbar"
+        android:orientation="horizontal"
+        tools:ignore="NotSibling">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/search"
@@ -40,8 +42,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="9dp"
-            android:padding="7dp"
             android:background="@null"
+            android:padding="7dp"
             android:src="@drawable/filters" />
 
     </LinearLayout>
@@ -50,7 +52,7 @@
         android:id="@+id/swipeRefreshLay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="120dp">
+        android:layout_below="@+id/searchLayout">
 
         <ExpandableListView
             android:id="@+id/expandableListView"
@@ -58,5 +60,14 @@
             android:layout_height="match_parent"
             android:layout_marginTop="120dp" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar1"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="@color/black_russian"
+        android:visibility="gone" />
 
 </RelativeLayout>

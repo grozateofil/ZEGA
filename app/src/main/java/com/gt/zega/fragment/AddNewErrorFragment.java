@@ -46,6 +46,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.gt.zega.R;
 import com.gt.zega.database.HideAndShow;
 import com.gt.zega.entity.Device;
+import com.gt.zega.entity.FaultCode;
 import com.gt.zega.entity.User;
 import com.gt.zega.htmlToPdf.HtmlToPdf;
 import com.gt.zega.util.Validations;
@@ -61,12 +62,15 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
     private File photoFile;
 
     private TextView selectDevice;
+    private TextView errorCode;
+    private TextView defaultDescription;
     private TextInputLayout description;
     private TextInputLayout deviceLocation;
     private TextInputLayout hospital;
     private Dialog dialog;
 
-    private ArrayList<Device> deviceArrayList;
+    private ArrayList<Object> deviceArrayList;
+    private ArrayList<Object> errorCodeArrayList;
 
     private LinearLayout linearLayout;
     private ImageButton addPictureButton;
@@ -95,6 +99,9 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
         View view = inflater.inflate(R.layout.fragment_add_new_error, container, false);
 
         selectDevice = view.findViewById(R.id.selectDevice);
+        errorCode = view.findViewById(R.id.errorCode);
+        defaultDescription = view.findViewById(R.id.description);
+
         description = view.findViewById(R.id.errorDescription);
         deviceLocation = view.findViewById(R.id.deviceLocation);
         hospital = view.findViewById(R.id.hospital);
@@ -111,8 +118,10 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
         databaseRef = FirebaseDatabase.getInstance().getReference().child("devices");
 
         deviceArrayList = new ArrayList<>();
+        errorCodeArrayList = new ArrayList<>();
 
         getDevices();
+        getFaultCodes();
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
@@ -123,95 +132,54 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
         selectDevice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog = new Dialog(getContext());
-                dialog.setContentView(R.layout.devices_list_view);
-
-                // set custom height and width
-                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 1500);
-                dialog.show();
-
-                // Initialize and assign variable
-                EditText editText = dialog.findViewById(R.id.edit_text);
-                ListView listView = dialog.findViewById(R.id.list_view);
-
-                ArrayAdapter<Device> adapter = new ArrayAdapter<Device>(getContext(), android.R.layout.simple_list_item_1, deviceArrayList) {
-                    @NonNull
-                    @Override
-                    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                        View view = super.getView(position, convertView, parent);
-                        TextView tv = view.findViewById(android.R.id.text1);
-                        tv.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-                        return view;
-                    }
-                };
-
-                listView.setAdapter(adapter);
-                editText.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        adapter.getFilter().filter(s);
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-
-                    }
-                });
-
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        // when item selected from list
-                        // set selected item on textView
-                        selectDevice.setText(adapter.getItem(position).toString());
-                        selectDevice.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-
-                        dialog.dismiss();
-                    }
-                });
+                openDialog(deviceArrayList, selectDevice);
             }
+
+
         });
 
-        description.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        errorCode.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View view, boolean b) {
-                if (b) {
-                    description.getEditText().setHintTextColor(ContextCompat.getColor(getContext(), R.color.lightGray));
-                    description.getEditText().setHint("Cât mai multe detalii");
-                } else {
-                    description.getEditText().setHint("");
-                }
+            public void onClick(View view) {
+                openDialog(errorCodeArrayList, errorCode);
             }
         });
 
-        deviceLocation.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (b) {
-                    deviceLocation.getEditText().setHintTextColor(ContextCompat.getColor(getContext(), R.color.lightGray));
-                    deviceLocation.getEditText().setHint("Etaj, salon, etc.");
-                } else {
-                    deviceLocation.getEditText().setHint("");
-                }
-            }
-        });
-
-        hospital.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (b) {
-                    hospital.getEditText().setHintTextColor(ContextCompat.getColor(getContext(), R.color.lightGray));
-                    hospital.getEditText().setHint("Numele spitalului/clinicii");
-                } else {
-                    hospital.getEditText().setHint("");
-                }
-            }
-        });
+//        description.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View view, boolean b) {
+//                if (b) {
+//                    description.getEditText().setHintTextColor(ContextCompat.getColor(getContext(), R.color.lightGray));
+//                    description.getEditText().setHint("Cât mai multe detalii");
+//                } else {
+//                    description.getEditText().setHint("");
+//                }
+//            }
+//        });
+//
+//        deviceLocation.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View view, boolean b) {
+//                if (b) {
+//                    deviceLocation.getEditText().setHintTextColor(ContextCompat.getColor(getContext(), R.color.lightGray));
+//                    deviceLocation.getEditText().setHint("Etaj, salon, etc.");
+//                } else {
+//                    deviceLocation.getEditText().setHint("");
+//                }
+//            }
+//        });
+//
+//        hospital.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View view, boolean b) {
+//                if (b) {
+//                    hospital.getEditText().setHintTextColor(ContextCompat.getColor(getContext(), R.color.lightGray));
+//                    hospital.getEditText().setHint("Numele spitalului/clinicii");
+//                } else {
+//                    hospital.getEditText().setHint("");
+//                }
+//            }
+//        });
 
         addPictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -228,10 +196,12 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
             public void onClick(View view) {
                 if (validation()) {
 
-                    htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectDevice.getText().toString(), description.getEditText().getText().toString(), hospital.getEditText().getText().toString(), deviceLocation.getEditText().getText().toString(), listOfImages);
+                    htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectDevice.getText().toString(), errorCode.getText().toString(), defaultDescription.getText().toString(), hospital.getEditText().getText().toString(), deviceLocation.getEditText().getText().toString(), description.getEditText().getText().toString(), listOfImages);
 
                     if (htmlToPdf.writeHTML()) {
                         selectDevice.setText(null);
+                        errorCode.setText(null);
+                        defaultDescription.setText(null);
                         description.getEditText().setText(null);
                         deviceLocation.getEditText().setText(null);
                         hospital.getEditText().setText(null);
@@ -243,6 +213,71 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
         });
 
         return view;
+    }
+
+    private void openDialog(ArrayList<Object> arrayListWithDevices, TextView textView) {
+        dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.devices_list_view);
+
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dialog.show();
+
+        // Initialize and assign variable
+        EditText searchEditText = dialog.findViewById(R.id.edit_text);
+        ListView listView = dialog.findViewById(R.id.list_view);
+        ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
+
+        ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(getContext(), android.R.layout.simple_list_item_1, arrayListWithDevices) {
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView tv = view.findViewById(android.R.id.text1);
+                tv.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+                return view;
+            }
+        };
+
+        listView.setAdapter(adapter);
+
+        closeFragButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (textView.getHint().toString().equals("Selectare cod defectiune")) {
+                    textView.setText(adapter.getItem(position).toString().split(",")[0].trim());
+                    textView.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+                    defaultDescription.setText(adapter.getItem(position).toString().split(",")[1].trim());
+                } else {
+                    textView.setText(adapter.getItem(position).toString());
+                    textView.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+                }
+                dialog.dismiss();
+            }
+        });
     }
 
     private void showPictureDialog() {
@@ -352,10 +387,7 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
     }
 
     private boolean validation() {
-        return (validations.textInputLayoutValidation(description) &
-                validations.textInputLayoutValidation(hospital) &
-                validations.textInputLayoutValidation(deviceLocation) &
-                validations.textViewValidation(selectDevice));
+        return (validations.textViewValidation(errorCode) & validations.textInputLayoutValidation(hospital) & validations.textInputLayoutValidation(deviceLocation) & validations.textViewValidation(selectDevice));
     }
 
     private void getUserData(String userKey) {
@@ -384,6 +416,25 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
                 for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
                     Device device = objectSnapshot.getValue(Device.class);
                     deviceArrayList.add(device);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void getFaultCodes() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("faultCodes");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
+                    FaultCode device = objectSnapshot.getValue(FaultCode.class);
+                    errorCodeArrayList.add(device);
 
                 }
             }

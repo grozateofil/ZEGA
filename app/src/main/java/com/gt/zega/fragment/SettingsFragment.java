@@ -27,8 +27,11 @@ import com.gt.zega.entity.User;
 
 public class SettingsFragment extends Fragment implements View.OnClickListener, HideAndShow {
 
-    private TextView deleteAccount;
     private TextView addNewDevice;
+    private TextView addNewFaultCode;
+
+    private TextView deleteAccount;
+
     private SharedPreferences sharedPreferences;
     private FirebaseUser firebaseUser;
 
@@ -39,8 +42,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         sharedPreferences = getContext().getSharedPreferences("Preferences", 0);
-        deleteAccount = view.findViewById(R.id.deleteAccount);
+
         addNewDevice = view.findViewById(R.id.addNewDevice);
+        addNewFaultCode = view.findViewById(R.id.addNewFaultCode);
+        deleteAccount = view.findViewById(R.id.deleteAccount);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -48,9 +53,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
 
         getUserData(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        deleteAccount.setOnClickListener(this);
-        addNewDevice.setOnClickListener(this);
 
+        addNewDevice.setOnClickListener(this);
+        addNewFaultCode.setOnClickListener(this);
+        deleteAccount.setOnClickListener(this);
         return view;
     }
 
@@ -59,6 +65,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
         switch (view.getId()) {
             case (R.id.addNewDevice):
                 requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new NewMedicalDeviceFragment()).addToBackStack(null).commit();
+                break;
+
+            case (R.id.addNewFaultCode):
+                requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new NewFaultCodeFragment()).addToBackStack(null).commit();
                 break;
 
 

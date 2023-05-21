@@ -30,14 +30,14 @@
         <!--            android:title="Editare" />-->
 
         <item
-            android:id="@+id/nav_report"
+            android:id="@+id/nav_myReport"
             android:icon="@drawable/my_reports"
-            android:title="My raports" />
+            android:title="Rapoartele mele" />
 
         <item
-            android:id="@+id/nav_folder"
+            android:id="@+id/nav_allReports"
             android:icon="@drawable/folder"
-            android:title="Reports" />
+            android:title="Rapoarte" />
 
         <item
             android:id="@+id/nav_statistics"

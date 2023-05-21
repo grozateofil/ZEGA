@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -34,6 +35,8 @@ import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
 import com.hbb20.CountryCodePicker;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -65,11 +68,20 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     private boolean isEditMode = false;
 
+    private ProgressBar progressBar;
+
+    private ArrayList<String> superUsersList;
+    private ArrayList<String> usersList;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        View view2 = inflater.inflate(R.layout.loading_dialog, container, false);
+        progressBar = view2.findViewById(R.id.progress_bar);
 
+        superUsersList = new ArrayList<>(Arrays.asList(getText(R.string.super_user).toString().split(",")));
+        usersList = new ArrayList<>(Arrays.asList(getText(R.string.user).toString().split(",")));
 //        profilePicture = view.findViewById(R.id.profilePicture);
         role = view.findViewById(R.id.role);
         firstname = view.findViewById(R.id.newFirstname);
@@ -206,19 +218,21 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     private void getUserData(String userKey) {
+        progressBar.setVisibility(View.VISIBLE);
         databaseReference.child(userKey).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
+
                 if (user != null) {
                     String userRole = user.getRole();
-                    if (userRole.equals("inginer") || userRole.equals("admin")) {
+                    if (superUsersList.contains(userRole) || userRole.equals(getText(R.string.admin).toString())) {
                         role.setText(userRole);
                         firstname.getEditText().setText(user.getFirstName());
                         lastname.getEditText().setText(user.getLastName());
                         ccp.setFullNumber(user.getPhoneNumber());
                         emailAddress.getEditText().setText(firebaseAuth.getCurrentUser().getEmail());
-                    } else if (userRole.equals("medic")) {
+                    } else if (usersList.contains(userRole)) {
                         role.setText(userRole);
                         firstname.getEditText().setText(user.getFirstName());
                         lastname.getEditText().setText(user.getLastName());
@@ -229,10 +243,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 //                    Picasso.get().load(user.getImageUrl()).into(profilePicture);
 
                 }
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                progressBar.setVisibility(View.GONE);
             }
         });
     }

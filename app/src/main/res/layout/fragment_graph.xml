@@ -6,14 +6,45 @@
     android:background="@color/floral_white"
     tools:context=".fragment.GraphFragment">
 
-    <ImageButton
-        android:id="@+id/closeFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:background="@null"
-        android:padding="6dp"
-        android:src="@drawable/close" />
+    <RelativeLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
+        <ImageButton
+            android:id="@+id/rotateFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:background="@null"
+            android:padding="6dp"
+            android:src="@drawable/clockwise_icon"
+            android:visibility="visible" />
+
+        <ImageButton
+            android:id="@+id/calendar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:padding="6dp"
+            android:layout_toRightOf="@id/rotateFragment"
+            android:src="@drawable/calendar"
+            android:visibility="visible" />
+
+        <ImageButton
+            android:id="@+id/closeFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@null"
+            android:padding="6dp"
+            android:src="@drawable/close" />
+    </RelativeLayout>
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/topBar" />
 
 </RelativeLayout>

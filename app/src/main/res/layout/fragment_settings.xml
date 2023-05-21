@@ -26,6 +26,19 @@
             android:textSize="25sp" />
 
         <TextView
+            android:id="@+id/addNewFaultCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:text="Adauga cod defectiune"
+            android:textColor="@color/black_russian"
+            android:textSize="25sp" />
+
+        <TextView
             android:id="@+id/deleteAccount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

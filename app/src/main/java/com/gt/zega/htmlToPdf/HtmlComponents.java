@@ -17,7 +17,7 @@ import java.util.Base64;
 
 public class HtmlComponents {
 
-    public static String createHtml(Context context, User user, String deviceName, String errorDescription, String hospitalName, String deviceLocation, String date, String time, ArrayList<Uri> list) throws IOException {
+    public static String createHtml(Context context, String date, String time, User user, String deviceName, String faultCode, String defaultDescription, String hospitalName, String deviceLocation, String optionalDescription, ArrayList<Uri> list) throws IOException {
         String userName = user.getFirstName() + " " + user.getLastName();
         String phoneNumber = user.getPhoneNumber();
         String htmlHead = "<!DOCTYPE html>\n" +
@@ -85,12 +85,17 @@ public class HtmlComponents {
                 "</tr>\n" +
 
                 "<tr>\n" +
-                "<th>Descriere problema</th>\n" +
-                "<td>" + errorDescription + "</td>\n" +
+                "<th>Cod defectiune</th>\n" +
+                "<td>" + faultCode + "</td>\n" +
                 "</tr>\n" +
 
                 "<tr>\n" +
-                "<th>Spital/Clinică</th>\n" +
+                "<th>Descriere generala</th>\n" +
+                "<td>" + defaultDescription + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Spital/Clinica</th>\n" +
                 "<td>" + hospitalName + "</td>\n" +
                 "</tr>\n" +
 
@@ -98,6 +103,13 @@ public class HtmlComponents {
                 "<th>Locatia aparatului</th>\n" +
                 "<td>" + deviceLocation + "</td>\n" +
                 "</tr>\n");
+
+        if (!optionalDescription.isEmpty()) {
+            htmlBody.append("<tr>\n" +
+                    "<th>Descriere optionala</th>\n" +
+                    "<td>" + optionalDescription + "</td>\n" +
+                    "</tr>\n");
+        }
 
         if (list.size() > 0) {
             htmlBody.append(
