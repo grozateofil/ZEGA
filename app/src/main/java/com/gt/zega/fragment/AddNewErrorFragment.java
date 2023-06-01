@@ -45,6 +45,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.gt.zega.R;
 import com.gt.zega.database.HideAndShow;
+import com.gt.zega.entity.BrokenMedicalDevices;
 import com.gt.zega.entity.Device;
 import com.gt.zega.entity.FaultCode;
 import com.gt.zega.entity.User;
@@ -53,14 +54,17 @@ import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginFragment.OnUserRoleSelectedListener {
 
-    private int MAX_NUMBER_OF_PHOTOS = 3;
+    private final int MAX_NUMBER_OF_PHOTOS = 3;
+    private final ArrayList<Uri> listOfImages = new ArrayList<>();
     private File photoFile;
-
     private TextView selectDevice;
     private TextView errorCode;
     private TextView defaultDescription;
@@ -68,28 +72,80 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
     private TextInputLayout deviceLocation;
     private TextInputLayout hospital;
     private Dialog dialog;
-
     private ArrayList<Object> deviceArrayList;
     private ArrayList<Object> errorCodeArrayList;
-
     private LinearLayout linearLayout;
+    ActivityResultLauncher<Intent> pickImage = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                Intent data = result.getData();
+                Uri uri = data.getData();
+
+//                if (data.getClipData() != null) {
+//                    int count = data.getClipData().getItemCount();
+//
+//                    for (int i = 0; i < count; i++) {
+//                        listOfImages.add(data.getClipData().getItemAt(i).getUri());
+//                    }
+//
+//                    for (Uri uri : listOfImages) {
+//                        ImageView imageView = new ImageView(getActivity().getApplicationContext());
+//                        imageView.setImageURI(uri);
+//                        addvieW(imageView, 130, linearLayout.getHeight());
+//                        System.out.println("-----------------------------------------------------" + linearLayout.getHeight());
+//                    }
+//
+//                } else
+                if (uri != null) {
+                    ImageView imageView = new ImageView(getActivity().getApplicationContext());
+                    imageView.setImageURI(data.getData());
+                    listOfImages.add(data.getData());
+                    imageView.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View view) {
+                            ViewGroup parentView = (ViewGroup) view.getParent();
+
+                            listOfImages.remove(parentView.indexOfChild(view));
+                            parentView.removeView(view);
+                            return true;
+                        }
+                    });
+//                    setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            ViewGroup parentView = (ViewGroup) view.getParent();
+//                            parentView.removeView(view);
+//                        }
+//                    });
+                    addview(imageView, linearLayout.getWidth() / 3, linearLayout.getHeight());
+                }
+            }
+        }
+    });
     private ImageButton addPictureButton;
     private Button addButton;
     private Uri imageUri;
-    private ArrayList<Uri> listOfImages = new ArrayList<>();
+    ActivityResultLauncher<Uri> takePicture = registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
+        if (success) {
+            ImageView imageView = new ImageView(getActivity().getApplicationContext());
+            imageView.setImageURI(imageUri);
+            addview(imageView, linearLayout.getWidth() / 3, linearLayout.getHeight());
 
+        }
+
+    });
+    private boolean exists = true;
     private DatabaseReference databaseReference;
     private DatabaseReference databaseRef;
     private FirebaseUser firebaseUser;
-
     private Validations validations;
-
     private User user;
     private String firstname;
     private String lastname;
     private String phoneNumber;
     private String userKey;
-
     private HtmlToPdf htmlToPdf;
     private String userRole;
 
@@ -197,16 +253,16 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
                 if (validation()) {
 
                     htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectDevice.getText().toString(), errorCode.getText().toString(), defaultDescription.getText().toString(), hospital.getEditText().getText().toString(), deviceLocation.getEditText().getText().toString(), description.getEditText().getText().toString(), listOfImages);
-
+                    saveProblem();
                     if (htmlToPdf.writeHTML()) {
-                        selectDevice.setText(null);
-                        errorCode.setText(null);
-                        defaultDescription.setText(null);
-                        description.getEditText().setText(null);
-                        deviceLocation.getEditText().setText(null);
-                        hospital.getEditText().setText(null);
-                        linearLayout.removeAllViews();
-                        listOfImages.clear();
+//                        selectDevice.setText(null);
+//                        errorCode.setText(null);
+//                        defaultDescription.setText(null);
+//                        description.getEditText().setText(null);
+//                        deviceLocation.getEditText().setText(null);
+//                        hospital.getEditText().setText(null);
+//                        linearLayout.removeAllViews();
+//                        listOfImages.clear();
                     }
                 }
             }
@@ -317,67 +373,6 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
         takePicture.launch(imageUri);
     }
 
-    ActivityResultLauncher<Intent> pickImage = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-                Intent data = result.getData();
-                Uri uri = data.getData();
-
-//                if (data.getClipData() != null) {
-//                    int count = data.getClipData().getItemCount();
-//
-//                    for (int i = 0; i < count; i++) {
-//                        listOfImages.add(data.getClipData().getItemAt(i).getUri());
-//                    }
-//
-//                    for (Uri uri : listOfImages) {
-//                        ImageView imageView = new ImageView(getActivity().getApplicationContext());
-//                        imageView.setImageURI(uri);
-//                        addvieW(imageView, 130, linearLayout.getHeight());
-//                        System.out.println("-----------------------------------------------------" + linearLayout.getHeight());
-//                    }
-//
-//                } else
-                if (uri != null) {
-                    ImageView imageView = new ImageView(getActivity().getApplicationContext());
-                    imageView.setImageURI(data.getData());
-                    listOfImages.add(data.getData());
-                    imageView.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View view) {
-                            ViewGroup parentView = (ViewGroup) view.getParent();
-
-                            listOfImages.remove(parentView.indexOfChild(view));
-                            parentView.removeView(view);
-                            return true;
-                        }
-                    });
-//                    setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            ViewGroup parentView = (ViewGroup) view.getParent();
-//                            parentView.removeView(view);
-//                        }
-//                    });
-                    addview(imageView, linearLayout.getWidth() / 3, linearLayout.getHeight());
-                }
-            }
-        }
-    });
-
-    ActivityResultLauncher<Uri> takePicture = registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
-        if (success) {
-            ImageView imageView = new ImageView(getActivity().getApplicationContext());
-            imageView.setImageURI(imageUri);
-            addview(imageView, linearLayout.getWidth() / 3, linearLayout.getHeight());
-
-        }
-
-    });
-
-
     private void addview(ImageView imageView, int width, int height) {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
         params.setMarginEnd(10);
@@ -445,6 +440,127 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
             }
         });
     }
+
+    public void saveProblem() {
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference("brokenMedicalDevices");
+        BrokenMedicalDevices brokenMedicalDevices = new BrokenMedicalDevices(errorCode.getText().toString(), String.valueOf(Year.now().getValue()), LocalDate.now().getMonth().name(), String.valueOf(LocalDate.now().getDayOfMonth()), selectDevice.getText().toString().split(",")[2].trim());
+
+        DatabaseReference yearsRef = databaseReference.child("years");
+        DatabaseReference yearRef = yearsRef.child(brokenMedicalDevices.getYear());
+
+        DatabaseReference monthsRef = yearRef.child("months");
+        DatabaseReference monthRef = monthsRef.child(brokenMedicalDevices.getMonth());
+
+        DatabaseReference daysRef = monthRef.child("days");
+        DatabaseReference dayRef = daysRef.child(brokenMedicalDevices.getDay());
+
+        DatabaseReference errorsNameRef = dayRef.child("errorsName");
+        DatabaseReference problemNameRef = errorsNameRef.child(brokenMedicalDevices.getProblemName());
+
+
+        errorsNameRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Year and month exist, update data
+                    checkMonthExistence(problemNameRef, brokenMedicalDevices);
+
+                } else {
+                    errorsNameRef.setValue("").addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            checkMonthExistence(problemNameRef, brokenMedicalDevices);
+                        } else {
+                            // Handle the error
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle the error
+            }
+        });
+    }
+
+    private static void checkMonthExistence(DatabaseReference dayRef, BrokenMedicalDevices brokenMD) {
+        dayRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Month exists, update data
+                    addDeviceCode(dayRef, brokenMD.getDeviceCode());
+                } else {
+                    // Month does not exist, create it
+                    dayRef.child("numberOfBrokenDevices").setValue(1);
+                    dayRef.child("arrayListOfDevicesCodes").setValue(new ArrayList<String>(Collections.singletonList(brokenMD.getDeviceCode())));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle the error
+            }
+        });
+    }
+
+    private static void addDeviceCode(DatabaseReference monthRef, String deviceCode) {
+        DatabaseReference deviceCodesRef = monthRef.child("arrayListOfDevicesCodes");
+        deviceCodesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<String> deviceCodes = new ArrayList<>();
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot codeSnapshot : dataSnapshot.getChildren()) {
+                        String code = codeSnapshot.getValue(String.class);
+                        deviceCodes.add(code);
+                    }
+                }
+
+                deviceCodes.add(deviceCode);
+
+                // Update "device codes" with the updated array list
+                deviceCodesRef.setValue(deviceCodes)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                // Update successful
+                            } else {
+                                // Handle the error
+                            }
+                        });
+
+                getSizeOfDeviceCodesArrayList(deviceCodes, monthRef);
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle the error
+            }
+        });
+    }
+
+    private static void getSizeOfDeviceCodesArrayList(ArrayList<String> deviceCodes, DatabaseReference monthRef) {
+        DatabaseReference numberOfBrokenDevicesRef = monthRef.child("numberOfBrokenDevices");
+        numberOfBrokenDevicesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    long size = deviceCodes.size();
+                    numberOfBrokenDevicesRef.setValue(size);
+
+                } else {
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
 
     @Override
     public void hideTextView(TextView textView, boolean isAdmin) {

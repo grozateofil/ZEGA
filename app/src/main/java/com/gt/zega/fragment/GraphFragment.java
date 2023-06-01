@@ -2,12 +2,12 @@ package com.gt.zega.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -19,36 +19,33 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.listener.ChartTouchListener;
-import com.github.mikephil.charting.listener.OnChartGestureListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.firebase.database.ValueEventListener;
 import com.gt.zega.R;
+import com.gt.zega.entity.BrokenMedicalDevicesMonthly;
 
-import java.time.LocalDate;
+import java.text.SimpleDateFormat;
+import java.time.Month;
+import java.time.Year;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 
-public class GraphFragment extends Fragment implements OnChartGestureListener, MonthSelectedFragment.OnDataSelectedListener {
+
+public class GraphFragment extends Fragment implements MonthSelectedFragment.OnDataSelectedListener {
 
     private ImageButton rotateFragment;
     private ImageButton calendar;
     private ImageButton closeFragment;
-
     private BarChart barChart;
 
-    private DatabaseReference databaseReference;
-    private StorageReference storageReference;
+    private DatabaseReference firebaseDatabase;
 
+    private HashMap<Integer, BrokenMedicalDevicesMonthly> pointsList = new HashMap<>();
     private ArrayList<BarEntry> entries;
-    private ArrayList<String> daysOfMonth;
-
-    //    private String day;
-    private int year = Calendar.getInstance().getActualMaximum(Calendar.YEAR);
-    private int month = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH);
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,70 +56,30 @@ public class GraphFragment extends Fragment implements OnChartGestureListener, M
         rotateFragment = view.findViewById(R.id.rotateFragment);
         calendar = view.findViewById(R.id.calendar);
         closeFragment = view.findViewById(R.id.closeFragment);
+        barChart = view.findViewById(R.id.barChart);
 
-        barChart = view.findViewById(R.id.chart);
 
-        entries = new ArrayList<>();
-        daysOfMonth = new ArrayList<>();
-//        for (int i = 1; i <= Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
-        for (int i = 1; i <= month; i++) {
-            entries.add(new BarEntry(i, i));
-            daysOfMonth.add(String.valueOf(i));
-        }
+        firebaseDatabase = FirebaseDatabase.getInstance().getReference("brokenMedicalDevices");
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("users");
-        storageReference = FirebaseStorage.getInstance().getReference("users");
-
-        barChart.setDrawBarShadow(false);
-        barChart.setDrawValueAboveBar(false);
-        barChart.getDescription().setEnabled(false);
-
-        XAxis xAxis = barChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setDrawGridLines(false);
-        xAxis.setGranularity(1f);
-        xAxis.setLabelCount(daysOfMonth.size());
-        xAxis.setValueFormatter(new ValueFormatter() {
+        getArrayListOfPoints(String.valueOf(Year.now().getValue()), new SimpleDateFormat("MMMM").format(new Date(System.currentTimeMillis())).toUpperCase(), new DataCallback() {
             @Override
-            public String getFormattedValue(float value) {
-                int index = (int) value;
-                if (index % 2 == 0)
-                    return "";
-                return String.valueOf(index);
-
-
-//                return "";
+            public void onDataLoaded(ArrayList<BrokenMedicalDevicesMonthly> data) {
+                entries = new ArrayList<>();
+                int i = 1;
+                for (BrokenMedicalDevicesMonthly item : data) {
+                    entries.add(new BarEntry(i, item.getNumberOfBrokenDevices()));
+                    i++;
+                }
+                extracted();
             }
-
         });
 
-        YAxis yAxisR = barChart.getAxisRight();
-        YAxis yAxisL = barChart.getAxisLeft();
-        yAxisR.setAxisMinimum(0f);
-        yAxisL.setAxisMinimum(0f);
-
-
-        BarDataSet barDataSet = new BarDataSet(entries, "Data");
-        BarData barData = new BarData(barDataSet);
-
-        barChart.setData(barData);
-        barChart.invalidate(); // Refresh the chart
-
-
-//        rotateFragment.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//            }
-//        });
 
         calendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showDialogFragment();
             }
-
-
         });
 
         closeFragment.setOnClickListener(new View.OnClickListener() {
@@ -132,75 +89,112 @@ public class GraphFragment extends Fragment implements OnChartGestureListener, M
             }
         });
 
-//        storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
-//            @Override
-//            public void onSuccess(ListResult listResult) {
-//                for (StorageReference item : listResult.getItems()) {
-//                    item.getStream().addOnSuccessListener(new OnSuccessListener<StreamDownloadTask.TaskSnapshot>() {
-//                        @Override
-//                        public void onSuccess(StreamDownloadTask.TaskSnapshot taskSnapshot) {
-//                            InputStream inputStream = taskSnapshot.getStream();
-////
-//                            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-//                            String line;
-//                            try {
-//                                while ((line = reader.readLine()) != null) {
-//                                    System.out.println("---------> "+line);
-//
-//                                }
-//                                reader.close();
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    });
-//                }
-//            }
-//        });
-//
-//        storageReference.listAll().addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//            }
-//        });
-//
-//        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-//                    String uid = userSnapshot.getKey();
-//                    User name = userSnapshot.getValue(User.class);
-//
-//                    StorageReference userFilesRef = storageReference.child(uid);
-//
-//                    userFilesRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
-//                        @Override
-//                        public void onSuccess(ListResult listResult) {
-//                            ArrayList<String> files = new ArrayList<>();
-//                            for (StorageReference item : listResult.getItems()) {
-//                                String filename = item.getName();
-//                                files.add(filename);
-//                            }
-//
-//                            UserFiles userFiles = new UserFiles(uid, name, files);
-//
-//
-//                        }
-//                    }).addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-//
-//                        }
-//                    });
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//            }
-//        });
-
         return view;
+    }
+
+    private void extracted() {
+        System.out.println(entries);
+        barChart.setDrawBarShadow(false);
+        barChart.setDrawValueAboveBar(false);
+        barChart.getDescription().setEnabled(false);
+
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setGranularity(1f);
+        xAxis.setLabelCount(Month.valueOf(new SimpleDateFormat("MMMM").format(new Date(System.currentTimeMillis())).toUpperCase()).length(false));
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                int index = (int) value;
+                if (index % 2 == 0)
+                    return "";
+                return String.valueOf(index);
+            }
+        });
+
+        YAxis yAxisR = barChart.getAxisRight();
+        YAxis yAxisL = barChart.getAxisLeft();
+        yAxisR.setAxisMinimum(0f);
+        yAxisL.setAxisMinimum(0f);
+
+        BarDataSet barDataSet = new BarDataSet(entries, "Numar de defectiuni");
+
+        BarData barData = new BarData(barDataSet);
+
+        barData.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                int index = (int) value;
+                if (index == 0)
+                    return "";
+                return String.valueOf(index);
+            }
+        });
+        barChart.setData(barData);
+        barChart.invalidate(); // Refresh the chart
+    }
+
+
+    public ArrayList<BrokenMedicalDevicesMonthly> getArrayListOfPoints(String year, String month, final DataCallback callback) {
+
+        ArrayList<BrokenMedicalDevicesMonthly> brokenMedicalDevicesMonthlyArrayList = new ArrayList<>();
+
+        DatabaseReference yearRef = firebaseDatabase.child("years").child(String.valueOf(year));
+
+        DatabaseReference monthRef = yearRef.child("months").child(String.valueOf(month));
+
+        DatabaseReference dayRef = monthRef.child("days");
+
+        for (int monthDay = 1; monthDay <= Month.valueOf(month.toUpperCase()).length(false); monthDay++) {
+            String date = monthDay + "." + month + "." + year;
+            dayRef.child(String.valueOf(monthDay)).child("errorsName").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    ArrayList<BrokenMedicalDevicesMonthly> dailyItems = new ArrayList<>();
+
+                    if (snapshot.exists()) {
+                        for (DataSnapshot errorSnapshot : snapshot.getChildren()) {
+                            String errorCode = errorSnapshot.getKey();
+                            Integer numberOfBrokenDevices = errorSnapshot.child("numberOfBrokenDevices").getValue(Integer.class);
+
+                            ArrayList<String> arrayListOfDevicesCodes = new ArrayList<>();
+
+                            for (DataSnapshot deviceSnapshot : errorSnapshot.child("arrayListOfDevicesCodes").getChildren()) {
+                                String deviceCode = deviceSnapshot.getValue(String.class);
+                                arrayListOfDevicesCodes.add(deviceCode);
+
+                            }
+
+                            dailyItems.add(new BrokenMedicalDevicesMonthly(date, errorCode, numberOfBrokenDevices, arrayListOfDevicesCodes));
+                        }
+                    } else {
+                        dailyItems.add(new BrokenMedicalDevicesMonthly(date, "", 0, new ArrayList<>()));
+                    }
+
+                    brokenMedicalDevicesMonthlyArrayList.addAll(dailyItems);
+
+                    if (brokenMedicalDevicesMonthlyArrayList.size() == Month.valueOf(month.toUpperCase()).length(false)) {
+
+                        callback.onDataLoaded(brokenMedicalDevicesMonthlyArrayList);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+
+        return brokenMedicalDevicesMonthlyArrayList;
+
+    }
+
+    private void showDialogFragment() {
+        MonthSelectedFragment monthSelectedFragment = new MonthSelectedFragment();
+        monthSelectedFragment.setOnDataSelectedListener(this);
+        monthSelectedFragment.show(getParentFragmentManager(), "tag");
     }
 
     @Override
@@ -219,69 +213,30 @@ public class GraphFragment extends Fragment implements OnChartGestureListener, M
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED);
     }
 
-    private void showDialogFragment() {
-        MonthSelectedFragment monthSelectedFragment = new MonthSelectedFragment();
-        monthSelectedFragment.setOnDataSelectedListener(this);
-        monthSelectedFragment.show(getParentFragmentManager(), "tag");
-    }
-
-    @Override
-    public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-
-    }
-
-    @Override
-    public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-
-    }
-
-    @Override
-    public void onChartLongPressed(MotionEvent me) {
-
-    }
-
-    @Override
-    public void onChartDoubleTapped(MotionEvent me) {
-
-    }
-
-    @Override
-    public void onChartSingleTapped(MotionEvent me) {
-
-    }
-
-    @Override
-    public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
-
-    }
-
-    @Override
-    public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-
-    }
-
-    @Override
-    public void onChartTranslate(MotionEvent me, float dX, float dY) {
-
-    }
-
     @Override
     public void onDataSelected(int selectedValue1, int selectedValue2) {
-        month = selectedValue1;
-        year = selectedValue2;
+        String month = Month.of(selectedValue1).name();
+        String year = String.valueOf(selectedValue2);
         entries = new ArrayList<>();
-        daysOfMonth = new ArrayList<>();
 
-        for (int i = 1; i <= LocalDate.of(year, month, 1).lengthOfMonth(); i++) {
-            entries.add(new BarEntry(i, i));
-            daysOfMonth.add(String.valueOf(i));
-        }
+        getArrayListOfPoints(year, month, new DataCallback() {
+            @Override
+            public void onDataLoaded(ArrayList<BrokenMedicalDevicesMonthly> data) {
+                entries = new ArrayList<>();
+                int i = 1;
+                for (BrokenMedicalDevicesMonthly item : data) {
+                    entries.add(new BarEntry(i, item.getNumberOfBrokenDevices()));
+                    i++;
+                }
+                extracted();
+                Toast.makeText(requireContext(), "Data: " + month + ", " + year, Toast.LENGTH_LONG).show();
+            }
+        });
 
-        BarDataSet barDataSet = new BarDataSet(entries, "Data");
-        BarData barData = new BarData(barDataSet);
 
-        barChart.setData(barData);
-        barChart.invalidate();
-        Toast.makeText(requireContext(), "Set date: " + month + ", " + year, Toast.LENGTH_LONG).show();
+    }
+
+    interface DataCallback {
+        void onDataLoaded(ArrayList<BrokenMedicalDevicesMonthly> data);
     }
 }
