@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import com.gt.zega.entity.BrokenMedicalDevicesMonthly;
 import com.gt.zega.entity.User;
 
 import java.io.File;
@@ -12,8 +13,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
+import java.util.Locale;
 
 public class HtmlComponents {
 
@@ -154,6 +158,63 @@ public class HtmlComponents {
             return imagePath;
         }
         return null;
+    }
+
+    public static String monthlyReportWithBrokenDevices(ArrayList<BrokenMedicalDevicesMonthly> brokenMedicalDevicesMonthlyArrayList) {
+        String localTime = new SimpleDateFormat("HH:mm:ss", Locale.forLanguageTag("ro")).format(new Date());
+        String localDate = new SimpleDateFormat("dd.MM.yyyy", Locale.forLanguageTag("ro")).format(new Date());
+        String htmlHead = "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head>" + "<style>" + ".center {\n" +
+                "  margin-left: auto;\n" +
+                "  margin-right: auto;\n" +
+                "}\n" +
+                "\n" +
+                "table{\n" +
+                "  width:100%;\n" +
+                "}\n" +
+                "\n" +
+                "tbody tr:nth-child(even) td{\n" +
+                "    background-color:#cdd0d1;\n" +
+                "}\n" +
+                "tbody tr:nth-child(odd) td{\n" +
+                "}\n" +
+                "\n" +
+                "table, th, td {\n" +
+                "  border: 1px solid black;\n" +
+                "  border-collapse: collapse;\n" +
+                "}\n" +
+                "\n" +
+                "th {\n" +
+                "  text-align: left;\n" +
+                "}" + "</style>" + "</head>";
+        StringBuilder htmlBody = new StringBuilder("\n<body>\n" +
+                "<p>" + localTime + "</p>\n" +
+                "<p>" + localDate + "</p>\n" +
+                "<table class=\"center\" border=\"1\">\n" +
+                "<tbody>\n" +
+                "<tr>\n" +
+                "<th>Data</th>" +
+                "<th>Coduri de eroare</th>" +
+                "<th>Numar de dispozitive defecte</th>" +
+                "<th>Codurile dispozitivelor defecte</th>" +
+                "</tr>");
+        for (BrokenMedicalDevicesMonthly brokenMedicalDevicesMonthly : brokenMedicalDevicesMonthlyArrayList) {
+            String date = brokenMedicalDevicesMonthly.getDate();
+            ArrayList<String> errorCodeArrayList = brokenMedicalDevicesMonthly.getErrorCode();
+            int numberOfBrokenDevices = brokenMedicalDevicesMonthly.getNumberOfBrokenDevices();
+            ArrayList<String> arrayListOfDevicesCodes = brokenMedicalDevicesMonthly.getArrayListOfDevicesCodes();
+            if (numberOfBrokenDevices != 0) {
+                htmlBody.append("<tr><td>" + date + "</td>\n" +
+                        "<td>" + errorCodeArrayList.toString() + "</td>\n" +
+                        "<td>" + numberOfBrokenDevices + "</td>\n" +
+                        "<td>" + arrayListOfDevicesCodes.toString() + "</td></tr>\n");
+            }
+        }
+        htmlBody.append("</tbody>\n" + "</table>\n" + "</body>\n" + "</html>");
+
+
+        return htmlHead + htmlBody;
     }
 
 }

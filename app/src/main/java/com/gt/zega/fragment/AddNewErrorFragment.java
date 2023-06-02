@@ -255,14 +255,14 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
                     htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectDevice.getText().toString(), errorCode.getText().toString(), defaultDescription.getText().toString(), hospital.getEditText().getText().toString(), deviceLocation.getEditText().getText().toString(), description.getEditText().getText().toString(), listOfImages);
                     saveProblem();
                     if (htmlToPdf.writeHTML()) {
-//                        selectDevice.setText(null);
-//                        errorCode.setText(null);
-//                        defaultDescription.setText(null);
-//                        description.getEditText().setText(null);
-//                        deviceLocation.getEditText().setText(null);
-//                        hospital.getEditText().setText(null);
-//                        linearLayout.removeAllViews();
-//                        listOfImages.clear();
+                        selectDevice.setText(null);
+                        errorCode.setText(null);
+                        defaultDescription.setText(null);
+                        description.getEditText().setText(null);
+                        deviceLocation.getEditText().setText(null);
+                        hospital.getEditText().setText(null);
+                        linearLayout.removeAllViews();
+                        listOfImages.clear();
                     }
                 }
             }

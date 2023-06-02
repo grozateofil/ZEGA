@@ -6,17 +6,17 @@ import java.util.ArrayList;
 public class BrokenMedicalDevicesMonthly implements Serializable {
 
     private String date;
-    private String errorCode;
+    private ArrayList<String> errorCode;
     private int numberOfBrokenDevices;
     private ArrayList<String> arrayListOfDevicesCodes;
 
-    public BrokenMedicalDevicesMonthly(String errorCode, int numberOfBrokenDevices, ArrayList<String> arrayListOfDevicesCodes) {
+    public BrokenMedicalDevicesMonthly(ArrayList<String> errorCode, int numberOfBrokenDevices, ArrayList<String> arrayListOfDevicesCodes) {
         this.errorCode = errorCode;
         this.numberOfBrokenDevices = numberOfBrokenDevices;
         this.arrayListOfDevicesCodes = arrayListOfDevicesCodes;
     }
 
-    public BrokenMedicalDevicesMonthly(String date, String errorCode, int numberOfBrokenDevices, ArrayList<String> arrayListOfDevicesCodes) {
+    public BrokenMedicalDevicesMonthly(String date, ArrayList<String> errorCode, int numberOfBrokenDevices, ArrayList<String> arrayListOfDevicesCodes) {
         this.date = date;
         this.errorCode = errorCode;
         this.numberOfBrokenDevices = numberOfBrokenDevices;
@@ -35,11 +35,11 @@ public class BrokenMedicalDevicesMonthly implements Serializable {
         this.date = date;
     }
 
-    public String getErrorCode() {
+    public ArrayList<String> getErrorCode() {
         return errorCode;
     }
 
-    public void setErrorCode(String errorCode) {
+    public void setErrorCode(ArrayList<String> errorCode) {
         this.errorCode = errorCode;
     }
 
@@ -61,9 +61,21 @@ public class BrokenMedicalDevicesMonthly implements Serializable {
 
     @Override
     public String toString() {
-        return "date: " + date +
-                ", errorCode: " + errorCode +
-                ", numberOfBrokenDevices: " + numberOfBrokenDevices +
-                ", arrayListOfDevicesCodes: " + arrayListOfDevicesCodes;
+        String toString = "Data: " + date;
+        if (!errorCode.isEmpty()) {
+            if (errorCode.size() == 1)
+                toString += "\nCod eroare: " + errorCode;
+            else
+                toString += "\nCoduri erori: " + errorCode;
+        }
+        if (numberOfBrokenDevices >= 0)
+            toString += "\nNumar de defectiuni: " + numberOfBrokenDevices;
+        if (!arrayListOfDevicesCodes.isEmpty()) {
+            if (arrayListOfDevicesCodes.size() == 1)
+                toString += "\nAparat: " + arrayListOfDevicesCodes;
+            else
+                toString += "\nAparate: " + arrayListOfDevicesCodes;
+        }
+        return toString;
     }
 }
