@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/floral_white"
-    tools:context=".fragment.BrokenDeviceReportFragment">
+    tools:context=".fragment.SuppliesReportsFragment">
 
     <TextView
-        android:id="@+id/message"
+        android:id="@+id/msg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -18,14 +18,14 @@
         android:textSize="20sp" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
+        android:id="@+id/swipeRefreshLay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
         tools:ignore="NotSibling,UnknownIdInLayout">
 
         <ListView
-            android:id="@+id/listOfFiles"
+            android:id="@+id/listOfReports"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingStart="0dp"

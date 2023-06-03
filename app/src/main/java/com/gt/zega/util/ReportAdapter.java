@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.gt.zega.fragment.AllReportsFragment;
-import com.gt.zega.fragment.UserReportFragment;
+import com.gt.zega.fragment.MyReportsFragment;
 
 public class ReportAdapter extends FragmentStateAdapter {
 
@@ -19,18 +19,21 @@ public class ReportAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         switch (position) {
             case 0:
-                return new UserReportFragment();
+                return new MyReportsFragment();
 
             case 1:
-                return new AllReportsFragment();
+                return new AllReportsFragment("brokenDeviceReport");
+
+            case 2:
+                return new AllReportsFragment("suppliesReport");
 
             default:
-                return new UserReportFragment();
+                return new MyReportsFragment();
         }
     }
 
     @Override
     public int getItemCount() {
-        return 2;
+        return 3;
     }
 }

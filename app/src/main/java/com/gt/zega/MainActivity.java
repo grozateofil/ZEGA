@@ -43,12 +43,12 @@ import com.gt.zega.fragment.AboutUsFragment;
 import com.gt.zega.fragment.AddNewErrorFragment;
 import com.gt.zega.fragment.HomeFragment;
 import com.gt.zega.fragment.LoginFragment;
+import com.gt.zega.fragment.MyReportsFragment;
 import com.gt.zega.fragment.ProfileFragment;
 import com.gt.zega.fragment.ReportsFragment;
 import com.gt.zega.fragment.SettingsFragment;
 import com.gt.zega.fragment.StatisticsFragment;
-import com.gt.zega.fragment.SuppliesFragment;
-import com.gt.zega.fragment.UserReportFragment;
+import com.gt.zega.fragment.SupplyFragment;
 import com.gt.zega.internetConnection.NetworkChangeListener;
 
 import java.util.ArrayList;
@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case (R.id.nav_supplies):
                 fragmentSelected = true;
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new SuppliesFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new SupplyFragment()).commit();
                 break;
 
             case (R.id.nav_profile):
@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case (R.id.nav_myReport):
                 fragmentSelected = true;
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new UserReportFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new MyReportsFragment()).commit();
                 break;
 
             case (R.id.nav_allReports):

@@ -38,6 +38,7 @@ import java.util.Locale;
 
 public class HtmlToPdf {
     private final int REQUEST_CODE_MANAGE_EXTERNAL_STORAGE = 777;
+
     private String DIRECTORY = "ZEGA";
     private String PDF_DIRECTORY = "Pdf";
     private String htmlFileName;
@@ -51,14 +52,18 @@ public class HtmlToPdf {
     private String faultCode;
     private String defaultDescription;
     private String optionalDescription;
-
-    //    private String errorDescription;
     private String hospitalName;
-    private String deviceLocation;
+    private String hospitalLocation;
+    private String hospitalSection;
+    private String roomSection;
     private ArrayList<Uri> listOfImages;
 
+    private String suppliesName;
 
-    public HtmlToPdf(Activity activity, Context context, User user, String deviceName, String faultCode, String defaultDescription, String hospitalName, String deviceLocation, String optionalDescription, ArrayList<Uri> listOfImages) {
+    private String reportType;
+
+
+    public HtmlToPdf(Activity activity, Context context, User user, String deviceName, String faultCode, String defaultDescription, String hospitalName, String hospitalLocation, String hospitalSection, String roomSection, String optionalDescription, ArrayList<Uri> listOfImages, String reportType) {
         this.activity = activity;
         this.context = context;
         this.user = user;
@@ -66,9 +71,27 @@ public class HtmlToPdf {
         this.faultCode = faultCode;
         this.defaultDescription = defaultDescription;
         this.hospitalName = hospitalName;
-        this.deviceLocation = deviceLocation;
+        this.hospitalLocation = hospitalLocation;
+        this.hospitalSection = hospitalSection;
+        this.roomSection = roomSection;
         this.optionalDescription = optionalDescription;
         this.listOfImages = listOfImages;
+
+        this.reportType = reportType;
+    }
+
+    public HtmlToPdf(Activity activity, Context context, User user, String suppliesName, String deviceName, String hospitalName, String hospitalLocation, String hospitalSection, String roomSection, String reportType) {
+        this.activity = activity;
+        this.context = context;
+        this.user = user;
+        this.suppliesName = suppliesName;
+        this.deviceName = deviceName;
+        this.hospitalName = hospitalName;
+        this.hospitalLocation = hospitalLocation;
+        this.hospitalSection = hospitalSection;
+        this.roomSection = roomSection;
+
+        this.reportType = reportType;
     }
 
     public boolean writeHTML() {
@@ -91,7 +114,12 @@ public class HtmlToPdf {
         File file = null;
 
         try {
-            Document document = Jsoup.parse(HtmlComponents.createHtml(context, date, time, user, deviceName, faultCode, defaultDescription, hospitalName, deviceLocation, optionalDescription, listOfImages), "UTF-8");
+            Document document = null;
+            if (reportType.equalsIgnoreCase("brokenDeviceReport")) {
+                document = Jsoup.parse(HtmlComponents.createHtml(context, date, time, user, deviceName, faultCode, defaultDescription, hospitalName, hospitalLocation, hospitalSection, roomSection, optionalDescription, listOfImages), "UTF-8");
+            } else if (reportType.equalsIgnoreCase("suppliesReport")) {
+                document = Jsoup.parse(HtmlComponents.createHtml1(context, date, time, user, suppliesName, deviceName, hospitalName, hospitalLocation, hospitalSection, roomSection), "UTF-8");
+            }
             System.out.println(document.outerHtml());
             if (!fileName.endsWith(".html")) {
                 htmlFileName = fileName + ".html";
@@ -166,7 +194,7 @@ public class HtmlToPdf {
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
-        StorageReference fileRef = storage.getReference().child("users/" + userId + "/" + file.getName());
+        StorageReference fileRef = storage.getReference().child("users/" + userId + "/" + reportType + "/" + file.getName());
 
         fileRef.putFile(Uri.fromFile(file)).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override

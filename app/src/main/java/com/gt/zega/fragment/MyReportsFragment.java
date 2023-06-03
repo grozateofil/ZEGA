@@ -10,35 +10,25 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.gt.zega.R;
-import com.gt.zega.util.ReportAdapter;
+import com.gt.zega.util.PersonalReportsAdapter;
 
-public class ReportsFragment extends Fragment {
+public class MyReportsFragment extends Fragment {
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_reports, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_reports, container, false);
 
-        tabLayout = view.findViewById(R.id.tab_layout);
-        viewPager = view.findViewById(R.id.view_pager);
+        tabLayout = view.findViewById(R.id.tabLay);
+        viewPager = view.findViewById(R.id.view_pager2);
 
-        ReportAdapter reportAdapter = new ReportAdapter(this);
+        PersonalReportsAdapter reportAdapter = new PersonalReportsAdapter(this);
 
         viewPager.setAdapter(reportAdapter);
-
-//        TabLayout.Tab tab0 = tabLayout.getTabAt(0);
-//        TabLayout.Tab tab1 = tabLayout.getTabAt(1);
-//        TabLayout.Tab tab2 = tabLayout.getTabAt(2);
-//
-//        tab0.setCustomView(createCustomTabView(tab0.getText().toString(), 15, R.color.black_russian)); //initially this tab is selected
-//        tab1.setCustomView(createCustomTabView(tab1.getText().toString(), 15, R.color.black_russian));
-//        tab2.setCustomView(createCustomTabView(tab2.getText().toString(), 15, R.color.black_russian));
-
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -67,14 +57,4 @@ public class ReportsFragment extends Fragment {
 
         return view;
     }
-
-//    private View createCustomTabView(String tabText, int tabSizeSp, int textColor){
-//
-//        View tabCustomView = getLayoutInflater().inflate(R.layout.custom_tab, null);
-//        TextView tabTextView = tabCustomView.findViewById(R.id.tab);
-//        tabTextView.setText(tabText);
-//        tabTextView.setTextSize(tabSizeSp);
-//        tabTextView.setTextColor(ContextCompat.getColor(tabCustomView.getContext(), textColor));
-//        return tabCustomView;
-//    }
 }

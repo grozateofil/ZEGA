@@ -4,72 +4,69 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/floral_white"
-    tools:context=".fragment.NewMedicalDeviceFragment">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    tools:context=".fragment.NewHospitalSectionFragment">
 
     <LinearLayout
+        android:id="@+id/addHospitalSectionLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:orientation="vertical">
+        android:layout_below="@id/toolbar"
+        android:orientation="vertical"
+        tools:ignore="NotSibling">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/deviceCompany"
-            style="@style/TextInputLayoutStyle"
+        <TextView
+            android:id="@+id/selectHospitalTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
+            android:layout_marginTop="6dp"
             android:layout_marginEnd="30dp"
-            android:hint="Compania aparatului"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/text_view_border"
+            android:gravity="center_vertical"
+            android:hint="Selectează spital"
+            android:padding="15dp"
+            android:textColor="@color/black_russian"
+            android:textColorHint="@color/black_russian"
             android:textSize="15sp"
-            app:endIconMode="clear_text"
+            app:drawableEndCompat="@drawable/arrow_down_icon"
             app:endIconTint="@color/black_russian"
             app:errorEnabled="true"
-            app:errorIconDrawable="@null">
+            app:errorIconDrawable="@null" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName|textCapWords"
-                android:singleLine="true"
-                android:textColor="@color/black_russian" />
-        </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:id="@+id/descrip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="-15dp"
+            android:layout_marginEnd="30dp"
+            android:text="*pentru stergere apasati lung"
+            android:textColor="@color/black_russian" />
 
+        <Button
+            android:id="@+id/hospitalSections"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="-10dp"
+            android:layout_marginEnd="30dp"
+            android:backgroundTint="@android:color/transparent"
+            android:outlineAmbientShadowColor="@android:color/transparent"
+            android:outlineSpotShadowColor="@android:color/transparent"
+            android:padding="0dp"
+            android:text="Secții existente"
+            android:textColor="@color/black_russian"
+            app:cornerRadius="20dp" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/deviceName"
+            android:id="@+id/hospitalSectionName"
             style="@style/TextInputLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
-            android:hint="Nume aparat"
-            android:textSize="15sp"
-            app:endIconMode="clear_text"
-            app:endIconTint="@color/black_russian"
-            app:errorEnabled="true"
-            app:errorIconDrawable="@null">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName|textCapWords"
-                android:singleLine="true"
-                android:textColor="@color/black_russian" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/deviceCode"
-            style="@style/TextInputLayoutStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
-            android:hint="Cod aparat"
+            android:hint="Secție"
             android:textSize="15sp"
             app:endIconMode="clear_text"
             app:endIconTint="@color/black_russian"
@@ -80,19 +77,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textCapCharacters"
-                android:maxLength="7"
-                android:singleLine="true"
+                android:textAllCaps="true"
                 android:textColor="@color/black_russian" />
+
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:id="@+id/addNewMedicalDeviceButton"
+            android:id="@+id/saveHospitalSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
             android:backgroundTint="@color/black_russian"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
             android:outlineSpotShadowColor="@color/black_russian"
             android:text="@string/save"
             android:textColor="#FFF7EC"

@@ -4,11 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.ReportsFragment">
-
+    tools:context=".fragment.MyReportsFragment">
 
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tab_layout"
+        android:id="@+id/tabLay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
@@ -19,33 +18,23 @@
         app:tabTextColor="@color/lightGray2">
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/myReports"
+            android:id="@+id/devicesReports"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/tabTextSize"
-            android:text="Rapoartele mele" />
+            android:text="Aparate" />
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/allReportsMedicalDevices"
+            android:id="@+id/suppliesReports"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/tabTextSize"
-            android:text="Aparaturi" />
-
-        <com.google.android.material.tabs.TabItem
-            android:id="@+id/allReportsSupplies"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/tabTextSize"
             android:text="Consumabile" />
 
     </com.google.android.material.tabs.TabLayout>
 
     <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/view_pager"
+        android:id="@+id/view_pager2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/tab_layout" />
-
+        android:layout_below="@+id/tabLay" />
 
 </RelativeLayout>

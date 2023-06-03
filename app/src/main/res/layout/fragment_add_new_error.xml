@@ -56,7 +56,6 @@
                 android:layout_below="@id/selectDevice"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
-                android:layout_marginBottom="15dp"
                 android:background="@drawable/text_view_border"
                 android:gravity="center_vertical"
                 android:hint="Selectare cod defectiune"
@@ -81,40 +80,55 @@
                 android:clickable="false"
                 android:gravity="center_vertical"
                 android:hint=""
-                android:padding="15dp"
+                android:padding="8dp"
                 android:textColor="@color/black_russian"
                 android:textIsSelectable="false"
                 android:textSize="15sp" />
 
-            <com.google.android.material.textfield.TextInputLayout
+            <TextView
                 android:id="@+id/hospital"
-                style="@style/TextInputLayoutStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/description"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="-1dp"
-                android:layout_marginRight="30dp"
-                android:drawablePadding="10dp"
-                android:hint="Spital/Clinică"
+
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/text_view_border"
+                android:gravity="center_vertical"
+                android:hint="Selectează spital"
+                android:padding="15dp"
+                android:textColor="@color/black_russian"
+                android:textColorHint="@color/black_russian"
                 android:textSize="15sp"
-                app:endIconMode="clear_text"
+                app:drawableEndCompat="@drawable/arrow_down_icon"
                 app:endIconTint="@color/black_russian"
                 app:errorEnabled="true"
-                app:errorIconDrawable="@null">
+                app:errorIconDrawable="@null" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textMultiLine|textLongMessage"
-                    android:maxLines="2"
-                    android:scrollbarThumbVertical="@android:color/transparent"
-                    android:scrollbars="vertical"
-                    android:textColor="@color/black_russian" />
-            </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:id="@+id/section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/text_view_border"
+                android:gravity="center_vertical"
+                android:hint="Selectează sectia"
+                android:padding="15dp"
+                android:textColor="@color/black_russian"
+                android:textColorHint="@color/black_russian"
+                android:textSize="15sp"
+                app:drawableEndCompat="@drawable/arrow_down_icon"
+                app:endIconTint="@color/black_russian"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/deviceLocation"
+                android:id="@+id/sectionRoom"
                 style="@style/TextInputLayoutStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -123,7 +137,7 @@
                 android:layout_marginTop="-1dp"
                 android:layout_marginEnd="30dp"
                 android:drawablePadding="10dp"
-                android:hint="Locație aparat"
+                android:hint="Salon"
                 android:textSize="15sp"
                 app:endIconMode="clear_text"
                 app:endIconTint="@color/black_russian"
@@ -142,11 +156,11 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/errorDescription"
+                android:id="@+id/optionalDescription"
                 style="@style/TextInputLayoutStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/deviceLocation"
+                android:layout_below="@id/sectionRoom"
                 android:layout_marginLeft="30dp"
                 android:layout_marginTop="-1dp"
                 android:layout_marginRight="30dp"
@@ -173,7 +187,7 @@
                 android:id="@+id/importImages"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:layout_below="@id/errorDescription"
+                android:layout_below="@id/optionalDescription"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
                 android:gravity="center|start"
@@ -197,10 +211,12 @@
 
             <Button
                 android:id="@+id/addNewDeviceButton"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/importImages"
                 android:layout_gravity="center"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
                 android:layout_marginBottom="20dp"
                 android:backgroundTint="@color/black_russian"
                 android:outlineSpotShadowColor="@color/black_russian"

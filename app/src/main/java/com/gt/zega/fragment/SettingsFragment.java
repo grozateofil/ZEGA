@@ -27,8 +27,11 @@ import com.gt.zega.entity.User;
 
 public class SettingsFragment extends Fragment implements View.OnClickListener, HideAndShow {
 
+    private TextView addNewHospital;
     private TextView addNewDevice;
     private TextView addNewFaultCode;
+
+    private TextView addNewSupplie;
 
     private TextView deleteAccount;
 
@@ -43,8 +46,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         sharedPreferences = getContext().getSharedPreferences("Preferences", 0);
 
+        addNewHospital = view.findViewById(R.id.addNewHospital);
         addNewDevice = view.findViewById(R.id.addNewDevice);
         addNewFaultCode = view.findViewById(R.id.addNewFaultCode);
+        addNewSupplie = view.findViewById(R.id.addNewSupplie);
         deleteAccount = view.findViewById(R.id.deleteAccount);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -53,9 +58,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
 
         getUserData(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-
+        addNewHospital.setOnClickListener(this);
         addNewDevice.setOnClickListener(this);
         addNewFaultCode.setOnClickListener(this);
+        addNewSupplie.setOnClickListener(this);
         deleteAccount.setOnClickListener(this);
         return view;
     }
@@ -63,6 +69,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case (R.id.addNewHospital):
+                requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new CreateHospitalFragment()).addToBackStack(null).commit();
+                break;
+
             case (R.id.addNewDevice):
                 requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new NewMedicalDeviceFragment()).addToBackStack(null).commit();
                 break;
@@ -71,6 +81,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
                 requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new NewFaultCodeFragment()).addToBackStack(null).commit();
                 break;
 
+            case (R.id.addNewSupplie):
+                requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new NewSuppliesFragment()).addToBackStack(null).commit();
+                break;
 
             case (R.id.deleteAccount):
                 confirmDeleteAccount();
@@ -133,7 +146,11 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
                 User user = dataSnapshot.getValue(User.class);
                 if (user != null) {
                     userRole = user.getRole();
+                    hideTextView(getView().findViewById(R.id.addNewHospital), !(userRole.equals("inginer") || userRole.equals("medic")));
                     hideTextView(getView().findViewById(R.id.addNewDevice), !userRole.equals("medic"));
+                    hideTextView(getView().findViewById(R.id.addNewFaultCode), !userRole.equals("medic"));
+                    hideTextView(getView().findViewById(R.id.addNewSupplie), !userRole.equals("medic"));
+                    hideTextView(getView().findViewById(R.id.deleteAccount), !userRole.equals("medic"));
                 }
             }
 

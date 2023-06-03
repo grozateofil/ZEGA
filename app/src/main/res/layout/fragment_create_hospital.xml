@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment.CreateHospitalFragment">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="50dp"
+        android:layout_height="wrap_content"
+        app:tabSelectedTextColor="@color/black_russian"
+        app:tabTextColor="@color/lightGray2"
+        android:background="@android:color/transparent"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/createHospital"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Creare spital" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/createHospitalSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Adăugare secție" />
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tabLayout" />
+
+</RelativeLayout>

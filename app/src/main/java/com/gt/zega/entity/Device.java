@@ -41,6 +41,6 @@ public class Device {
 
     @Override
     public String toString() {
-        return deviceCompanyName + ",  " + deviceName + ", " + deviceCode;
+        return deviceName + ",  " + deviceCode + ", " + deviceCompanyName;
     }
 }

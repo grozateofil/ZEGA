@@ -2,6 +2,7 @@ package com.gt.zega.fragment;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -61,6 +62,14 @@ public class AllReportsFragment extends Fragment {
 
     private ProgressBar progressBar;
 
+    private String type;
+    private Uri uri;
+
+    public AllReportsFragment(String type) {
+        this.type = type;
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -85,7 +94,7 @@ public class AllReportsFragment extends Fragment {
                     String uid = userSnapshot.getKey();
                     User name = userSnapshot.getValue(User.class);
 
-                    StorageReference userFilesRef = storageReference.child(uid);
+                    StorageReference userFilesRef = storageReference.child(uid).child(type);
 
                     userFilesRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
                         @Override
@@ -106,10 +115,9 @@ public class AllReportsFragment extends Fragment {
                                 }
                             });
 
-                            expandableListAdapter = new ExpandableListAdapter(getContext(), userFilesArrayList);
+                            expandableListAdapter = new ExpandableListAdapter(getContext(), userFilesArrayList, type);
                             expandableListView.setAdapter(expandableListAdapter);
                             expandableListView.setGroupIndicator(null);
-
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {

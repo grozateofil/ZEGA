@@ -24,7 +24,7 @@ import com.gt.zega.util.AdapterForPersonalReports;
 
 import java.util.ArrayList;
 
-public class UserReportFragment extends Fragment {
+public class SuppliesReportsFragment extends Fragment {
 
     private StorageReference storageReference;
     private FirebaseStorage firebaseStorage;
@@ -41,18 +41,18 @@ public class UserReportFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_user_report, container, false);
-        message = view.findViewById(R.id.message);
+        View view = inflater.inflate(R.layout.fragment_supplies_reports, container, false);
+
+        message = view.findViewById(R.id.msg);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         userId = user.getUid();
 
         firebaseStorage = FirebaseStorage.getInstance();
-        storageReference = firebaseStorage.getReference().child("users/" + userId);
+        storageReference = firebaseStorage.getReference().child("users").child(userId).child("suppliesReport");
         arrayList = new ArrayList<>();
-        listView = view.findViewById(R.id.listOfFiles);
-        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
-
+        listView = view.findViewById(R.id.listOfReports);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLay);
 
         storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
             @Override
@@ -61,7 +61,7 @@ public class UserReportFragment extends Fragment {
                     arrayList.add(item.getName());
                 }
 
-                customAdapter = new AdapterForPersonalReports(userId, arrayList, getContext());
+                customAdapter = new AdapterForPersonalReports(userId, arrayList, getContext(), "suppliesReport");
 
 //                if (arrayList.isEmpty()) {
 //                    message.setText("Nu exista niciun raport");
@@ -130,5 +130,4 @@ public class UserReportFragment extends Fragment {
             listView.setVisibility(View.VISIBLE);
         }
     }
-
 }

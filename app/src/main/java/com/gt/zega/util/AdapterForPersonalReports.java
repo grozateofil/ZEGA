@@ -35,20 +35,25 @@ public class AdapterForPersonalReports extends BaseAdapter {
     private ImageView resolvedMark;
     private StorageReference storageRef;
     private String currentUidUser;
-    private int position;
 
-    public AdapterForPersonalReports(String uid, ArrayList<String> arrayList, Context context) {
+    private int position;
+    private String type;
+
+    public AdapterForPersonalReports(String uid, ArrayList<String> arrayList, Context context, String type) {
         this.arrayList = arrayList;
         this.context = context;
         this.currentUidUser = uid;
         this.position = -1;
+        this.type = type;
     }
 
-    public AdapterForPersonalReports(int position, String uid, ArrayList<String> arrayList, Context context) {
+
+    public AdapterForPersonalReports(int position, String uid, ArrayList<String> arrayList, Context context, String type) {
         this.arrayList = arrayList;
         this.context = context;
         this.currentUidUser = uid;
         this.position = position;
+        this.type = type;
     }
 
     @Override
@@ -91,11 +96,12 @@ public class AdapterForPersonalReports extends BaseAdapter {
         textViewFileName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                storageRef = FirebaseStorage.getInstance().getReference().child("users/" + currentUidUser).child(arrayList.get(newPosition));
+                storageRef = FirebaseStorage.getInstance().getReference().child("users").child(currentUidUser).child(type).child(arrayList.get(newPosition));
                 storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
                         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        System.out.println("FILE URI--------------------> " + uri);
                         try {
                             context.startActivity(intent);
                         } catch (ActivityNotFoundException e) {
@@ -169,7 +175,7 @@ public class AdapterForPersonalReports extends BaseAdapter {
 
 
         okButton.setOnClickListener(view2 -> {
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("users/" + currentUidUser).child(adapter.get(newPosition));
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("users").child(currentUidUser).child(type).child(adapter.get(newPosition));
             storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void unused) {
@@ -182,11 +188,7 @@ public class AdapterForPersonalReports extends BaseAdapter {
                 }
             });
             dialog.cancel();
-
-
         });
-
-
     }
 
     public void markAsResolved(Context context, ArrayList<String> adapter, int position) {

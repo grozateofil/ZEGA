@@ -11,6 +11,7 @@
     <string name="createAccount">Creare cont</string>
     <string name="email">Email</string>
     <string name="password">Parolă</string>
+    <string name="save">SALVEAZĂ</string>
     <string name="login">Conectează-te</string>
     <string name="firstName">Prenume</string>
     <string name="lastName">Nume de familie</string>

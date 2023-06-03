@@ -13,6 +13,19 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/addNewHospital"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:text="Adaugă spital"
+            android:textColor="@color/black_russian"
+            android:textSize="25sp" />
+
+        <TextView
             android:id="@+id/addNewDevice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,7 +34,7 @@
             android:foreground="?attr/selectableItemBackground"
             android:paddingStart="30dp"
             android:paddingEnd="30dp"
-            android:text="Adauga aparat"
+            android:text="Adaugă aparat"
             android:textColor="@color/black_russian"
             android:textSize="25sp" />
 
@@ -34,7 +47,20 @@
             android:foreground="?attr/selectableItemBackground"
             android:paddingStart="30dp"
             android:paddingEnd="30dp"
-            android:text="Adauga cod defectiune"
+            android:text="Adaugă cod defecțiune"
+            android:textColor="@color/black_russian"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/addNewSupplie"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:text="Adaugă consumabil nou"
             android:textColor="@color/black_russian"
             android:textSize="25sp" />
 

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/floral_white"
-    tools:context=".fragment.SuppliesFragment">
+    tools:context=".fragment.NewSuppliesFragment">
 
     <TextView
         android:id="@+id/title"
@@ -18,38 +18,17 @@
         android:textSize="26sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/selectSupplies"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/title"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="15dp"
-        android:background="@drawable/text_view_border"
-        android:gravity="center_vertical"
-        android:hint="Selectează consumabilul lipsă"
-        android:padding="15dp"
-        android:textColor="@color/black_russian"
-        android:textColorHint="@color/black_russian"
-        android:textSize="15sp"
-        app:drawableEndCompat="@drawable/arrow_down_icon"
-        app:endIconTint="@color/black_russian"
-        app:errorEnabled="true"
-        app:errorIconDrawable="@null" />
-
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/deviceCode"
+        android:id="@+id/supplieName"
         style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/selectSupplies"
+        android:layout_below="@id/title"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="-1dp"
         android:layout_marginRight="30dp"
         android:drawablePadding="10dp"
-        android:hint="Codul aparatului"
+        android:hint="Nume consumabil"
         android:textSize="15sp"
         app:endIconMode="clear_text"
         app:endIconTint="@color/black_russian"
@@ -61,21 +40,46 @@
             android:layout_height="wrap_content"
             android:inputType="textCapCharacters"
             android:maxLines="1"
-            android:maxLength="7"
             android:textColor="@color/black_russian" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/devLocation"
+        android:id="@+id/supplieCode"
         style="@style/TextInputLayoutStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/deviceCode"
+        android:layout_below="@id/supplieName"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="-1dp"
         android:layout_marginRight="30dp"
         android:drawablePadding="10dp"
-        android:hint="Locația aparatului"
+        android:hint="Cod consumabil"
+        android:textSize="15sp"
+        app:endIconMode="clear_text"
+        app:endIconTint="@color/black_russian"
+        app:errorEnabled="true"
+        app:errorIconDrawable="@null">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapCharacters"
+            android:maxLength="7"
+            android:maxLines="1"
+            android:textColor="@color/black_russian" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/supplieBrand"
+        style="@style/TextInputLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/supplieCode"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="-1dp"
+        android:layout_marginRight="30dp"
+        android:drawablePadding="10dp"
+        android:hint="Firma consumabil"
         android:textSize="15sp"
         app:endIconMode="clear_text"
         app:endIconTint="@color/black_russian"
@@ -94,14 +98,16 @@
 
     <Button
         android:id="@+id/sendButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/devLocation"
+        android:layout_below="@id/supplieBrand"
         android:layout_centerHorizontal="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         android:layout_marginBottom="20dp"
         android:backgroundTint="@color/black_russian"
         android:outlineSpotShadowColor="@color/black_russian"
-        android:text="TRIMITE"
+        android:text="@string/save"
         android:textColor="#FFF7EC"
         app:cornerRadius="3dp" />
 

@@ -101,7 +101,7 @@
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
             android:outlineSpotShadowColor="@color/black_russian"
-            android:text="Adaugă"
+            android:text="@string/save"
             android:textColor="#FFF7EC"
             app:cornerRadius="3dp" />
 

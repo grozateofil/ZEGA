@@ -1,14 +1,10 @@
 package com.gt.zega.fragment;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
@@ -44,37 +40,56 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.gt.zega.R;
-import com.gt.zega.database.HideAndShow;
+import com.gt.zega.entity.Address;
 import com.gt.zega.entity.BrokenMedicalDevices;
 import com.gt.zega.entity.Device;
 import com.gt.zega.entity.FaultCode;
+import com.gt.zega.entity.Hospital;
 import com.gt.zega.entity.User;
 import com.gt.zega.htmlToPdf.HtmlToPdf;
 import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
 
-import java.io.File;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collections;
 
 
-public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginFragment.OnUserRoleSelectedListener {
+public class AddNewErrorFragment extends Fragment {
 
     private final int MAX_NUMBER_OF_PHOTOS = 3;
     private final ArrayList<Uri> listOfImages = new ArrayList<>();
-    private File photoFile;
+
     private TextView selectDevice;
     private TextView errorCode;
-    private TextView defaultDescription;
+    private TextView errorCodeDescription;
+    private TextView hospital;
+    private TextView hospitalSection;
+    private TextInputLayout sectionRoom;
     private TextInputLayout description;
-    private TextInputLayout deviceLocation;
-    private TextInputLayout hospital;
+
+
     private Dialog dialog;
-    private ArrayList<Object> deviceArrayList;
-    private ArrayList<Object> errorCodeArrayList;
+    private ArrayList<Device> deviceArrayList;
+    private ArrayList<FaultCode> errorCodeArrayList;
+    private ArrayList<Hospital> hospitalArrayList;
+    private ArrayList<String> hospitalSectionsArrayList;
     private LinearLayout linearLayout;
+
+    private ImageButton addPictureButton;
+    private Button addButton;
+
+    private DatabaseReference databaseReference;
+    private DatabaseReference databaseRef;
+    private FirebaseUser firebaseUser;
+    private Validations validations;
+    private User user;
+    private String userKey;
+    private HtmlToPdf htmlToPdf;
+
+    private Address currentAddress;
+
     ActivityResultLauncher<Intent> pickImage = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
 
         @Override
@@ -83,25 +98,18 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
                 Intent data = result.getData();
                 Uri uri = data.getData();
 
-//                if (data.getClipData() != null) {
-//                    int count = data.getClipData().getItemCount();
-//
-//                    for (int i = 0; i < count; i++) {
-//                        listOfImages.add(data.getClipData().getItemAt(i).getUri());
-//                    }
-//
-//                    for (Uri uri : listOfImages) {
-//                        ImageView imageView = new ImageView(getActivity().getApplicationContext());
-//                        imageView.setImageURI(uri);
-//                        addvieW(imageView, 130, linearLayout.getHeight());
-//                        System.out.println("-----------------------------------------------------" + linearLayout.getHeight());
-//                    }
-//
-//                } else
                 if (uri != null) {
                     ImageView imageView = new ImageView(getActivity().getApplicationContext());
                     imageView.setImageURI(data.getData());
                     listOfImages.add(data.getData());
+
+                    imageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Toast.makeText(getActivity().getApplicationContext(), "Pentru ștergere apăsați lung pe o imagine", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
                     imageView.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View view) {
@@ -112,42 +120,11 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
                             return true;
                         }
                     });
-//                    setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            ViewGroup parentView = (ViewGroup) view.getParent();
-//                            parentView.removeView(view);
-//                        }
-//                    });
-                    addview(imageView, linearLayout.getWidth() / 3, linearLayout.getHeight());
+                    adView(imageView, linearLayout.getWidth() / 3, linearLayout.getHeight());
                 }
             }
         }
     });
-    private ImageButton addPictureButton;
-    private Button addButton;
-    private Uri imageUri;
-    ActivityResultLauncher<Uri> takePicture = registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
-        if (success) {
-            ImageView imageView = new ImageView(getActivity().getApplicationContext());
-            imageView.setImageURI(imageUri);
-            addview(imageView, linearLayout.getWidth() / 3, linearLayout.getHeight());
-
-        }
-
-    });
-    private boolean exists = true;
-    private DatabaseReference databaseReference;
-    private DatabaseReference databaseRef;
-    private FirebaseUser firebaseUser;
-    private Validations validations;
-    private User user;
-    private String firstname;
-    private String lastname;
-    private String phoneNumber;
-    private String userKey;
-    private HtmlToPdf htmlToPdf;
-    private String userRole;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -156,11 +133,11 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
 
         selectDevice = view.findViewById(R.id.selectDevice);
         errorCode = view.findViewById(R.id.errorCode);
-        defaultDescription = view.findViewById(R.id.description);
-
-        description = view.findViewById(R.id.errorDescription);
-        deviceLocation = view.findViewById(R.id.deviceLocation);
+        errorCodeDescription = view.findViewById(R.id.description);
         hospital = view.findViewById(R.id.hospital);
+        hospitalSection = view.findViewById(R.id.section);
+        sectionRoom = view.findViewById(R.id.sectionRoom);
+        description = view.findViewById(R.id.optionalDescription);
 
         linearLayout = view.findViewById(R.id.photosLinearLayout);
         addPictureButton = view.findViewById(R.id.addPicture);
@@ -175,9 +152,12 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
 
         deviceArrayList = new ArrayList<>();
         errorCodeArrayList = new ArrayList<>();
+        hospitalArrayList = new ArrayList<>();
+        hospitalSectionsArrayList = new ArrayList<>();
 
         getDevices();
         getFaultCodes();
+        getHospitalFromDB();
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
@@ -188,7 +168,7 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
         selectDevice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openDialog(deviceArrayList, selectDevice);
+                openDialogWithMedicalDevices(deviceArrayList);
             }
 
 
@@ -197,52 +177,30 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
         errorCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openDialog(errorCodeArrayList, errorCode);
+                openDialogWithErrorCodes(errorCodeArrayList);
             }
         });
 
-//        description.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View view, boolean b) {
-//                if (b) {
-//                    description.getEditText().setHintTextColor(ContextCompat.getColor(getContext(), R.color.lightGray));
-//                    description.getEditText().setHint("Cât mai multe detalii");
-//                } else {
-//                    description.getEditText().setHint("");
-//                }
-//            }
-//        });
-//
-//        deviceLocation.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View view, boolean b) {
-//                if (b) {
-//                    deviceLocation.getEditText().setHintTextColor(ContextCompat.getColor(getContext(), R.color.lightGray));
-//                    deviceLocation.getEditText().setHint("Etaj, salon, etc.");
-//                } else {
-//                    deviceLocation.getEditText().setHint("");
-//                }
-//            }
-//        });
-//
-//        hospital.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View view, boolean b) {
-//                if (b) {
-//                    hospital.getEditText().setHintTextColor(ContextCompat.getColor(getContext(), R.color.lightGray));
-//                    hospital.getEditText().setHint("Numele spitalului/clinicii");
-//                } else {
-//                    hospital.getEditText().setHint("");
-//                }
-//            }
-//        });
+        hospital.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openDialogWithHospitals(hospitalArrayList);
+            }
+        });
+
+        hospitalSection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (hospitalSectionsArrayList.size() > 0)
+                    openDialogWithHospitalSections(hospitalSectionsArrayList);
+            }
+        });
 
         addPictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (linearLayout.getChildCount() < MAX_NUMBER_OF_PHOTOS)
-//                    showPictureDialog();
-                    choosePhotoFromGallary();
+                    choosePhotoFromGallery();
                 else
                     Toast.makeText(getActivity().getApplicationContext(), "Maxim " + MAX_NUMBER_OF_PHOTOS + " imagini", Toast.LENGTH_SHORT).show();
             }
@@ -252,15 +210,17 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
             public void onClick(View view) {
                 if (validation()) {
 
-                    htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectDevice.getText().toString(), errorCode.getText().toString(), defaultDescription.getText().toString(), hospital.getEditText().getText().toString(), deviceLocation.getEditText().getText().toString(), description.getEditText().getText().toString(), listOfImages);
-                    saveProblem();
+                    htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectDevice.getText().toString(), errorCode.getText().toString(), errorCodeDescription.getText().toString(), hospital.getText().toString(), currentAddress.toString(), hospitalSection.getText().toString(), sectionRoom.getEditText().getText().toString(), description.getEditText().getText().toString(), listOfImages, "brokenDeviceReport");
+                    saveProblemForGraphFragment();
                     if (htmlToPdf.writeHTML()) {
                         selectDevice.setText(null);
                         errorCode.setText(null);
-                        defaultDescription.setText(null);
+                        errorCodeDescription.setText(null);
+                        hospital.setText(null);
+                        hospitalSection.setText(null);
+                        sectionRoom.getEditText().setText(null);
                         description.getEditText().setText(null);
-                        deviceLocation.getEditText().setText(null);
-                        hospital.getEditText().setText(null);
+
                         linearLayout.removeAllViews();
                         listOfImages.clear();
                     }
@@ -271,7 +231,165 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
         return view;
     }
 
-    private void openDialog(ArrayList<Object> arrayListWithDevices, TextView textView) {
+
+    public void choosePhotoFromGallery() {
+        Intent photo = new Intent();
+        photo.setType("image/*");
+
+        photo.setAction(Intent.ACTION_GET_CONTENT);
+        pickImage.launch(photo);
+    }
+
+    private void adView(ImageView imageView, int width, int height) {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
+        params.setMarginEnd(10);
+        imageView.setLayoutParams(params);
+
+        linearLayout.addView(imageView);
+    }
+
+    private void getDevices() {
+        databaseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
+                    Device device = objectSnapshot.getValue(Device.class);
+                    deviceArrayList.add(device);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void getFaultCodes() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("faultCodes");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
+                    FaultCode device = objectSnapshot.getValue(FaultCode.class);
+                    errorCodeArrayList.add(device);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void getHospitalFromDB() {
+        hospitalArrayList = new ArrayList<>();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("hospitals");
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
+                    Hospital hospital = objectSnapshot.getValue(Hospital.class);
+                    if (!hospitalArrayList.stream().anyMatch(f -> f.getHospitalName().equalsIgnoreCase(hospital.getHospitalName())))
+                        hospitalArrayList.add(hospital);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void getUserData(String userKey) {
+        databaseReference.child(userKey).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                user = dataSnapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+
+    private void checkMonthExistence(DatabaseReference dayRef, BrokenMedicalDevices brokenMD) {
+        dayRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Month exists, update data
+                    addDeviceCode(dayRef, brokenMD.getDeviceCode());
+                } else {
+                    // Month does not exist, create it
+                    dayRef.child("numberOfBrokenDevices").setValue(1);
+                    dayRef.child("arrayListOfDevicesCodes").setValue(new ArrayList<String>(Collections.singletonList(brokenMD.getDeviceCode())));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle the error
+            }
+        });
+    }
+
+    private void addDeviceCode(DatabaseReference monthRef, String deviceCode) {
+        DatabaseReference deviceCodesRef = monthRef.child("arrayListOfDevicesCodes");
+        deviceCodesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<String> deviceCodes = new ArrayList<>();
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot codeSnapshot : dataSnapshot.getChildren()) {
+                        String code = codeSnapshot.getValue(String.class);
+                        deviceCodes.add(code);
+                    }
+                }
+
+                deviceCodes.add(deviceCode);
+
+//                Actualizeaza valoarea nodului "arrayListOfDevicesCodes"
+                deviceCodesRef.setValue(deviceCodes)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                            }
+                        });
+
+                getSizeOfArrayListOfDevicesCodes(deviceCodes, monthRef);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle the error
+            }
+        });
+    }
+
+    private static void getSizeOfArrayListOfDevicesCodes(ArrayList<String> deviceCodes, DatabaseReference monthRef) {
+        DatabaseReference numberOfBrokenDevicesRef = monthRef.child("numberOfBrokenDevices");
+        numberOfBrokenDevicesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    long size = deviceCodes.size();
+                    numberOfBrokenDevicesRef.setValue(size);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void openDialogWithErrorCodes(ArrayList<FaultCode> arrayListWithDevices) {
         dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.devices_list_view);
 
@@ -283,14 +401,26 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(getContext(), android.R.layout.simple_list_item_1, arrayListWithDevices) {
+        ArrayAdapter<FaultCode> adapter = new ArrayAdapter<FaultCode>(getContext(), R.layout.list_item_layout_user_name, arrayListWithDevices) {
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView tv = view.findViewById(android.R.id.text1);
+                if (convertView == null)
+                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_layout_user_name, parent, false);
+                TextView tv = convertView.findViewById(R.id.text1);
+                TextView description = convertView.findViewById(R.id.text2);
+
+                ImageView expandCollapseArrow = convertView.findViewById(R.id.arrow);
+                expandCollapseArrow.setVisibility(View.GONE);
+
                 tv.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-                return view;
+                description.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+
+                tv.setText(arrayListWithDevices.get(position).getCode());
+                description.setText(arrayListWithDevices.get(position).getDescription());
+
+//                tv.setText(arrayListWithDevices.get(position));
+                return convertView;
             }
         };
 
@@ -323,128 +453,247 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (textView.getHint().toString().equals("Selectare cod defectiune")) {
-                    textView.setText(adapter.getItem(position).toString().split(",")[0].trim());
-                    textView.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-                    defaultDescription.setText(adapter.getItem(position).toString().split(",")[1].trim());
-                } else {
-                    textView.setText(adapter.getItem(position).toString());
-                    textView.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-                }
+
+                errorCode.setText(adapter.getItem(position).getCode());
+                errorCode.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+                errorCodeDescription.setText(adapter.getItem(position).getDescription());
+
                 dialog.dismiss();
             }
         });
     }
 
-    private void showPictureDialog() {
-        AlertDialog.Builder pictureDialog = new AlertDialog.Builder(getContext());
-        pictureDialog.setTitle("Select Action");
-        String[] pictureDialogItems = {"Selectați imagine din galerie", "Deschide-ți camera"};
-        pictureDialog.setItems(pictureDialogItems, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0:
-                        choosePhotoFromGallary();
-                        break;
-                    case 1:
+    private void openDialogWithHospitals(ArrayList<Hospital> arrayListWithDevices) {
+        Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.devices_list_view);
 
-                        takePhotoFromCamera();
-                        break;
-                }
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dialog.show();
+
+        EditText searchEditText = dialog.findViewById(R.id.edit_text);
+        ListView listView = dialog.findViewById(R.id.list_view);
+        ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
+
+        ArrayAdapter<Hospital> adapter = new ArrayAdapter<Hospital>(getContext(), R.layout.list_item_layout_user_name, arrayListWithDevices) {
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                if (convertView == null)
+                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_layout_user_name, parent, false);
+                TextView hospitalName = convertView.findViewById(R.id.text1);
+                TextView hospitalAddress = convertView.findViewById(R.id.text2);
+
+                ImageView expandCollapseArrow = convertView.findViewById(R.id.arrow);
+                expandCollapseArrow.setVisibility(View.GONE);
+
+                hospitalName.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+                hospitalAddress.setTextColor(ContextCompat.getColor(getContext(), R.color.lightGray));
+
+                hospitalName.setText(arrayListWithDevices.get(position).getHospitalName());
+                hospitalAddress.setText(arrayListWithDevices.get(position).getHospitalAddress().toString());
+
+
+                return convertView;
+            }
+        };
+
+        listView.setAdapter(adapter);
+
+        closeFragButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
             }
         });
-        pictureDialog.show();
-    }
 
-    public void choosePhotoFromGallary() {
-        Intent photo = new Intent();
-        photo.setType("image/*");
-
-        photo.setAction(Intent.ACTION_GET_CONTENT);
-        pickImage.launch(photo);
-    }
-
-    private void takePhotoFromCamera() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File photo = new File(Environment.getExternalStorageDirectory(), "dir/pic.jpg");
-        imageUri = Uri.fromFile(photo);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-        takePicture.launch(imageUri);
-    }
-
-    private void addview(ImageView imageView, int width, int height) {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
-        params.setMarginEnd(10);
-        imageView.setLayoutParams(params);
-
-        linearLayout.addView(imageView);
-    }
-
-    private boolean validation() {
-        return (validations.textViewValidation(errorCode) & validations.textInputLayoutValidation(hospital) & validations.textInputLayoutValidation(deviceLocation) & validations.textViewValidation(selectDevice));
-    }
-
-    private void getUserData(String userKey) {
-        databaseReference.child(userKey).addValueEventListener(new ValueEventListener() {
+        searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                user = dataSnapshot.getValue(User.class);
-                if (user != null) {
-                    firstname = user.getFirstName();
-                    lastname = user.getLastName();
-                    phoneNumber = user.getPhoneNumber();
-//                    hideTextView(getView().findViewById(R.id.titleNewError),user.getRole().equals("admin"));
-                }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-    }
-
-    private void getDevices() {
-        databaseRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
-                    Device device = objectSnapshot.getValue(Device.class);
-                    deviceArrayList.add(device);
-
-                }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s);
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void afterTextChanged(Editable s) {
 
             }
         });
-    }
 
-    private void getFaultCodes() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("faultCodes");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
-                    FaultCode device = objectSnapshot.getValue(FaultCode.class);
-                    errorCodeArrayList.add(device);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                }
-            }
+                hospital.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+                hospital.setText(adapter.getItem(position).getHospitalName());
+                hospital.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                    }
 
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        hospitalSection.setText(null);
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
+
+                hospitalSectionsArrayList = new ArrayList<>();
+                hospitalSectionsArrayList.addAll(adapter.getItem(position).getHospitalSections());
+
+                currentAddress = adapter.getItem(position).getHospitalAddress();
+
+                dialog.dismiss();
             }
         });
     }
 
-    public void saveProblem() {
+    private void openDialogWithHospitalSections(ArrayList<String> arrayListWithDevices) {
+        dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.devices_list_view);
+
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dialog.show();
+
+        // Initialize and assign variable
+        EditText searchEditText = dialog.findViewById(R.id.edit_text);
+        ListView listView = dialog.findViewById(R.id.list_view);
+        ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, arrayListWithDevices) {
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView tv = view.findViewById(android.R.id.text1);
+                tv.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+                return view;
+            }
+        };
+
+        listView.setAdapter(adapter);
+
+        closeFragButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                hospitalSection.setText(adapter.getItem(position).toString());
+                hospitalSection.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+
+
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private void openDialogWithMedicalDevices(ArrayList<Device> arrayListWithDevices) {
+        dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.devices_list_view);
+
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dialog.show();
+
+        EditText searchEditText = dialog.findViewById(R.id.edit_text);
+        ListView listView = dialog.findViewById(R.id.list_view);
+        ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
+
+        ArrayAdapter<Device> adapter = new ArrayAdapter<Device>(getContext(), R.layout.list_item_layout_user_name, arrayListWithDevices) {
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                if (convertView == null)
+                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_layout_user_name, parent, false);
+                TextView tv = convertView.findViewById(R.id.text1);
+                TextView description = convertView.findViewById(R.id.text2);
+
+                ImageView expandCollapseArrow = convertView.findViewById(R.id.arrow);
+                expandCollapseArrow.setVisibility(View.GONE);
+
+                tv.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+                description.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+
+                tv.setText(arrayListWithDevices.get(position).getDeviceName().concat(", ").concat(arrayListWithDevices.get(position).getDeviceCode()));
+                description.setText(arrayListWithDevices.get(position).getDeviceCompanyName());
+                return convertView;
+            }
+        };
+
+        listView.setAdapter(adapter);
+
+        closeFragButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                selectDevice.setText(adapter.getItem(position).toString());
+                selectDevice.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+
+                dialog.dismiss();
+            }
+        });
+    }
+
+    public void saveProblemForGraphFragment() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference("brokenMedicalDevices");
-        BrokenMedicalDevices brokenMedicalDevices = new BrokenMedicalDevices(errorCode.getText().toString(), String.valueOf(Year.now().getValue()), LocalDate.now().getMonth().name(), String.valueOf(LocalDate.now().getDayOfMonth()), selectDevice.getText().toString().split(",")[2].trim());
+        BrokenMedicalDevices brokenMedicalDevices = new BrokenMedicalDevices(errorCode.getText().toString(), String.valueOf(Year.now().getValue()), LocalDate.now().getMonth().name(), String.valueOf(LocalDate.now().getDayOfMonth()), selectDevice.getText().toString().split(",")[1].trim());
 
         DatabaseReference yearsRef = databaseReference.child("years");
         DatabaseReference yearRef = yearsRef.child(brokenMedicalDevices.getYear());
@@ -463,15 +712,12 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    // Year and month exist, update data
                     checkMonthExistence(problemNameRef, brokenMedicalDevices);
 
                 } else {
                     errorsNameRef.setValue("").addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             checkMonthExistence(problemNameRef, brokenMedicalDevices);
-                        } else {
-                            // Handle the error
                         }
                     });
                 }
@@ -479,99 +725,16 @@ public class AddNewErrorFragment extends Fragment implements HideAndShow, LoginF
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Handle the error
             }
         });
     }
 
-    private static void checkMonthExistence(DatabaseReference dayRef, BrokenMedicalDevices brokenMD) {
-        dayRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    // Month exists, update data
-                    addDeviceCode(dayRef, brokenMD.getDeviceCode());
-                } else {
-                    // Month does not exist, create it
-                    dayRef.child("numberOfBrokenDevices").setValue(1);
-                    dayRef.child("arrayListOfDevicesCodes").setValue(new ArrayList<String>(Collections.singletonList(brokenMD.getDeviceCode())));
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Handle the error
-            }
-        });
+    private boolean validation() {
+        return (validations.textViewValidation(selectDevice) &
+                validations.textViewValidation(errorCode) &
+                validations.textViewValidation(hospital) &
+                validations.textViewValidation(hospitalSection) &
+                validations.textInputLayoutValidation(sectionRoom));
     }
 
-    private static void addDeviceCode(DatabaseReference monthRef, String deviceCode) {
-        DatabaseReference deviceCodesRef = monthRef.child("arrayListOfDevicesCodes");
-        deviceCodesRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<String> deviceCodes = new ArrayList<>();
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot codeSnapshot : dataSnapshot.getChildren()) {
-                        String code = codeSnapshot.getValue(String.class);
-                        deviceCodes.add(code);
-                    }
-                }
-
-                deviceCodes.add(deviceCode);
-
-                // Update "device codes" with the updated array list
-                deviceCodesRef.setValue(deviceCodes)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                // Update successful
-                            } else {
-                                // Handle the error
-                            }
-                        });
-
-                getSizeOfDeviceCodesArrayList(deviceCodes, monthRef);
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Handle the error
-            }
-        });
-    }
-
-    private static void getSizeOfDeviceCodesArrayList(ArrayList<String> deviceCodes, DatabaseReference monthRef) {
-        DatabaseReference numberOfBrokenDevicesRef = monthRef.child("numberOfBrokenDevices");
-        numberOfBrokenDevicesRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    long size = deviceCodes.size();
-                    numberOfBrokenDevicesRef.setValue(size);
-
-                } else {
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
-
-
-    @Override
-    public void hideTextView(TextView textView, boolean isAdmin) {
-        if (!isAdmin) {
-            textView.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    @Override
-    public void onUserRoleSelected(String userRole) {
-        this.userRole = userRole;
-
-    }
 }

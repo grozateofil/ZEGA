@@ -30,12 +30,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private AdapterForPersonalReports customAdapter;
 
     private String searchedUser;
+    private String type;
 
-    public ExpandableListAdapter(Context context, ArrayList<UserFiles> userList) {
+    public ExpandableListAdapter(Context context, ArrayList<UserFiles> userList, String type) {
         this.listOfUserFiles = userList;
         this.context = context;
         this.searchedUser = searchedUser;
         this.listAfterFiltered = new ArrayList<>(userList);
+        this.type = type;
     }
 
     @Override
@@ -114,7 +116,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         String childUid = listAfterFiltered.get(groupPosition).getUid();
 
 
-        customAdapter = new AdapterForPersonalReports(childPosition, childUid, arrayListOfUserNames, context);
+        customAdapter = new AdapterForPersonalReports(childPosition, childUid, arrayListOfUserNames, context, type);
 
         childListView.setAdapter(customAdapter);
         customAdapter.notifyDataSetChanged();
@@ -177,6 +179,5 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         notifyDataSetChanged();
     }
-
 
 }

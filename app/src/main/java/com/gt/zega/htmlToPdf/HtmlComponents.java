@@ -21,7 +21,7 @@ import java.util.Locale;
 
 public class HtmlComponents {
 
-    public static String createHtml(Context context, String date, String time, User user, String deviceName, String faultCode, String defaultDescription, String hospitalName, String deviceLocation, String optionalDescription, ArrayList<Uri> list) throws IOException {
+    public static String createHtml(Context context, String date, String time, User user, String deviceName, String faultCode, String defaultDescription, String hospitalName, String hospitalLocation, String hospitalSection, String roomSection, String optionalDescription, ArrayList<Uri> list) throws IOException {
         String userName = user.getFirstName() + " " + user.getLastName();
         String phoneNumber = user.getPhoneNumber();
         String htmlHead = "<!DOCTYPE html>\n" +
@@ -94,18 +94,28 @@ public class HtmlComponents {
                 "</tr>\n" +
 
                 "<tr>\n" +
-                "<th>Descriere generala</th>\n" +
+                "<th>Descriere generala defectiune</th>\n" +
                 "<td>" + defaultDescription + "</td>\n" +
                 "</tr>\n" +
 
                 "<tr>\n" +
-                "<th>Spital/Clinica</th>\n" +
+                "<th>Spital</th>\n" +
                 "<td>" + hospitalName + "</td>\n" +
                 "</tr>\n" +
 
                 "<tr>\n" +
-                "<th>Locatia aparatului</th>\n" +
-                "<td>" + deviceLocation + "</td>\n" +
+                "<th>Locatie spital</th>\n" +
+                "<td>" + hospitalLocation + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Sectia</th>\n" +
+                "<td>" + hospitalSection + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Salon</th>\n" +
+                "<td>" + roomSection + "</td>\n" +
                 "</tr>\n");
 
         if (!optionalDescription.isEmpty()) {
@@ -158,6 +168,103 @@ public class HtmlComponents {
             return imagePath;
         }
         return null;
+    }
+
+    public static String createHtml1(Context context, String date, String time, User user, String suppliesName, String deviceName, String hospitalName, String hospitalLocation, String hospitalSection, String roomSection) throws IOException {
+        String userName = user.getFirstName() + " " + user.getLastName();
+        String phoneNumber = user.getPhoneNumber();
+        String htmlHead = "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head>" + "<style>" + ".center {\n" +
+                "  margin-left: auto;\n" +
+                "  margin-right: auto;\n" +
+                "}\n" +
+                "\n" +
+                "table{\n" +
+                "  width:100%;\n" +
+                "}\n" +
+                "\n" +
+                "th{\n" +
+                "  width:20%;\n" +
+                "  background-color:#c2f4fc;\n" +
+                "}\n" +
+                "\n" +
+                "td{\n" +
+                "  width:80%;\n" +
+                "  word-wrap: break-word;\n" +
+                "}\n" +
+                "\n" +
+                "tbody tr:nth-child(even) td{\n" +
+                "    background-color:#cdd0d1;\n" +
+                "}\n" +
+                "tbody tr:nth-child(odd) td{\n" +
+                "}\n" +
+                "\n" +
+                "table, th, td {\n" +
+                "  border: 1px solid black;\n" +
+                "  border-collapse: collapse;\n" +
+                "}\n" +
+                "\n" +
+                "th {\n" +
+                "  text-align: left;\n" +
+                "}" + "</style>" + "</head>";
+
+        StringBuilder htmlBody = new StringBuilder("\n<body>\n" +
+                "<table class=\"center\" border=\"1\">\n" +
+                "<tbody>\n" +
+                "<tr>\n" +
+                "<th>Data</th>\n" +
+                "<td>" + date + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Ora</th>\n" +
+                "<td>" + time + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Nume utilizator</th>\n" +
+                "<td>" + userName + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Telefon</th>\n" +
+                "<td>" + phoneNumber + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Consumabil</th>\n" +
+                "<td>" + suppliesName + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Aparat</th>\n" +
+                "<td>" + deviceName + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Spital</th>\n" +
+                "<td>" + hospitalName + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Locatie spital</th>\n" +
+                "<td>" + hospitalLocation + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Sectia</th>\n" +
+                "<td>" + hospitalSection + "</td>\n" +
+                "</tr>\n" +
+
+                "<tr>\n" +
+                "<th>Salon</th>\n" +
+                "<td>" + roomSection + "</td>\n" +
+                "</tr>\n");
+
+        htmlBody.append("</tbody>\n" + "</table>\n" + "</body>\n" + "</html>");
+        return htmlHead + htmlBody;
+
     }
 
     public static String monthlyReportWithBrokenDevices(ArrayList<BrokenMedicalDevicesMonthly> brokenMedicalDevicesMonthlyArrayList) {
