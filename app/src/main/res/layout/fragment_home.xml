@@ -121,6 +121,33 @@
     <!--        android:text="Aplică"-->
     <!--        android:textColor="@color/floral_white"-->
     <!--        app:cornerRadius="3dp" />-->
+    <DigitalClock
+        android:id="@+id/clock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:textColor="@color/black_russian"
+        android:textSize="60sp" />
+
+    <TextView
+        android:id="@+id/hello"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/clock"
+        android:gravity="center"
+        android:textColor="@color/black_russian"
+        android:textSize="25sp" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar_home"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/clock"
+        android:layout_centerHorizontal="true"
+        android:indeterminateTint="@color/black_russian"
+        android:visibility="gone" />
 
 
 </RelativeLayout>

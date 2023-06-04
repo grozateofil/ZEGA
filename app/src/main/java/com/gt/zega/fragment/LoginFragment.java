@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -46,6 +47,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private Button forgotPasswordButton;
     private Button loginButton;
     private Button registerButton;
+    private ProgressBar progressBar;
 
     private FirebaseAuth fAuth;
     private DatabaseReference databaseReference;
@@ -73,6 +75,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         forgotPasswordButton = view.findViewById(R.id.forgotPasswordButton);
         loginButton = view.findViewById(R.id.loginButton);
         registerButton = view.findViewById(R.id.createAccountButton);
+        progressBar = view.findViewById(R.id.progress_bar_login);
 
         fAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
@@ -164,12 +167,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 //            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 //                FirebaseUser userObject = firebaseAuth.getCurrentUser();
 //                if (userObject != null && userObject.isEmailVerified()) {
-
+        enabled(false);
+        progressBar.setVisibility(View.VISIBLE);
         fAuth.signInWithEmailAndPassword(emailAddress, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-
 
                 if (task.isSuccessful()) {
                     email.setError(null);
@@ -213,6 +216,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 } else {
                     email.setError("\0");
                     password.setError("\0");
+                    progressBar.setVisibility(View.GONE);
+                    enabled(true);
                     Toast.makeText(getActivity().getApplicationContext(), "Email sau parolă incorectă", Toast.LENGTH_SHORT).show();
                 }
 
@@ -226,6 +231,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 //        });
 
 
+    }
+
+    public void enabled(boolean type) {
+        email.setEnabled(type);
+        password.setEnabled(type);
+        forgotPasswordButton.setEnabled(type);
+        loginButton.setEnabled(type);
+        registerButton.setEnabled(type);
     }
 
     @Override

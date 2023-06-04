@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,6 +34,7 @@ public class BrokenDeviceReportFragment extends Fragment {
     private ListView listView;
     private TextView message;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private ProgressBar progressBar;
     private ArrayList<String> arrayList;
 
     private AdapterForPersonalReports customAdapter;
@@ -52,8 +54,10 @@ public class BrokenDeviceReportFragment extends Fragment {
         arrayList = new ArrayList<>();
         listView = view.findViewById(R.id.listOfFiles);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        progressBar = view.findViewById(R.id.progress_bar_broken_device_report);
 
 
+        progressBar.setVisibility(View.VISIBLE);
         storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
             @Override
             public void onSuccess(ListResult listResult) {
@@ -91,6 +95,7 @@ public class BrokenDeviceReportFragment extends Fragment {
 //                        }
 //                    }
 //                });
+                progressBar.setVisibility(View.GONE);
             }
         });
 

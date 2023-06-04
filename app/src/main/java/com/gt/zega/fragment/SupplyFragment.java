@@ -41,7 +41,7 @@ import com.gt.zega.util.ValidationsImpl;
 
 import java.util.ArrayList;
 
-public class SupplyFragment extends Fragment implements View.OnClickListener {
+public class SupplyFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
     private TextView selectSupplies;
     private TextView selectMedicalDevice;
@@ -83,7 +83,6 @@ public class SupplyFragment extends Fragment implements View.OnClickListener {
 
         validations = new ValidationsImpl();
 
-//        hospitalsArrayList=new ArrayList<>();
         hospitalSectionsArrayList = new ArrayList<>();
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -102,6 +101,12 @@ public class SupplyFragment extends Fragment implements View.OnClickListener {
         selectHospitalSection.setOnClickListener(this);
         sendButton.setOnClickListener(this);
 
+        selectSupplies.setOnLongClickListener(this);
+        selectMedicalDevice.setOnLongClickListener(this);
+        selectHospital.setOnLongClickListener(this);
+        selectHospitalSection.setOnLongClickListener(this);
+        sendButton.setOnLongClickListener(this);
+
         return view;
     }
 
@@ -114,7 +119,6 @@ public class SupplyFragment extends Fragment implements View.OnClickListener {
                 for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
                     Device device = objectSnapshot.getValue(Device.class);
                     medicalDevicesArrayList.add(device);
-
                 }
             }
 
@@ -155,7 +159,6 @@ public class SupplyFragment extends Fragment implements View.OnClickListener {
                 for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
                     Supply supply = objectSnapshot.getValue(Supply.class);
                     suppliesArrayList.add(supply);
-
                 }
             }
 
@@ -353,7 +356,6 @@ public class SupplyFragment extends Fragment implements View.OnClickListener {
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         dialog.show();
 
-        // Initialize and assign variable
         EditText searchEditText = dialog.findViewById(R.id.edit_text);
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
@@ -401,7 +403,6 @@ public class SupplyFragment extends Fragment implements View.OnClickListener {
 
                 selectHospitalSection.setText(adapter.getItem(position).toString());
                 selectHospitalSection.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-
 
                 dialog.dismiss();
             }
@@ -506,20 +507,36 @@ public class SupplyFragment extends Fragment implements View.OnClickListener {
             case (R.id.sendButton):
                 if (validation()) {
                     htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectSupplies.getText().toString(), selectMedicalDevice.getText().toString(), selectHospital.getText().toString(), currentAddress.toString(), selectHospitalSection.getText().toString(), devLocation.getEditText().getText().toString(), "suppliesReport");
-                    saveProblemForGraphFragment();
                     if (htmlToPdf.writeHTML()) {
                         selectSupplies.setText(null);
                         selectMedicalDevice.setText(null);
                         selectHospital.setText(null);
                         selectHospitalSection.setText(null);
                         devLocation.getEditText().setText(null);
-
                     }
                 }
                 break;
         }
     }
 
-    private void saveProblemForGraphFragment() {
+    @Override
+    public boolean onLongClick(View view) {
+        switch (view.getId()) {
+            case (R.id.selectSupplies):
+                selectSupplies.setText(null);
+                break;
+            case (R.id.selectMedicalDevice):
+                selectMedicalDevice.setText(null);
+                break;
+            case (R.id.selectHospital):
+                selectHospital.setText(null);
+                hospitalSectionsArrayList.clear();
+                break;
+            case (R.id.selectSection):
+                selectHospitalSection.setText(null);
+                break;
+
+        }
+        return true;
     }
 }

@@ -21,7 +21,7 @@ public class MyReportsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_user_reports, container, false);
+        View view = inflater.inflate(R.layout.fragment_my_reports, container, false);
 
         tabLayout = view.findViewById(R.id.tabLay);
         viewPager = view.findViewById(R.id.view_pager2);

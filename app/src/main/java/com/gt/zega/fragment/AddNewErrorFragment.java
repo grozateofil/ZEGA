@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,7 +69,7 @@ public class AddNewErrorFragment extends Fragment {
     private TextView hospitalSection;
     private TextInputLayout sectionRoom;
     private TextInputLayout description;
-
+    private ProgressBar progressBar;
 
     private Dialog dialog;
     private ArrayList<Device> deviceArrayList;
@@ -142,6 +143,7 @@ public class AddNewErrorFragment extends Fragment {
         linearLayout = view.findViewById(R.id.photosLinearLayout);
         addPictureButton = view.findViewById(R.id.addPicture);
         addButton = view.findViewById(R.id.addNewDeviceButton);
+        progressBar = view.findViewById(R.id.progress_bar_create_broken_device_report);
 
         description.getEditText().setMovementMethod(new ScrollingMovementMethod());
 
@@ -170,8 +172,14 @@ public class AddNewErrorFragment extends Fragment {
             public void onClick(View v) {
                 openDialogWithMedicalDevices(deviceArrayList);
             }
+        });
 
-
+        selectDevice.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                selectDevice.setText(null);
+                return true;
+            }
         });
 
         errorCode.setOnClickListener(new View.OnClickListener() {
@@ -181,10 +189,37 @@ public class AddNewErrorFragment extends Fragment {
             }
         });
 
+        errorCode.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                errorCode.setText(null);
+                errorCodeDescription.setText(null);
+                return true;
+            }
+        });
+
         hospital.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openDialogWithHospitals(hospitalArrayList);
+            }
+        });
+
+        hospital.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                hospital.setText(null);
+                hospitalSection.setText(null);
+                hospitalSectionsArrayList.clear();
+                return true;
+            }
+        });
+
+        hospitalSection.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                hospitalSection.setText(null);
+                return true;
             }
         });
 
@@ -209,7 +244,7 @@ public class AddNewErrorFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (validation()) {
-
+                    enabled(false);
                     htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectDevice.getText().toString(), errorCode.getText().toString(), errorCodeDescription.getText().toString(), hospital.getText().toString(), currentAddress.toString(), hospitalSection.getText().toString(), sectionRoom.getEditText().getText().toString(), description.getEditText().getText().toString(), listOfImages, "brokenDeviceReport");
                     saveProblemForGraphFragment();
                     if (htmlToPdf.writeHTML()) {
@@ -223,6 +258,8 @@ public class AddNewErrorFragment extends Fragment {
 
                         linearLayout.removeAllViews();
                         listOfImages.clear();
+                        enabled(true);
+
                     }
                 }
             }
@@ -362,7 +399,6 @@ public class AddNewErrorFragment extends Fragment {
                         });
 
                 getSizeOfArrayListOfDevicesCodes(deviceCodes, monthRef);
-
             }
 
             @Override
@@ -396,7 +432,6 @@ public class AddNewErrorFragment extends Fragment {
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         dialog.show();
 
-        // Initialize and assign variable
         EditText searchEditText = dialog.findViewById(R.id.edit_text);
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
@@ -419,7 +454,6 @@ public class AddNewErrorFragment extends Fragment {
                 tv.setText(arrayListWithDevices.get(position).getCode());
                 description.setText(arrayListWithDevices.get(position).getDescription());
 
-//                tv.setText(arrayListWithDevices.get(position));
                 return convertView;
             }
         };
@@ -492,7 +526,6 @@ public class AddNewErrorFragment extends Fragment {
                 hospitalName.setText(arrayListWithDevices.get(position).getHospitalName());
                 hospitalAddress.setText(arrayListWithDevices.get(position).getHospitalAddress().toString());
 
-
                 return convertView;
             }
         };
@@ -538,7 +571,6 @@ public class AddNewErrorFragment extends Fragment {
                     @Override
                     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                         hospitalSection.setText(null);
-
                     }
 
                     @Override
@@ -564,7 +596,6 @@ public class AddNewErrorFragment extends Fragment {
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         dialog.show();
 
-        // Initialize and assign variable
         EditText searchEditText = dialog.findViewById(R.id.edit_text);
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
@@ -613,7 +644,6 @@ public class AddNewErrorFragment extends Fragment {
 
                 hospitalSection.setText(adapter.getItem(position).toString());
                 hospitalSection.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-
 
                 dialog.dismiss();
             }
@@ -735,6 +765,17 @@ public class AddNewErrorFragment extends Fragment {
                 validations.textViewValidation(hospital) &
                 validations.textViewValidation(hospitalSection) &
                 validations.textInputLayoutValidation(sectionRoom));
+    }
+
+    public void enabled(boolean type) {
+        selectDevice.setEnabled(type);
+        errorCode.setEnabled(type);
+        hospital.setEnabled(type);
+        hospitalSection.setEnabled(type);
+        sectionRoom.setEnabled(type);
+        description.setEnabled(type);
+        linearLayout.setEnabled(type);
+        addPictureButton.setEnabled(type);
     }
 
 }

@@ -16,15 +16,18 @@
     <string name="firstName">Prenume</string>
     <string name="lastName">Nume de familie</string>
     <string name="europeanCountries">AL,AD,AT,BY,BE,BA,BG,HR,CZ,DK,EE,FI,FR,DE,GR,HU,IS,IE,IT,LV,LI,LT,LU,MT,MD,MC,ME,MK,NL,NO,PL,PT,RO,RU,SM,RS,SK,SI,ES,SE,CH,UA,GB</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="selectACountry">Selectați o țară</string>
     <string name="search">Caută</string>
     <string name="wantToExit">Doriți să vă deconectați?</string>
     <string name="yes">Da</string>
     <string name="no">Nu</string>
 
-    <string name="navigation_drower_open">Open</string>
-    <string name="navigation_drower_close">Close</string>
+    <string name="navigation_drower_open">Deschide</string>
+    <string name="navigation_drower_close">Închide</string>
+
+    <string name="demo">Hello, %1$s! You have %2$d new messages.</string>
+    <string name="reset_password">Introduceți mai jos adresa de e-mail și vă vom trimite un link pentru a putea să vă resetați parola.</string>
+    <string name="reset_password_confirmation">V-am trimis un e-mail la adresa\n %1$s pentru a putea reseta parola.\n\nDaca nu ați primit nimic este posibil ca e-mailul să-l fi primit în folderul de spam.</string>
 
     <string name="admin">admin</string>
     <string name="super_user">inginer, asistenta sef, medic sef</string>

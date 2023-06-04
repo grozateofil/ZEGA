@@ -8,7 +8,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -170,17 +169,17 @@ public class HtmlToPdf {
 
     private void uploadUserFileToFirebaseStorage(File file, Context context, Activity activity) {
 
-//        View customProgressDialogView = LayoutInflater.from(context).inflate(R.layout.loading_dialog, null);
-//        ProgressBar progressBar = customProgressDialogView.findViewById(R.id.progress_bar);
-        ProgressBar progressBar = new ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal);
-        progressBar.setIndeterminate(false);
-        progressBar.setProgress(0);
+        View customProgressDialogView = LayoutInflater.from(context).inflate(R.layout.fragment_add_new_error, null);
+//        ProgressBar progressBar = customProgressDialogView.findViewById(R.id.progress_bar_create_broken_device_report);
+//        ProgressBar progressBar = new ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal);
+//        progressBar.setIndeterminate(false);
+//        progressBar.setProgress(0);
 //        TextView progressTextView = customProgressDialogView.findViewById(R.id.loading_text);
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setView(progressBar);
-        builder.setCancelable(false);
-        AlertDialog progressDialog = builder.create();
-        progressDialog.show();
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//        builder.setView(progressBar);
+//        builder.setCancelable(false);
+//        AlertDialog progressDialog = builder.create();
+//        progressDialog.show();
 
         // Show the progress dialog
 //        activity.runOnUiThread(new Runnable() {
@@ -196,30 +195,34 @@ public class HtmlToPdf {
 
         StorageReference fileRef = storage.getReference().child("users/" + userId + "/" + reportType + "/" + file.getName());
 
+//        progressBar.setVisibility(View.VISIBLE);
         fileRef.putFile(Uri.fromFile(file)).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
 
-                double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
-                progressBar.setProgress((int) progress);
+                int progress = (int) ((1000 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount());
+//                progressBar.setVisibility(View.VISIBLE);
+//                progressBar.setProgress((int) progress);
             }
         }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onPaused(@NonNull UploadTask.TaskSnapshot snapshot) {
+//                progressBar.setVisibility(View.GONE);
                 System.out.println("Upload is paused!");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                progressDialog.dismiss();
+//                progressBar.setVisibility(View.GONE);
                 System.out.println("Error uploading file: " + e.getMessage());
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 file.delete();
-                progressDialog.dismiss();
+//                progressBar.setVisibility(View.GONE);
                 Toast.makeText(context, htmlFileName + " a fost salvat", Toast.LENGTH_SHORT).show();
+
             }
         });
     }

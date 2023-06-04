@@ -77,8 +77,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        View view2 = inflater.inflate(R.layout.loading_dialog, container, false);
-        progressBar = view2.findViewById(R.id.progress_bar);
 
         superUsersList = new ArrayList<>(Arrays.asList(getText(R.string.super_user).toString().split(",")));
         usersList = new ArrayList<>(Arrays.asList(getText(R.string.user).toString().split(",")));
@@ -92,17 +90,18 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         resetPassword = view.findViewById(R.id.resetPasswordButton);
         editSaveButton = view.findViewById(R.id.saveChangesButton);
+        progressBar = view.findViewById(R.id.progress_bar_profile);
 
-        editSaveButton.setTextOff("Edit");
-        editSaveButton.setTextOn("Save");
+        editSaveButton.setTextOff("Editare");
+        editSaveButton.setTextOn(getText(R.string.save));
         editSaveButton.setChecked(isEditMode);
 
         ccp.registerCarrierNumberEditText(phoneNumber.getEditText());
 
-        firstname.setEnabled(isEditMode);
-        lastname.setEnabled(isEditMode);
-        phoneNumber.setEnabled(isEditMode);
-        ccp.setEnabled(isEditMode);
+        firstname.setEnabled(false);
+        lastname.setEnabled(false);
+        phoneNumber.setEnabled(false);
+        ccp.setEnabled(false);
 
         validations = new ValidationsImpl();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -132,7 +131,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     lastname.setEnabled(true);
                     phoneNumber.setEnabled(true);
                     ccp.setEnabled(true);
-                    editSaveButton.setTextOn("Save");
 
                 } else {
 
@@ -140,8 +138,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     lastname.setEnabled(false);
                     phoneNumber.setEnabled(false);
                     ccp.setEnabled(false);
-                    editSaveButton.setTextOff("Edit");
-
 
                     updateData(firstname, lastname, phoneNumber, ccp, emailAddress);
                 }
@@ -218,6 +214,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     private void getUserData(String userKey) {
+        enabled(false);
         progressBar.setVisibility(View.VISIBLE);
         databaseReference.child(userKey).addValueEventListener(new ValueEventListener() {
             @Override
@@ -244,11 +241,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
                 }
                 progressBar.setVisibility(View.GONE);
+                enabled(true);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 progressBar.setVisibility(View.GONE);
+                enabled(false);
             }
         });
     }
@@ -286,6 +285,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
 
             if (hashMap.size() > 0) {
+                enabled(false);
+                progressBar.setVisibility(View.VISIBLE);
                 databaseReference.child(userKey).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -299,12 +300,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                             } else {
                                 Toast.makeText(getActivity().getApplicationContext(), "Date actualizate cu succes", Toast.LENGTH_SHORT).show();
                             }
-
+                            progressBar.setVisibility(View.GONE);
+                            enabled(true);
                         } else {
-                            Toast.makeText(getActivity().getApplicationContext(), "Actualizarea datelor a eșuat", Toast.LENGTH_SHORT).show();
-
+                            enabled(false);
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getActivity().getApplicationContext(), "Actualizarea datelor a eșuat.\nRedeschideți pagina.", Toast.LENGTH_SHORT).show();
                         }
-
                     }
                 });
             }
@@ -321,10 +323,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 //                    }
 //                });
 //            }
-
         }
-
-
     }
 
     @NonNull
@@ -333,6 +332,15 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 .collect(Collectors.joining(", "));
     }
 
+    public void enabled(boolean type) {
+        firstname.setEnabled(type);
+        lastname.setEnabled(type);
+        phoneNumber.setEnabled(type);
+        ccp.setEnabled(type);
+        emailAddress.setEnabled(type);
+        resetPassword.setEnabled(type);
+        editSaveButton.setEnabled(type);
+    }
 
 //    private void saveProfilePicture() {
 //        firebaseStorage = FirebaseStorage.getInstance();

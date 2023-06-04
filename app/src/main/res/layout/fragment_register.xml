@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5E3D9"
+    android:background="@color/light_pink"
     tools:context=".fragment.RegisterFragment">
 
 
@@ -39,10 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_logo"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"
-        android:orientation="horizontal"
-        android:weightSum="100">
+        android:orientation="horizontal">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/firstname"
@@ -192,20 +189,38 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
-    <Spinner
+    <!--    <Spinner-->
+    <!--        android:id="@+id/role"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_below="@id/password"-->
+    <!--        android:layout_marginLeft="30dp"-->
+    <!--        android:layout_marginRight="30dp"-->
+
+    <!--        android:background="@android:color/transparent"-->
+    <!--        android:spinnerMode="dropdown"-->
+    <!--        android:theme="@style/ThemeOverlay.AppCompat.Light" />-->
+
+    <TextView
         android:id="@+id/role"
-        style="@style/SpinnerButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="15dp"
         android:layout_below="@id/password"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:backgroundTint="@color/black_russian"
-        android:entries="@array/my_spinner_options"
-        android:prompt="@string/select_an_option"
-        android:spinnerMode="dropdown" />
-
-
+        android:background="@drawable/text_view_border"
+        android:gravity="center_vertical"
+        android:hint="Rol"
+        android:padding="12dp"
+        android:textColor="@color/black_russian"
+        android:textColorHint="@color/black_russian"
+        android:textSize="15sp"
+        app:drawableEndCompat="@drawable/arrow_down_icon"
+        app:endIconTint="@color/black_russian"
+        app:errorEnabled="true"
+        app:errorIconDrawable="@null" />
     <Button
         android:id="@+id/createButton"
         android:layout_width="match_parent"
@@ -246,6 +261,15 @@
         android:text="@string/login"
         android:textColor="#F5E3D9"
         app:cornerRadius="3dp" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar2"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="@color/black_russian"
+        android:visibility="gone" />
 
 
 </RelativeLayout>

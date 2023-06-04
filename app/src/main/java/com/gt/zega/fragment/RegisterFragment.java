@@ -9,13 +9,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,6 +41,9 @@ import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
 import com.hbb20.CountryCodePicker;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class RegisterFragment extends Fragment implements View.OnClickListener {
 
@@ -47,7 +56,10 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     private TextInputLayout phoneNumber;
     private TextInputLayout email;
     private TextInputLayout password;
-    private Spinner spinnerRole;
+    private TextView role;
+    private Button createButton;
+    private Button backToLoginButton;
+    private ProgressBar progressBar;
 
     private FirebaseAuth fAuth;
     private FirebaseDatabase firebaseDatabase;
@@ -58,9 +70,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     private Validations validations;
     private String userUid;
     private User user;
-
-    private Button createButton;
-    private Button backToLoginButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -74,9 +83,10 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         phoneNumber = view.findViewById(R.id.phoneNumberRegistration);
         email = view.findViewById(R.id.email);
         password = view.findViewById(R.id.password);
-        spinnerRole = view.findViewById(R.id.role);
+        role = view.findViewById(R.id.role);
         createButton = view.findViewById(R.id.createButton);
         backToLoginButton = view.findViewById(R.id.backToLoginButton);
+        progressBar = view.findViewById(R.id.progress_bar2);
 
         ccp.registerCarrierNumberEditText(phoneNumber.getEditText());
         ccp.setCustomMasterCountries(getText(R.string.europeanCountries).toString());
@@ -97,9 +107,11 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         email.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
         password.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
 
+
 //        imageView.setOnClickListener(this);
         createButton.setOnClickListener(this);
         backToLoginButton.setOnClickListener(this);
+        role.setOnClickListener(this);
 
         return view;
     }
@@ -123,6 +135,10 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                 break;
             case (R.id.backToLoginButton):
                 getActivity().onBackPressed();
+                break;
+
+            case (R.id.role):
+                openDialogWithUserRoles();
                 break;
         }
     }
@@ -172,7 +188,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     }
 
     private boolean validation() {
-        return (validations.textInputLayoutValidation(firstname) & validations.textInputLayoutValidation(lastname) & validations.phoneNumberValidation(phoneNumber, ccp) & validations.emailValidation(email) & validations.createPassword(password));
+        return (validations.textInputLayoutValidation(firstname) & validations.textInputLayoutValidation(lastname) & validations.phoneNumberValidation(phoneNumber, ccp) & validations.emailValidation(email) & validations.createPassword(password) & validations.textViewValidation(role));
     }
 
     private void firebaseRegistration() {
@@ -181,7 +197,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         String phoneNumber = ccp.getFullNumberWithPlus();
         String emailAddress = email.getEditText().getText().toString();
         String pass = password.getEditText().getText().toString();
-        String role = spinnerRole.getSelectedItem().toString();
+        String role = this.role.getText().toString();
 
         UserAccount userAccount = new UserAccount(emailAddress, pass);
         user = new User(firstName, lastName, phoneNumber, role);
@@ -197,7 +213,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 //                        public void onSuccess(Uri uri) {
 //                            String imageUrl = uri.toString();
 //                            user = new User(firstName, lastName, phoneNumber, imageUrl);
-
+        progressBar.setVisibility(View.VISIBLE);
+        enabled(false);
         fAuth.createUserWithEmailAndPassword(userAccount.getEmail(), userAccount.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -212,9 +229,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
 
-//                                Toast.makeText(getActivity().getApplicationContext(), "Cont creat cu succes", Toast.LENGTH_SHORT).show();
-
-
                                 fAuth.setLanguageCode("ro");
                                 firebaseUser.sendEmailVerification();
                                 Toast.makeText(getActivity().getApplicationContext(), "Ți-a fost trimis un email pentru a valida adresa de email", Toast.LENGTH_LONG).show();
@@ -226,6 +240,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                         }
                     });
                 } else {
+                    progressBar.setVisibility(View.GONE);
+                    enabled(true);
                     email.setError("Există deja un cont asociat acestei adrese de email");
                 }
             }
@@ -237,6 +253,51 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 //        });
 
 
+    }
+
+    private void openDialogWithUserRoles() {
+        Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.devices_list_view);
+
+        dialog.getWindow().setLayout(900, 600);
+        dialog.show();
+
+        EditText searchEditText = dialog.findViewById(R.id.edit_text);
+        ListView listView = dialog.findViewById(R.id.list_view);
+        ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
+
+        searchEditText.setVisibility(View.GONE);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, new ArrayList<>(Arrays.asList("dasda", "dsadasd", "dsadasdsadsad"))) {
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView tv = view.findViewById(android.R.id.text1);
+                tv.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+                return view;
+            }
+        };
+
+        listView.setAdapter(adapter);
+
+        closeFragButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                role.setText(adapter.getItem(position));
+                role.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+
+                dialog.dismiss();
+            }
+        });
     }
 
 
@@ -269,6 +330,18 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
             }
         };
+    }
+
+    public void enabled(boolean type) {
+        firstname.setEnabled(type);
+        lastname.setEnabled(type);
+        phoneNumber.setEnabled(type);
+        ccp.setEnabled(type);
+        email.setEnabled(type);
+        password.setEnabled(type);
+        role.setEnabled(type);
+        createButton.setEnabled(type);
+        backToLoginButton.setEnabled(type);
     }
 
 }

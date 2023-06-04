@@ -40,7 +40,7 @@
                 android:background="@drawable/text_view_border"
                 android:gravity="center_vertical"
                 android:hint="Selectează aparat"
-                android:padding="15dp"
+                android:padding="12dp"
                 android:textColor="@color/black_russian"
                 android:textColorHint="@color/black_russian"
                 android:textSize="15sp"
@@ -59,7 +59,7 @@
                 android:background="@drawable/text_view_border"
                 android:gravity="center_vertical"
                 android:hint="Selectare cod defectiune"
-                android:padding="15dp"
+                android:padding="12dp"
                 android:textColor="@color/black_russian"
                 android:textColorHint="@color/black_russian"
                 android:textSize="15sp"
@@ -74,6 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/errorCode"
                 android:layout_marginStart="30dp"
+                android:layout_marginTop="-1dp"
                 android:layout_marginEnd="30dp"
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/text_view_border"
@@ -97,7 +98,7 @@
                 android:background="@drawable/text_view_border"
                 android:gravity="center_vertical"
                 android:hint="Selectează spital"
-                android:padding="15dp"
+                android:padding="12dp"
                 android:textColor="@color/black_russian"
                 android:textColorHint="@color/black_russian"
                 android:textSize="15sp"
@@ -118,7 +119,7 @@
                 android:background="@drawable/text_view_border"
                 android:gravity="center_vertical"
                 android:hint="Selectează sectia"
-                android:padding="15dp"
+                android:padding="12dp"
                 android:textColor="@color/black_russian"
                 android:textColorHint="@color/black_russian"
                 android:textSize="15sp"
@@ -225,5 +226,14 @@
                 app:cornerRadius="3dp" />
         </LinearLayout>
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progress_bar_create_broken_device_report"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="@color/black_russian"
+        android:visibility="gone" />
 
 </RelativeLayout>

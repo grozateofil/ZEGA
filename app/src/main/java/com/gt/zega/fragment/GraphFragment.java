@@ -45,6 +45,7 @@ import java.time.Month;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 
 public class GraphFragment extends Fragment implements MonthSelectedFragment.OnDataSelectedListener {
@@ -60,6 +61,8 @@ public class GraphFragment extends Fragment implements MonthSelectedFragment.OnD
 
     private ArrayList<BarEntry> entries;
     private ArrayList<BrokenMedicalDevicesMonthly> brokenMedicalDevicesMonthlyArrayList;
+    private Locale englishLocale;
+    private Locale romanianLocale;
 
     private String[] arrayOfMonths = new String[]{"Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"};
 
@@ -76,10 +79,12 @@ public class GraphFragment extends Fragment implements MonthSelectedFragment.OnD
         closeFragment = view.findViewById(R.id.closeFragment);
         barChart = view.findViewById(R.id.barChart);
 
-
         firebaseDatabase = FirebaseDatabase.getInstance().getReference("brokenMedicalDevices");
 
-        getArrayListOfPoints(String.valueOf(Year.now().getValue()), new SimpleDateFormat("MMMM").format(new Date(System.currentTimeMillis())).toUpperCase(), new DataCallback() {
+        englishLocale = new Locale("en");
+        romanianLocale = new Locale("ro");
+
+        getArrayListOfPoints(String.valueOf(Year.now().getValue()), new SimpleDateFormat("MMMM", englishLocale).format(new Date(System.currentTimeMillis())).toUpperCase(), new DataCallback() {
             @Override
             public void onDataLoaded(ArrayList<BrokenMedicalDevicesMonthly> data) {
                 entries = new ArrayList<>();
@@ -175,7 +180,7 @@ public class GraphFragment extends Fragment implements MonthSelectedFragment.OnD
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false);
         xAxis.setGranularity(1f);
-        xAxis.setLabelCount(Month.valueOf(new SimpleDateFormat("MMMM").format(new Date(System.currentTimeMillis())).toUpperCase()).length(false));
+        xAxis.setLabelCount(Month.valueOf(new SimpleDateFormat("MMMM", englishLocale).format(new Date(System.currentTimeMillis())).toUpperCase()).length(false));
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {

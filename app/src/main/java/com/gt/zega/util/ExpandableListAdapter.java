@@ -29,13 +29,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private AdapterForPersonalReports customAdapter;
 
-    private String searchedUser;
     private String type;
 
     public ExpandableListAdapter(Context context, ArrayList<UserFiles> userList, String type) {
         this.listOfUserFiles = userList;
         this.context = context;
-        this.searchedUser = searchedUser;
         this.listAfterFiltered = new ArrayList<>(userList);
         this.type = type;
     }

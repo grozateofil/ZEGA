@@ -2,7 +2,6 @@ package com.gt.zega.fragment;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +13,7 @@ import android.widget.DatePicker;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -63,7 +63,6 @@ public class AllReportsFragment extends Fragment {
     private ProgressBar progressBar;
 
     private String type;
-    private Uri uri;
 
     public AllReportsFragment(String type) {
         this.type = type;
@@ -123,7 +122,7 @@ public class AllReportsFragment extends Fragment {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            // Handle errors here
+                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -134,6 +133,7 @@ public class AllReportsFragment extends Fragment {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -177,7 +177,7 @@ public class AllReportsFragment extends Fragment {
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    // Handle errors here
+                                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -185,7 +185,7 @@ public class AllReportsFragment extends Fragment {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        // Handle errors here
+                        Toast.makeText(getContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -240,7 +240,6 @@ public class AllReportsFragment extends Fragment {
                                 new DatePickerDialog.OnDateSetListener() {
                                     @Override
                                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                        // Set the selected date on the EditText
                                         fromTIL.getEditText().setText(dayOfMonth + "." + (month + 1) + "." + year);
                                     }
                                 },
@@ -265,7 +264,6 @@ public class AllReportsFragment extends Fragment {
                                 new DatePickerDialog.OnDateSetListener() {
                                     @Override
                                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                        // Set the selected date on the EditText
                                         untilTIL.getEditText().setText(dayOfMonth + "." + (month + 1) + "." + year);
                                     }
                                 },

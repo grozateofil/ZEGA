@@ -28,7 +28,7 @@ public class ResetPasswordConfirmationFragment extends Fragment {
         button = view.findViewById(R.id.backToLoginPageButton);
         bundle = this.getArguments();
 
-        textView.setText("V-am trimis un e-mail la adresa\n" + bundle.getString("email") + " pentru a putea reseta parola.\n\nDaca nu ati primit nimic este posibil ca e-mailul sa-l fi primit in folderul de spam");
+        textView.setText(getString(R.string.reset_password_confirmation, bundle.getString("email")));
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override

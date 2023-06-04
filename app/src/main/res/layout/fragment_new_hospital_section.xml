@@ -25,7 +25,7 @@
             android:background="@drawable/text_view_border"
             android:gravity="center_vertical"
             android:hint="Selectează spital"
-            android:padding="15dp"
+            android:padding="12dp"
             android:textColor="@color/black_russian"
             android:textColorHint="@color/black_russian"
             android:textSize="15sp"

@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -76,6 +75,9 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
                 .addOnCompleteListener(task -> {
 
                     if (task.isSuccessful()) {
+                        email.setError(null);
+                        email.setErrorEnabled(false);
+
                         bundle.putString("email", email.getEditText().getText().toString());
                         ResetPasswordConfirmationFragment forgotPasswordFragment = new ResetPasswordConfirmationFragment();
                         forgotPasswordFragment.setArguments(bundle);
@@ -85,11 +87,8 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
                         transaction.addToBackStack(TAG);
                         transaction.commit();
 
-//                        Toast.makeText(getActivity().getApplicationContext(), "În căteva momente vei primi un email pentru resetarea parolei", Toast.LENGTH_SHORT).show();
-//                        getActivity().onBackPressed();
-
                     } else {
-                        Toast.makeText(getActivity().getApplicationContext(), "E-mailul introdus nu este înregistrat", Toast.LENGTH_SHORT).show();
+                        email.setError("E-mailul introdus nu este înregistrat");
                     }
 
                 });

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,6 +34,7 @@ public class SuppliesReportsFragment extends Fragment {
     private ListView listView;
     private TextView message;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private ProgressBar progressBar;
     private ArrayList<String> arrayList;
 
     private AdapterForPersonalReports customAdapter;
@@ -53,7 +55,9 @@ public class SuppliesReportsFragment extends Fragment {
         arrayList = new ArrayList<>();
         listView = view.findViewById(R.id.listOfReports);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLay);
+        progressBar = view.findViewById(R.id.progress_bar_supplies_report);
 
+        progressBar.setVisibility(View.VISIBLE);
         storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
             @Override
             public void onSuccess(ListResult listResult) {
@@ -91,6 +95,7 @@ public class SuppliesReportsFragment extends Fragment {
 //                        }
 //                    }
 //                });
+                progressBar.setVisibility(View.GONE);
             }
         });
 

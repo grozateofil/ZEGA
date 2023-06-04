@@ -87,8 +87,7 @@
             style="@style/TextInputLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="30dp"
-            android:layout_toRightOf="@id/newFirstname"
+            android:layout_marginEnd="30dp"
             android:layout_weight="50"
             android:hint="@string/lastName"
             android:textSize="15sp"
@@ -118,7 +117,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="30dp"
+            android:layout_marginStart="30dp"
             app:ccpDialog_backgroundColor="@color/black"
             app:ccpDialog_fastScroller_bubbleColor="@color/desert_storm"
             app:ccpDialog_fastScroller_bubbleTextAppearance="@style/bubbleText"
@@ -139,7 +138,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="30dp"
+            android:layout_marginEnd="30dp"
             android:hint="Telefon"
             android:textSize="15sp"
             app:endIconMode="clear_text"
@@ -203,7 +202,7 @@
         android:layout_centerInParent="true"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="10dp"
         android:backgroundTint="@color/black_russian"
         android:outlineSpotShadowColor="@color/black_russian"
         android:text=""
@@ -211,11 +210,12 @@
         app:cornerRadius="3dp" />
 
     <ProgressBar
-        android:id="@+id/progress_bar"
+        android:id="@+id/progress_bar_profile"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_below="@id/saveChangesButton"
+        android:layout_centerHorizontal="true"
         android:indeterminateTint="@color/black_russian"
         android:visibility="gone" />
 

@@ -123,4 +123,14 @@
         android:textColor="#FFF7EC"
         app:cornerRadius="3dp" />
 
+    <ProgressBar
+        android:id="@+id/progress_bar_login"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/loginButton"
+        android:layout_centerHorizontal="true"
+        android:indeterminateTint="@color/black_russian"
+        android:visibility="gone" />
+
 </RelativeLayout>
