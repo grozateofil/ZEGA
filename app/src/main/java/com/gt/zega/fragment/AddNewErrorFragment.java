@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -28,7 +27,6 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -41,6 +39,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.gt.zega.R;
+import com.gt.zega.adapter.DeviceAdapter;
+import com.gt.zega.adapter.FaultCodeAdapter;
+import com.gt.zega.adapter.HospitalAdapter;
+import com.gt.zega.adapter.HospitalSectionAdapter;
 import com.gt.zega.entity.Address;
 import com.gt.zega.entity.BrokenMedicalDevices;
 import com.gt.zega.entity.Device;
@@ -75,6 +77,7 @@ public class AddNewErrorFragment extends Fragment {
     private ArrayList<Device> deviceArrayList;
     private ArrayList<FaultCode> errorCodeArrayList;
     private ArrayList<Hospital> hospitalArrayList;
+
     private ArrayList<String> hospitalSectionsArrayList;
     private LinearLayout linearLayout;
 
@@ -436,29 +439,9 @@ public class AddNewErrorFragment extends Fragment {
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        ArrayAdapter<FaultCode> adapter = new ArrayAdapter<FaultCode>(getContext(), R.layout.list_item_layout_user_name, arrayListWithDevices) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                if (convertView == null)
-                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_layout_user_name, parent, false);
-                TextView tv = convertView.findViewById(R.id.text1);
-                TextView description = convertView.findViewById(R.id.text2);
+        FaultCodeAdapter faultCodeAdapter = new FaultCodeAdapter(getContext(), arrayListWithDevices);
 
-                ImageView expandCollapseArrow = convertView.findViewById(R.id.arrow);
-                expandCollapseArrow.setVisibility(View.GONE);
-
-                tv.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-                description.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-
-                tv.setText(arrayListWithDevices.get(position).getCode());
-                description.setText(arrayListWithDevices.get(position).getDescription());
-
-                return convertView;
-            }
-        };
-
-        listView.setAdapter(adapter);
+        listView.setAdapter(faultCodeAdapter);
 
         closeFragButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -475,7 +458,7 @@ public class AddNewErrorFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.getFilter().filter(s);
+                faultCodeAdapter.getFilter().filter(s);
             }
 
             @Override
@@ -488,16 +471,16 @@ public class AddNewErrorFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                errorCode.setText(adapter.getItem(position).getCode());
+                errorCode.setText(faultCodeAdapter.getItem(position).getCode());
                 errorCode.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-                errorCodeDescription.setText(adapter.getItem(position).getDescription());
+                errorCodeDescription.setText(faultCodeAdapter.getItem(position).getDescription());
 
                 dialog.dismiss();
             }
         });
     }
 
-    private void openDialogWithHospitals(ArrayList<Hospital> arrayListWithDevices) {
+    private void openDialogWithHospitals(ArrayList<Hospital> arrayListWithHospitals) {
         Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.devices_list_view);
 
@@ -508,29 +491,8 @@ public class AddNewErrorFragment extends Fragment {
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        ArrayAdapter<Hospital> adapter = new ArrayAdapter<Hospital>(getContext(), R.layout.list_item_layout_user_name, arrayListWithDevices) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                if (convertView == null)
-                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_layout_user_name, parent, false);
-                TextView hospitalName = convertView.findViewById(R.id.text1);
-                TextView hospitalAddress = convertView.findViewById(R.id.text2);
-
-                ImageView expandCollapseArrow = convertView.findViewById(R.id.arrow);
-                expandCollapseArrow.setVisibility(View.GONE);
-
-                hospitalName.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-                hospitalAddress.setTextColor(ContextCompat.getColor(getContext(), R.color.lightGray));
-
-                hospitalName.setText(arrayListWithDevices.get(position).getHospitalName());
-                hospitalAddress.setText(arrayListWithDevices.get(position).getHospitalAddress().toString());
-
-                return convertView;
-            }
-        };
-
-        listView.setAdapter(adapter);
+        HospitalAdapter hospitalAdapter = new HospitalAdapter(getContext(), arrayListWithHospitals);
+        listView.setAdapter(hospitalAdapter);
 
         closeFragButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -547,7 +509,7 @@ public class AddNewErrorFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.getFilter().filter(s);
+                hospitalAdapter.getFilter().filter(s);
             }
 
             @Override
@@ -561,7 +523,7 @@ public class AddNewErrorFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 hospital.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-                hospital.setText(adapter.getItem(position).getHospitalName());
+                hospital.setText(hospitalAdapter.getItem(position).getHospitalName());
                 hospital.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -579,11 +541,14 @@ public class AddNewErrorFragment extends Fragment {
                     }
                 });
 
-                hospitalSectionsArrayList = new ArrayList<>();
-                hospitalSectionsArrayList.addAll(adapter.getItem(position).getHospitalSections());
+                try {
+                    hospitalSectionsArrayList = new ArrayList<>();
+                    hospitalSectionsArrayList.addAll(hospitalAdapter.getItem(position).getHospitalSections());
+                } catch (NullPointerException e) {
+                    Toast.makeText(getContext(), getString(R.string.without_sections, hospitalAdapter.getItem(position).getHospitalName()), Toast.LENGTH_SHORT).show();
+                }
 
-                currentAddress = adapter.getItem(position).getHospitalAddress();
-
+                currentAddress = hospitalAdapter.getItem(position).getHospitalAddress();
                 dialog.dismiss();
             }
         });
@@ -600,18 +565,8 @@ public class AddNewErrorFragment extends Fragment {
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, arrayListWithDevices) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView tv = view.findViewById(android.R.id.text1);
-                tv.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-                return view;
-            }
-        };
-
-        listView.setAdapter(adapter);
+        HospitalSectionAdapter sectionAdapter = new HospitalSectionAdapter(getContext(), arrayListWithDevices);
+        listView.setAdapter(sectionAdapter);
 
         closeFragButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -629,7 +584,7 @@ public class AddNewErrorFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.getFilter().filter(s);
+                sectionAdapter.getFilter().filter(s);
             }
 
             @Override
@@ -642,7 +597,7 @@ public class AddNewErrorFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                hospitalSection.setText(adapter.getItem(position).toString());
+                hospitalSection.setText(sectionAdapter.getItem(position));
                 hospitalSection.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
 
                 dialog.dismiss();
@@ -661,28 +616,8 @@ public class AddNewErrorFragment extends Fragment {
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        ArrayAdapter<Device> adapter = new ArrayAdapter<Device>(getContext(), R.layout.list_item_layout_user_name, arrayListWithDevices) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                if (convertView == null)
-                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_layout_user_name, parent, false);
-                TextView tv = convertView.findViewById(R.id.text1);
-                TextView description = convertView.findViewById(R.id.text2);
-
-                ImageView expandCollapseArrow = convertView.findViewById(R.id.arrow);
-                expandCollapseArrow.setVisibility(View.GONE);
-
-                tv.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-                description.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-
-                tv.setText(arrayListWithDevices.get(position).getDeviceName().concat(", ").concat(arrayListWithDevices.get(position).getDeviceCode()));
-                description.setText(arrayListWithDevices.get(position).getDeviceCompanyName());
-                return convertView;
-            }
-        };
-
-        listView.setAdapter(adapter);
+        DeviceAdapter deviceAdapter = new DeviceAdapter(getContext(), arrayListWithDevices);
+        listView.setAdapter(deviceAdapter);
 
         closeFragButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -699,7 +634,7 @@ public class AddNewErrorFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.getFilter().filter(s);
+                deviceAdapter.getFilter().filter(s);
             }
 
             @Override
@@ -712,7 +647,7 @@ public class AddNewErrorFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                selectDevice.setText(adapter.getItem(position).toString());
+                selectDevice.setText(deviceAdapter.getItem(position).toString());
                 selectDevice.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
 
                 dialog.dismiss();

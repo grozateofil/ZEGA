@@ -13,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +31,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.gt.zega.R;
+import com.gt.zega.adapter.HospitalAdapter;
 import com.gt.zega.entity.Address;
 import com.gt.zega.entity.Hospital;
 import com.gt.zega.util.Validations;
@@ -173,30 +173,9 @@ public class NewHospitalSectionFragment extends Fragment {
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        ArrayAdapter<Hospital> adapter = new ArrayAdapter<Hospital>(getContext(), R.layout.list_item_layout_user_name, arrayListWithDevices) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                if (convertView == null)
-                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_layout_user_name, parent, false);
-                TextView hospitalName = convertView.findViewById(R.id.text1);
-                TextView hospitalAddress = convertView.findViewById(R.id.text2);
+        HospitalAdapter hospitalAdapter = new HospitalAdapter(getContext(), arrayListWithDevices);
 
-                ImageView expandCollapseArrow = convertView.findViewById(R.id.arrow);
-                expandCollapseArrow.setVisibility(View.GONE);
-
-                hospitalName.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-                hospitalAddress.setTextColor(ContextCompat.getColor(getContext(), R.color.lightGray));
-
-                hospitalName.setText(arrayListWithDevices.get(position).getHospitalName());
-                hospitalAddress.setText(arrayListWithDevices.get(position).getHospitalAddress().toString());
-
-
-                return convertView;
-            }
-        };
-
-        listView.setAdapter(adapter);
+        listView.setAdapter(hospitalAdapter);
 
         closeFragButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,7 +192,7 @@ public class NewHospitalSectionFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.getFilter().filter(s);
+                hospitalAdapter.getFilter().filter(s);
             }
 
             @Override
@@ -225,15 +204,18 @@ public class NewHospitalSectionFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectHospital.setText(adapter.getItem(position).getHospitalName());
+                selectHospital.setText(hospitalAdapter.getItem(position).getHospitalName());
                 selectHospital.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
 
-                currentAddress = adapter.getItem(position).getHospitalAddress();
-                currentHospital = adapter.getItem(position);
+                try {
+                    hospitalSectionsArrayList = new ArrayList<>();
+                    hospitalSectionsArrayList.addAll(hospitalAdapter.getItem(position).getHospitalSections());
+                } catch (NullPointerException e) {
+                    Toast.makeText(getContext(), getString(R.string.without_sections, hospitalAdapter.getItem(position).getHospitalName()), Toast.LENGTH_SHORT).show();
+                }
 
-                hospitalSectionsArrayList = new ArrayList<>();
-                if (adapter.getItem(position).getHospitalSections() != null)
-                    hospitalSectionsArrayList.addAll(adapter.getItem(position).getHospitalSections());
+                currentAddress = hospitalAdapter.getItem(position).getHospitalAddress();
+                currentHospital = hospitalAdapter.getItem(position);
 
                 dialog.dismiss();
             }

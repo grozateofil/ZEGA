@@ -38,6 +38,8 @@ import com.gt.zega.entity.User;
 import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
 
+import java.util.regex.Pattern;
+
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
 
@@ -55,6 +57,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences sharedPreferences1;
+    private Bundle bundle;
 
     private Context context;
 
@@ -65,8 +68,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private static User user;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_login, container, false);
         email = view.findViewById(R.id.loginEmail);
@@ -82,7 +84,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         firebaseUser = fAuth.getCurrentUser();
 
         sharedPreferences = getContext().getSharedPreferences("Preferences", 0);
-//        sharedPreferences1 = getContext().getSharedPreferences("Preferences1", 0);
+        bundle = new Bundle();
+        //        sharedPreferences1 = getContext().getSharedPreferences("Preferences1", 0);
 
         validations = new ValidationsImpl();
 
@@ -134,7 +137,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case (R.id.forgotPasswordButton):
+                if (!email.getEditText().getText().toString().trim().isEmpty() || !Pattern.compile("^(?=.*\\s).+$").matcher(email.getEditText().getText().toString()).matches())
+                    bundle.putString("emailAddress", email.getEditText().getText().toString().trim());
+                else bundle.putString("emailAddress", null);
                 ResetPasswordFragment forgotPasswordFragment = new ResetPasswordFragment();
+                forgotPasswordFragment.setArguments(bundle);
                 FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                 transaction.hide(this);
                 transaction.add(R.id.content_frame, forgotPasswordFragment);
@@ -154,8 +161,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     }
 
     private boolean validation() {
-        return (validations.emailValidation(email) &
-                validations.passwordValidation(password));
+        return (validations.emailValidation(email) & validations.passwordValidation(password));
     }
 
     private void firebaseLogin() {
@@ -203,9 +209,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
                     HomeFragment homeFragment = new HomeFragment();
                     FragmentManager fragmentManager = getParentFragmentManager();
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.content_frame, homeFragment)
-                            .commit();
+                    fragmentManager.beginTransaction().replace(R.id.content_frame, homeFragment).commit();
 
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("LOGIN", emailAddress);

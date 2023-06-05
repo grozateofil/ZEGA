@@ -83,7 +83,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView userRole = convertView.findViewById(R.id.text2);
         ImageView expandCollapseArrow = convertView.findViewById(R.id.arrow);
 
-        userName.setText(listAfterFiltered.get(groupPosition).getUser().getFirstName() + " " + listAfterFiltered.get(groupPosition).getUser().getLastName());
+        userName.setText(listAfterFiltered.get(groupPosition).getUser().fullName());
         userRole.setText(listAfterFiltered.get(groupPosition).getUser().getRole());
 
         userName.setTypeface(null, Typeface.BOLD);
@@ -94,6 +94,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         if (isExpanded && listAfterFiltered.get(groupPosition).getListOfFiles().size() > 0) {
             expandCollapseArrow.setRotation(180);
+            notifyDataSetChanged();
         } else {
             expandCollapseArrow.setRotation(0);
         }
@@ -112,7 +113,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         ArrayList<String> arrayListOfUserNames = listAfterFiltered.get(groupPosition).getListOfFiles();
         String childUid = listAfterFiltered.get(groupPosition).getUid();
-
 
         customAdapter = new AdapterForPersonalReports(childPosition, childUid, arrayListOfUserNames, context, type);
 
@@ -134,9 +134,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             listAfterFiltered.addAll(listOfUserFiles);
         } else {
             for (UserFiles group : listOfUserFiles) {
-                String userName = group.getUser().getFirstName() + " " + group.getUser().getLastName();
-                String userRole = group.getUser().getRole();
-                if (userName.toLowerCase().contains(searchedWord.toLowerCase()) || userRole.contains(searchedWord.toLowerCase())) {
+                String userName = group.getUser().fullName().toUpperCase();
+                String userRole = group.getUser().getRole().toUpperCase();
+                if (userName.contains(searchedWord.toUpperCase()) || userRole.contains(searchedWord.toUpperCase())) {
                     listAfterFiltered.add(group);
                 }
             }
@@ -161,8 +161,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                     for (String file : listOfFiles) {
                         Date dateFromFileName = dateTimeFormatter.parse(file.substring(0, file.indexOf('_')));
-                        if (dateFromFileName.compareTo(strDate) >= 0 && dateFromFileName.compareTo(edDate) <= 0) {
-                            listAfterFiltered.add(group);
+                        if (dateFromFileName != null) {
+                            if (dateFromFileName.compareTo(strDate) >= 0 && dateFromFileName.compareTo(edDate) <= 0) {
+                                listAfterFiltered.add(group);
+                            }
                         }
 
                     }

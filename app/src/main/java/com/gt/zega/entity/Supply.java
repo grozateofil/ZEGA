@@ -39,6 +39,10 @@ public class Supply {
         this.brand = brand;
     }
 
+    public String getNameAndCode() {
+        return name + ", " + code;
+    }
+
     @Override
     public String toString() {
         return name + ", " + code + ", " + brand;

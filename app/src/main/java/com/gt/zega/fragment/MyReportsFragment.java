@@ -54,7 +54,6 @@ public class MyReportsFragment extends Fragment {
             }
         });
 
-
         return view;
     }
 }

@@ -41,6 +41,7 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
 
         validations = new ValidationsImpl();
 
+        email.getEditText().setText(this.getArguments().getString("emailAddress"));
         fAuth = FirebaseAuth.getInstance();
 
         submitButton.setOnClickListener(this);
@@ -79,11 +80,11 @@ public class ResetPasswordFragment extends Fragment implements View.OnClickListe
                         email.setErrorEnabled(false);
 
                         bundle.putString("email", email.getEditText().getText().toString());
-                        ResetPasswordConfirmationFragment forgotPasswordFragment = new ResetPasswordConfirmationFragment();
-                        forgotPasswordFragment.setArguments(bundle);
+                        ResetPasswordConfirmationFragment resetPasswordConfirmationFragment = new ResetPasswordConfirmationFragment();
+                        resetPasswordConfirmationFragment.setArguments(bundle);
                         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                         transaction.hide(this);
-                        transaction.add(R.id.content_frame, forgotPasswordFragment);
+                        transaction.add(R.id.content_frame, resetPasswordConfirmationFragment);
                         transaction.addToBackStack(TAG);
                         transaction.commit();
 

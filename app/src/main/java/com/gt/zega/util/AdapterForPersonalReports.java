@@ -22,19 +22,22 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.gt.zega.R;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class AdapterForPersonalReports extends BaseAdapter {
 
     private ArrayList<String> arrayList;
     private Context context;
-    private ImageView resolvedMark;
     private StorageReference storageRef;
     private String currentUidUser;
+    private View rowView;
 
     private int position;
     private String type;
@@ -76,7 +79,7 @@ public class AdapterForPersonalReports extends BaseAdapter {
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        View rowView = convertView;
+        rowView = convertView;
         int newPosition = this.position != -1 ? this.position : position;
 
         if (rowView == null) {
@@ -85,10 +88,14 @@ public class AdapterForPersonalReports extends BaseAdapter {
         }
 
         TextView textViewFileName = rowView.findViewById(R.id.fileName);
+        ImageView checked = rowView.findViewById(R.id.resolved);
         ImageButton menuButton = rowView.findViewById(R.id.menu);
 
         try {
             textViewFileName.setText(arrayList.get(newPosition));
+            if (arrayList.get(newPosition).contains("_REZ")) {
+                checked.setVisibility(View.VISIBLE);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -101,7 +108,7 @@ public class AdapterForPersonalReports extends BaseAdapter {
                     @Override
                     public void onSuccess(Uri uri) {
                         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                        System.out.println("FILE URI--------------------> " + uri);
+                        System.out.println("FILE URI: " + uri);
                         try {
                             context.startActivity(intent);
                         } catch (ActivityNotFoundException e) {
@@ -117,7 +124,6 @@ public class AdapterForPersonalReports extends BaseAdapter {
                             Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-
             }
         });
 
@@ -136,15 +142,19 @@ public class AdapterForPersonalReports extends BaseAdapter {
 
                     }
                 });
-
                 TextView editButton = bottomSheetDialog.findViewById(R.id.bottom_sheet_dialog_mark_as_resolved);
-                editButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        markAsResolved(context, arrayList, position);
-                        bottomSheetDialog.dismiss();
-                    }
-                });
+                if (arrayList.get(newPosition).contains("_REZ")) {
+                    editButton.setEnabled(false);
+                } else {
+                    editButton.setEnabled(true);
+                    editButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            markAsResolved(context, arrayList, newPosition);
+                            bottomSheetDialog.dismiss();
+                        }
+                    });
+                }
 
                 bottomSheetDialog.show();
             }
@@ -164,7 +174,7 @@ public class AdapterForPersonalReports extends BaseAdapter {
         TextView question = view.findViewById(R.id.deleteFileDescription);
         Button cancelButton = view.findViewById(R.id.btn_Cancel);
         Button okButton = view.findViewById(R.id.btn_Y);
-        question.setText("Stergeti fisierul \"" + adapter.get(newPosition) + "\"?");
+        question.setText(context.getString(R.string.delete_file_confirmation, adapter.get(newPosition)));
 
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -192,7 +202,6 @@ public class AdapterForPersonalReports extends BaseAdapter {
     }
 
     public void markAsResolved(Context context, ArrayList<String> adapter, int position) {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View view = LayoutInflater.from(context).inflate(R.layout.delete_file_confirmation, null);
         builder.setView(view);
@@ -212,17 +221,52 @@ public class AdapterForPersonalReports extends BaseAdapter {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                resolvedMark = LayoutInflater.from(context).inflate(R.layout.list_item_layout, null).findViewById(R.id.resolved);
-                resolvedMark.setImageResource(R.drawable.checkbox);
-                notifyDataSetChanged();
-//                Glide.with(context)
-//                        .load(R.drawable.checkbox)
-//                        .into(resolvedMark);
-                dialog.cancel();
+
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("users").child(currentUidUser).child(type).child(adapter.get(position));
+                int dot = adapter.get(position).lastIndexOf(".");
+                String newFileName = adapter.get(position).substring(0, dot) + "_REZ" + adapter.get(position).substring(dot);
+                String oldFileName = storageReference.getName();
+
+                StorageReference newFileNameRef = FirebaseStorage.getInstance().getReference().child("users").child(currentUidUser).child(type).child(newFileName);
+
+                storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        File localFile = new File(context.getExternalFilesDir("Pdf"), oldFileName);
+                        storageReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+
+                            @Override
+                            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                newFileNameRef.putFile(Uri.fromFile(localFile)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        // Delete the original file
+                                        storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                // The file was successfully renamed
+                                                // You can perform any additional operations here
+                                                notifyDataSetChanged();
+                                            }
+                                        });
+
+                                    }
+                                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        localFile.delete();
+                                        Toast.makeText(context, "Va rugam să dați refresh paginii!", Toast.LENGTH_SHORT).show();
+                                        notifyDataSetChanged();
+                                    }
+                                });
+                                notifyDataSetChanged();
+                            }
+                        });
+                        dialog.cancel();
+                        notifyDataSetChanged();
+                    }
+                });
             }
         });
-
-
     }
-
 }

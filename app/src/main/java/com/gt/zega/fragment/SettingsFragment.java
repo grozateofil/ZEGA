@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -24,6 +25,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.gt.zega.R;
 import com.gt.zega.database.HideAndShow;
 import com.gt.zega.entity.User;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SettingsFragment extends Fragment implements View.OnClickListener, HideAndShow {
 
@@ -41,6 +45,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
     private DatabaseReference databaseReference;
     private String userRole;
 
+    private ArrayList<String> superUsersList;
+    private ArrayList<String> usersList;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
@@ -55,6 +62,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
+
+        superUsersList = new ArrayList<>(Arrays.asList(getText(R.string.super_user).toString().split(",")));
+        usersList = new ArrayList<>(Arrays.asList(getText(R.string.user).toString().split(",")));
 
         getUserData(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
@@ -129,10 +139,12 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
 
                 }).addOnFailureListener(e -> {
                     System.out.println("---------------------------------------------->" + "Realtime database error:  " + e.getMessage());
+                    Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
 
             }).addOnFailureListener(e -> {
                 System.out.println("---------------------------------------------->" + "Authentication user error: " + e.getMessage());
+                Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             });
 
         });
@@ -146,11 +158,11 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
                 User user = dataSnapshot.getValue(User.class);
                 if (user != null) {
                     userRole = user.getRole();
-                    hideTextView(getView().findViewById(R.id.addNewHospital), !(userRole.equals("inginer") || userRole.equals("medic")));
-                    hideTextView(getView().findViewById(R.id.addNewDevice), !userRole.equals("medic"));
-                    hideTextView(getView().findViewById(R.id.addNewFaultCode), !userRole.equals("medic"));
-                    hideTextView(getView().findViewById(R.id.addNewSupplie), !userRole.equals("medic"));
-                    hideTextView(getView().findViewById(R.id.deleteAccount), !userRole.equals("medic"));
+                    hideTextView(getView().findViewById(R.id.addNewHospital), (userRole.equals("inginer") || userRole.equals("admin")));
+                    hideTextView(getView().findViewById(R.id.addNewDevice), superUsersList.contains(userRole) || userRole.equals("admin"));
+                    hideTextView(getView().findViewById(R.id.addNewFaultCode), superUsersList.contains(userRole) || userRole.equals("admin"));
+                    hideTextView(getView().findViewById(R.id.addNewSupplie), superUsersList.contains(userRole) || userRole.equals("admin"));
+                    hideTextView(getView().findViewById(R.id.deleteAccount), userRole.equals("admin"));
                 }
             }
 

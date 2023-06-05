@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String[] PERMISSIONS = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA,
+//            Manifest.permission.CAMERA,
             Manifest.permission.MANAGE_EXTERNAL_STORAGE
     };
     private static final int PERMISSIONS_REQUEST_CODE = 777;
@@ -213,10 +213,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == PERMISSIONS_REQUEST_CODE) {
-            boolean allGranted = true;
+
             for (int grantResult : grantResults) {
                 if (grantResult != PackageManager.PERMISSION_GRANTED) {
-                    allGranted = false;
+
                     break;
                 }
             }

@@ -43,6 +43,7 @@ import com.hbb20.CountryCodePicker;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 
 public class RegisterFragment extends Fragment implements View.OnClickListener {
@@ -229,9 +230,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
 
-                                fAuth.setLanguageCode("ro");
-                                firebaseUser.sendEmailVerification();
-                                Toast.makeText(getActivity().getApplicationContext(), "Ți-a fost trimis un email pentru a valida adresa de email", Toast.LENGTH_LONG).show();
+//                                fAuth.setLanguageCode("ro");
+//                                firebaseUser.sendEmailVerification();
+//                                Toast.makeText(getActivity().getApplicationContext(), "Ți-a fost trimis un email pentru a valida adresa de email", Toast.LENGTH_LONG).show();
 
                                 getActivity().onBackPressed();
                             } else {
@@ -256,6 +257,11 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     }
 
     private void openDialogWithUserRoles() {
+        ArrayList<String> roles = new ArrayList<>();
+        roles.addAll(Arrays.asList(getText(R.string.super_user).toString().split(",")));
+        roles.addAll(Arrays.asList(getText(R.string.user).toString().split(",")));
+        Collections.sort(roles);
+
         Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.devices_list_view);
 
@@ -268,7 +274,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
         searchEditText.setVisibility(View.GONE);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, new ArrayList<>(Arrays.asList("dasda", "dsadasd", "dsadasdsadsad"))) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, roles) {
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

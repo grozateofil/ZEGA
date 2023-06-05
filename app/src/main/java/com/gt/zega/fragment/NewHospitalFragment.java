@@ -67,7 +67,8 @@ public class NewHospitalFragment extends Fragment {
             public void onClick(View view) {
                 if (validation()) {
                     Address address = new Address(city.getEditText().getText().toString(), street.getEditText().getText().toString(), number.getEditText().getText().toString());
-                    Hospital hospital = new Hospital(hospitalName.getEditText().getText().toString(), address, new ArrayList<String>());
+                    ArrayList<String> hospitalSections = new ArrayList<>();
+                    Hospital hospital = new Hospital(hospitalName.getEditText().getText().toString(), address, hospitalSections);
 
                     if (!hospitalArrayList.stream().anyMatch(f -> f.getHospitalName().equalsIgnoreCase(hospital.getHospitalName()))) {
 
@@ -89,8 +90,6 @@ public class NewHospitalFragment extends Fragment {
                         new AlertDialog.Builder(getContext())
                                 .setTitle("Atentie")
                                 .setMessage("Spitalul " + hospital.getHospitalName().toUpperCase() + " exista")
-
-                                // A null listener allows the button to dismiss the dialog and take no further action.
                                 .setNegativeButton(android.R.string.no, null)
                                 .setIcon(android.R.drawable.ic_dialog_alert)
                                 .show();

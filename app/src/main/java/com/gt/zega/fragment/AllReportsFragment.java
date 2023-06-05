@@ -20,8 +20,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -152,34 +154,57 @@ public class AllReportsFragment extends Fragment {
 
                             StorageReference userFilesRef = storageReference.child(uid);
 
-                            userFilesRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+                            userFilesRef.listAll().addOnCompleteListener(new OnCompleteListener<ListResult>() {
                                 @Override
-                                public void onSuccess(ListResult listResult) {
-                                    ArrayList<String> files = new ArrayList<>();
-                                    for (StorageReference item : listResult.getItems()) {
-                                        String filename = item.getName();
-                                        files.add(filename);
-                                    }
-
-                                    UserFiles userFiles = new UserFiles(uid, name, files);
-                                    userFilesArrayList.add(userFiles);
-
-                                    Collections.sort(userFilesArrayList, new Comparator<UserFiles>() {
-                                        @Override
-                                        public int compare(UserFiles userFiles1, UserFiles userFiles2) {
-                                            return userFiles1.getUser().getFirstName().toLowerCase(Locale.ROOT).compareTo(userFiles2.getUser().getFirstName().toLowerCase(Locale.ROOT));
+                                public void onComplete(@NonNull Task<ListResult> task) {
+                                    if (task.isSuccessful()) {
+                                        ArrayList<String> files = new ArrayList<>();
+                                        for (StorageReference item : task.getResult().getItems()) {
+                                            String filename = item.getName();
+                                            files.add(filename);
                                         }
-                                    });
+                                        UserFiles userFiles = new UserFiles(uid, name, files);
+                                        userFilesArrayList.add(userFiles);
 
-                                    expandableListAdapter.notifyDataSetChanged();
-
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        Collections.sort(userFilesArrayList, new Comparator<UserFiles>() {
+                                            @Override
+                                            public int compare(UserFiles userFiles1, UserFiles userFiles2) {
+                                                return userFiles1.getUser().getFirstName().toLowerCase(Locale.ROOT).compareTo(userFiles2.getUser().getFirstName().toLowerCase(Locale.ROOT));
+                                            }
+                                        });
+                                        expandableListAdapter.notifyDataSetChanged();
+                                    }
                                 }
                             });
+
+//                            userFilesRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+//                                @Override
+//                                public void onSuccess(ListResult listResult) {
+//                                    ArrayList<String> files = new ArrayList<>();
+//                                    for (StorageReference item : listResult.getItems()) {
+//                                        String filename = item.getName();
+//                                        files.add(filename);
+//                                    }
+//
+//                                    UserFiles userFiles = new UserFiles(uid, name, files);
+//                                    userFilesArrayList.add(userFiles);
+//
+//                                    Collections.sort(userFilesArrayList, new Comparator<UserFiles>() {
+//                                        @Override
+//                                        public int compare(UserFiles userFiles1, UserFiles userFiles2) {
+//                                            return userFiles1.getUser().getFirstName().toLowerCase(Locale.ROOT).compareTo(userFiles2.getUser().getFirstName().toLowerCase(Locale.ROOT));
+//                                        }
+//                                    });
+//
+//                                    expandableListAdapter.notifyDataSetChanged();
+//
+//                                }
+//                            }).addOnFailureListener(new OnFailureListener() {
+//                                @Override
+//                                public void onFailure(@NonNull Exception e) {
+//                                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//                                }
+//                            });
                         }
                     }
 

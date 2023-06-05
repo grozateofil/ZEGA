@@ -26,18 +26,14 @@
     <string name="navigation_drower_close">Închide</string>
 
     <string name="demo">Hello, %1$s! You have %2$d new messages.</string>
+    <string name="delete_file_confirmation">Stergeti fisierul "%1$s"?</string>
+    <string name="without_sections">"%1$s" nu are sectii asociate.</string>
     <string name="reset_password">Introduceți mai jos adresa de e-mail și vă vom trimite un link pentru a putea să vă resetați parola.</string>
     <string name="reset_password_confirmation">V-am trimis un e-mail la adresa\n %1$s pentru a putea reseta parola.\n\nDaca nu ați primit nimic este posibil ca e-mailul să-l fi primit în folderul de spam.</string>
 
     <string name="admin">admin</string>
-    <string name="super_user">inginer, asistenta sef, medic sef</string>
-    <string name="user">medic, asistenta, asistent</string>
+    <string name="super_user">inginer, asistent sef, medic sef</string>
+    <string name="user">medic, asistent</string>
 
-
-    <string name="select_an_option">Select an option</string>
-    <string-array name="my_spinner_options">
-        <item>inginer</item>
-        <item>medic</item>
-    </string-array>
 
 </resources>

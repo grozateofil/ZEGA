@@ -39,6 +39,10 @@ public class Device {
         this.deviceCode = deviceCode;
     }
 
+    public String getNameAndCode() {
+        return deviceName + ",  " + deviceCode;
+    }
+
     @Override
     public String toString() {
         return deviceName + ",  " + deviceCode + ", " + deviceCompanyName;

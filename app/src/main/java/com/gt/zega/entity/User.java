@@ -8,6 +8,7 @@ public class User {
     private String phoneNumber;
     private String imageUrl;
     private UserAccount userAccount;
+    private boolean blockedAccount;
 
     public User() {
 
@@ -75,6 +76,18 @@ public class User {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public boolean isBlockedAccount() {
+        return blockedAccount;
+    }
+
+    public void setBlockedAccount(boolean blockedAccount) {
+        this.blockedAccount = blockedAccount;
+    }
+
+    public String fullName() {
+        return firstName + " " + lastName;
     }
 
     @Override

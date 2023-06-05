@@ -8,16 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -30,6 +28,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.gt.zega.R;
+import com.gt.zega.adapter.DeviceAdapter;
+import com.gt.zega.adapter.HospitalAdapter;
+import com.gt.zega.adapter.HospitalSectionAdapter;
+import com.gt.zega.adapter.SuppliesAdapter;
 import com.gt.zega.entity.Address;
 import com.gt.zega.entity.Device;
 import com.gt.zega.entity.Hospital;
@@ -183,7 +185,7 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
         });
     }
 
-    private void openDialog(ArrayList<Supply> arrayListWithDevices) {
+    private void openDialogWithSupplies(ArrayList<Supply> arrayListWithDevices) {
         dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.devices_list_view);
 
@@ -194,29 +196,7 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        ArrayAdapter<Supply> adapter = new ArrayAdapter<Supply>(getContext(), R.layout.list_item_layout_user_name, arrayListWithDevices) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                if (convertView == null)
-                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_layout_user_name, parent, false);
-                TextView nameAndCode = convertView.findViewById(R.id.text1);
-                TextView brand = convertView.findViewById(R.id.text2);
-
-                ImageView expandCollapseArrow = convertView.findViewById(R.id.arrow);
-                expandCollapseArrow.setVisibility(View.GONE);
-
-                nameAndCode.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-                brand.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-
-                nameAndCode.setText(arrayListWithDevices.get(position).getName().concat(", ").concat(arrayListWithDevices.get(position).getCode()));
-                brand.setText(arrayListWithDevices.get(position).getBrand());
-
-
-                return convertView;
-            }
-        };
-
+        SuppliesAdapter adapter = new SuppliesAdapter(getContext(), arrayListWithDevices);
         listView.setAdapter(adapter);
 
         closeFragButton.setOnClickListener(new View.OnClickListener() {
@@ -266,29 +246,7 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        ArrayAdapter<Hospital> adapter = new ArrayAdapter<Hospital>(getContext(), R.layout.list_item_layout_user_name, arrayListWithDevices) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                if (convertView == null)
-                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_layout_user_name, parent, false);
-                TextView hospitalName = convertView.findViewById(R.id.text1);
-                TextView hospitalAddress = convertView.findViewById(R.id.text2);
-
-                ImageView expandCollapseArrow = convertView.findViewById(R.id.arrow);
-                expandCollapseArrow.setVisibility(View.GONE);
-
-                hospitalName.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-                hospitalAddress.setTextColor(ContextCompat.getColor(getContext(), R.color.lightGray));
-
-                hospitalName.setText(arrayListWithDevices.get(position).getHospitalName());
-                hospitalAddress.setText(arrayListWithDevices.get(position).getHospitalAddress().toString());
-
-
-                return convertView;
-            }
-        };
-
+        HospitalAdapter adapter = new HospitalAdapter(getContext(), arrayListWithDevices);
         listView.setAdapter(adapter);
 
         closeFragButton.setOnClickListener(new View.OnClickListener() {
@@ -339,9 +297,12 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
                     }
                 });
 
-                hospitalSectionsArrayList = new ArrayList<>();
-                hospitalSectionsArrayList.addAll(adapter.getItem(position).getHospitalSections());
-
+                try {
+                    hospitalSectionsArrayList = new ArrayList<>();
+                    hospitalSectionsArrayList.addAll(adapter.getItem(position).getHospitalSections());
+                } catch (NullPointerException e) {
+                    Toast.makeText(getContext(), getString(R.string.without_sections, adapter.getItem(position).getHospitalName()), Toast.LENGTH_SHORT).show();
+                }
                 currentAddress = adapter.getItem(position).getHospitalAddress();
 
                 dialog.dismiss();
@@ -360,18 +321,8 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, arrayListWithDevices) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView tv = view.findViewById(android.R.id.text1);
-                tv.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-                return view;
-            }
-        };
-
-        listView.setAdapter(adapter);
+        HospitalSectionAdapter sectionAdapter = new HospitalSectionAdapter(getContext(), arrayListWithDevices);
+        listView.setAdapter(sectionAdapter);
 
         closeFragButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -388,7 +339,7 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.getFilter().filter(s);
+                sectionAdapter.getFilter().filter(s);
             }
 
             @Override
@@ -401,7 +352,7 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                selectHospitalSection.setText(adapter.getItem(position).toString());
+                selectHospitalSection.setText(sectionAdapter.getItem(position).toString());
                 selectHospitalSection.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
 
                 dialog.dismiss();
@@ -420,28 +371,9 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        ArrayAdapter<Device> adapter = new ArrayAdapter<Device>(getContext(), R.layout.list_item_layout_user_name, arrayListWithDevices) {
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                if (convertView == null)
-                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_layout_user_name, parent, false);
-                TextView tv = convertView.findViewById(R.id.text1);
-                TextView description = convertView.findViewById(R.id.text2);
+        DeviceAdapter deviceAdapter = new DeviceAdapter(getContext(), arrayListWithDevices);
 
-                ImageView expandCollapseArrow = convertView.findViewById(R.id.arrow);
-                expandCollapseArrow.setVisibility(View.GONE);
-
-                tv.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-                description.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-
-                tv.setText(arrayListWithDevices.get(position).getDeviceName() + ", " + arrayListWithDevices.get(position).getDeviceCode());
-                description.setText(arrayListWithDevices.get(position).getDeviceCompanyName());
-                return convertView;
-            }
-        };
-
-        listView.setAdapter(adapter);
+        listView.setAdapter(deviceAdapter);
 
         closeFragButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -458,7 +390,7 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.getFilter().filter(s);
+                deviceAdapter.getFilter().filter(s);
             }
 
             @Override
@@ -471,7 +403,7 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                selectMedicalDevice.setText(adapter.getItem(position).toString());
+                selectMedicalDevice.setText(deviceAdapter.getItem(position).toString());
                 selectMedicalDevice.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
 
                 dialog.dismiss();
@@ -492,7 +424,7 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
     public void onClick(View view) {
         switch (view.getId()) {
             case (R.id.selectSupplies):
-                openDialog(suppliesArrayList);
+                openDialogWithSupplies(suppliesArrayList);
                 break;
             case (R.id.selectMedicalDevice):
                 openDialogWithMedicalDevices(medicalDevicesArrayList);
