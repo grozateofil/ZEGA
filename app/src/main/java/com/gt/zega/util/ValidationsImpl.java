@@ -1,7 +1,11 @@
 package com.gt.zega.util;
 
 import android.content.Context;
+import android.widget.CheckBox;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.CompoundButtonCompat;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.gt.zega.R;
@@ -50,7 +54,9 @@ public class ValidationsImpl implements Validations {
         if (emailString.isEmpty()) {
             email.setError(context.getResources().getString(R.string.required));
             return false;
-        } else if (!Pattern.compile("^[\\w.]+@([\\w-]+\\.)+[\\w-]{2,4}$").matcher(emailString).matches()) {
+        } else if (!Pattern.compile("^[\\w.]+@([\\w-]+\\.)*(?:com|ro)$").matcher(emailString).matches()) {
+//            Pattern.compile("^[\\w.]+@([\\w-]+\\.)*[\\w-]{2,4}$")
+//            Pattern.compile("^[\\w.]+@([\\w-]+\\.)*[\\w-]+\\.com$")
             email.setError(context.getResources().getString(R.string.invalidEmail));
             return false;
         } else {
@@ -90,20 +96,16 @@ public class ValidationsImpl implements Validations {
         } else if (passwordString.length() < 6) {
             password.setError("Parola trebuie să conțină minim 6 caractere");
             return false;
-        }
-//        else if (!Pattern.compile("^(?=.*\\p{Upper}).+$").matcher(passwordString).matches()) {
-//            password.setError("Parola trebuie să conțină minim o majusculă");
-//            return false;
-//        }
-//        else if (!Pattern.compile("^(?=.*\\p{Digit}).+$").matcher(passwordString).matches()) {
-//            password.setError("Parola trebuie să conțină minim o cifră");
-//            return false;
-//        }
-//        else if (!Pattern.compile("^(?=.*\\p{Punct}).+$").matcher(passwordString).matches()) {
-//            password.setError("Parola trebuie să conțină minim un caracter special");
-//            return false;
-//        }
-        else {
+        } else if (!Pattern.compile("^(?=.*\\p{Upper}).+$").matcher(passwordString).matches()) {
+            password.setError("Parola trebuie să conțină minim o majusculă");
+            return false;
+        } else if (!Pattern.compile("^(?=.*\\p{Digit}).+$").matcher(passwordString).matches()) {
+            password.setError("Parola trebuie să conțină minim o cifră");
+            return false;
+        } else if (!Pattern.compile("^(?=.*\\p{Punct}).+$").matcher(passwordString).matches()) {
+            password.setError("Parola trebuie să conțină minim un caracter special");
+            return false;
+        } else {
             password.setError(null);
             password.setErrorEnabled(false);
             return true;
@@ -119,6 +121,17 @@ public class ValidationsImpl implements Validations {
         } else {
             materialTextView.setError(null);
             return true;
+        }
+    }
+
+    @Override
+    public boolean checkBoxValidation(CheckBox checkBox, Context context) {
+        if ((checkBox.isChecked())) {
+            CompoundButtonCompat.setButtonTintList(checkBox, ContextCompat.getColorStateList(context, R.color.black_russian));
+            return true;
+        } else {
+            CompoundButtonCompat.setButtonTintList(checkBox, ContextCompat.getColorStateList(context, R.color.red));
+            return false;
         }
     }
 

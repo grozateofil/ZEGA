@@ -294,6 +294,7 @@ public class AddNewErrorFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
                     Device device = objectSnapshot.getValue(Device.class);
+                    deviceArrayList.clear();
                     deviceArrayList.add(device);
                 }
             }

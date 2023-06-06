@@ -1,7 +1,9 @@
 package com.gt.zega.fragment;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -58,6 +61,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     private TextInputLayout email;
     private TextInputLayout password;
     private TextView role;
+    private CheckBox checkBox;
+    private TextView terms;
     private Button createButton;
     private Button backToLoginButton;
     private ProgressBar progressBar;
@@ -85,6 +90,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         email = view.findViewById(R.id.email);
         password = view.findViewById(R.id.password);
         role = view.findViewById(R.id.role);
+        terms = view.findViewById(R.id.terms);
+        checkBox = view.findViewById(R.id.checkboxTerms);
         createButton = view.findViewById(R.id.createButton);
         backToLoginButton = view.findViewById(R.id.backToLoginButton);
         progressBar = view.findViewById(R.id.progress_bar2);
@@ -92,6 +99,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         ccp.registerCarrierNumberEditText(phoneNumber.getEditText());
         ccp.setCustomMasterCountries(getText(R.string.europeanCountries).toString());
         ccp.setDialogEventsListener(dialogEventsListener());
+
+        terms.setPaintFlags(terms.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         fAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -113,6 +122,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         createButton.setOnClickListener(this);
         backToLoginButton.setOnClickListener(this);
         role.setOnClickListener(this);
+        terms.setOnClickListener(this);
 
         return view;
     }
@@ -140,6 +150,10 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
             case (R.id.role):
                 openDialogWithUserRoles();
+                break;
+
+            case (R.id.terms):
+                openDialogWithTerms();
                 break;
         }
     }
@@ -189,7 +203,13 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     }
 
     private boolean validation() {
-        return (validations.textInputLayoutValidation(firstname) & validations.textInputLayoutValidation(lastname) & validations.phoneNumberValidation(phoneNumber, ccp) & validations.emailValidation(email) & validations.createPassword(password) & validations.textViewValidation(role));
+        return (validations.textInputLayoutValidation(firstname) &
+                validations.textInputLayoutValidation(lastname) &
+                validations.phoneNumberValidation(phoneNumber, ccp) &
+                validations.emailValidation(email) &
+                validations.createPassword(password) &
+                validations.textViewValidation(role) &
+                validations.checkBoxValidation(checkBox, getContext()));
     }
 
     private void firebaseRegistration() {
@@ -306,6 +326,20 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    private void openDialogWithTerms() {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Termeni și condiții")
+                .setMessage("Ești de acord cu acest termen?")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        checkBox.setChecked(true);
+                    }
+                })
+                .show();
+
+    }
+
 
 //    private String getPhotoExtension(Uri uri) {
 //        ContentResolver contentResolver = getContext().getContentResolver();
@@ -348,6 +382,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         role.setEnabled(type);
         createButton.setEnabled(type);
         backToLoginButton.setEnabled(type);
+        checkBox.setEnabled(type);
+        terms.setEnabled(type);
     }
 
 }

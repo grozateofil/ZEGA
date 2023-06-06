@@ -9,10 +9,12 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
 import com.gt.zega.R;
+import com.gt.zega.entity.User;
 import com.gt.zega.entity.UserFiles;
 
 import java.text.DateFormat;
@@ -24,18 +26,21 @@ import java.util.Locale;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
+
     private ArrayList<UserFiles> listOfUserFiles;
     private ArrayList<UserFiles> listAfterFiltered;
     private Context context;
     private AdapterForPersonalReports customAdapter;
 
     private String type;
+    private User currentUser;
 
-    public ExpandableListAdapter(Context context, ArrayList<UserFiles> userList, String type) {
+    public ExpandableListAdapter(Context context, User currentUser, ArrayList<UserFiles> userList, String type) {
         this.listOfUserFiles = userList;
         this.context = context;
         this.listAfterFiltered = new ArrayList<>(userList);
         this.type = type;
+        this.currentUser = currentUser;
     }
 
     @Override
@@ -114,7 +119,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         ArrayList<String> arrayListOfUserNames = listAfterFiltered.get(groupPosition).getListOfFiles();
         String childUid = listAfterFiltered.get(groupPosition).getUid();
 
-        customAdapter = new AdapterForPersonalReports(childPosition, childUid, arrayListOfUserNames, context, type);
+        customAdapter = new AdapterForPersonalReports(childPosition, childUid, currentUser, arrayListOfUserNames, context, type);
 
         childListView.setAdapter(customAdapter);
         customAdapter.notifyDataSetChanged();
@@ -155,7 +160,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             try {
                 Date strDate = dateTimeFormatter.parse(startDate);
                 Date edDate = dateTimeFormatter.parse(endDate);
-
                 for (UserFiles group : listOfUserFiles) {
                     ArrayList<String> listOfFiles = group.getListOfFiles();
 
@@ -166,14 +170,15 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 listAfterFiltered.add(group);
                             }
                         }
-
                     }
-
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+        }
 
+        if (listAfterFiltered.size() == 0) {
+            Toast.makeText(context, "Nu s-a găsit niciun rezultat.", Toast.LENGTH_SHORT).show();
 
         }
 

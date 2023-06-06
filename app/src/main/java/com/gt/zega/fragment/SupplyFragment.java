@@ -45,6 +45,7 @@ import java.util.ArrayList;
 
 public class SupplyFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
+    // stoc minim si maxim pe un consumabil
     private TextView selectSupplies;
     private TextView selectMedicalDevice;
     private TextView selectHospital;

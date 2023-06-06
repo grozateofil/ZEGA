@@ -11,36 +11,66 @@
     <!--        android:layout_height="match_parent" />-->
 
     <LinearLayout
-        android:id="@+id/delete"
+        android:id="@+id/cancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ImageView
+            android:id="@+id/cancelIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:padding="10dp"
-            android:src="@drawable/delete_bin" />
+            android:src="@drawable/cancel_icon" />
 
         <TextView
-            android:id="@+id/bottom_sheet_dialog_delete"
+            android:id="@+id/bottom_sheet_dialog_cancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black_russian"
             android:layout_gravity="center_vertical"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            android:text="Sterge"
+            android:text="Anulare"
+            android:textColor="@color/black_russian"
+            android:textSize="25sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/noCancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cancel">
+
+        <ImageView
+            android:id="@+id/noCancelIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="10dp"
+            android:src="@drawable/cancel_icon"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/bottom_sheet_dialog_noCancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:text="Înlătură anularea"
+            android:textColor="@color/black_russian"
             android:textSize="25sp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/delete">
+        android:layout_below="@id/noCancel">
 
         <ImageView
+            android:id="@+id/resolvedIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -54,9 +84,9 @@
             android:layout_gravity="center_vertical"
             android:clickable="true"
             android:focusable="true"
-            android:textColor="@color/black_russian"
             android:foreground="?attr/selectableItemBackground"
-            android:text="Marcheaza ca rezolvat"
+            android:text="Marchează ca rezolvat"
+            android:textColor="@color/black_russian"
             android:textSize="25sp" />
     </LinearLayout>
 

@@ -33,234 +33,265 @@
     <!--        android:scaleType="fitXY"-->
     <!--        app:shapeAppearanceOverlay="@style/circleImageView" />-->
 
-
-    <LinearLayout
-        android:id="@+id/fullName"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@id/tv_logo"
-        android:orientation="horizontal">
+        android:fillViewport="true">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/firstname"
-            style="@style/TextInputLayoutStyle"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_weight="50"
-            android:hint="@string/firstName"
-            android:textSize="15sp"
-            app:endIconMode="clear_text"
-            app:endIconTint="@color/black_russian"
-            app:errorEnabled="true"
-            app:errorIconDrawable="@null">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <LinearLayout
+                android:id="@+id/fullName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName|textCapWords"
-                android:singleLine="true"
-                android:textColor="@color/black_russian" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="horizontal">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/lastname"
-            style="@style/TextInputLayoutStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="30dp"
-            android:layout_toRightOf="@id/firstname"
-            android:layout_weight="50"
-            android:hint="@string/lastName"
-            android:textSize="15sp"
-            app:endIconMode="clear_text"
-            app:endIconTint="@color/black_russian"
-            app:errorEnabled="true"
-            app:errorIconDrawable="@null">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/firstname"
+                    style="@style/TextInputLayoutStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_weight="50"
+                    android:hint="@string/firstName"
+                    android:textSize="15sp"
+                    app:endIconMode="clear_text"
+                    app:endIconTint="@color/black_russian"
+                    app:errorEnabled="true"
+                    app:errorIconDrawable="@null">
 
-            <com.google.android.material.textfield.TextInputEditText
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName|textCapWords"
+                        android:singleLine="true"
+                        android:textColor="@color/black_russian" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/lastname"
+                    style="@style/TextInputLayoutStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="30dp"
+                    android:layout_toRightOf="@id/firstname"
+                    android:layout_weight="50"
+                    android:hint="@string/lastName"
+                    android:textSize="15sp"
+                    app:endIconMode="clear_text"
+                    app:endIconTint="@color/black_russian"
+                    app:errorEnabled="true"
+                    app:errorIconDrawable="@null">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName|textCapWords"
+                        android:singleLine="true"
+                        android:textColor="@color/black_russian" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName|textCapWords"
-                android:singleLine="true"
-                android:textColor="@color/black_russian" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
+
+                android:layout_below="@id/fullName"
+                android:orientation="horizontal">
+
+                <com.hbb20.CountryCodePicker
+                    android:id="@+id/ccpRegistration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="30dp"
+                    app:ccpDialog_backgroundColor="@color/black"
+                    app:ccpDialog_fastScroller_bubbleColor="@color/desert_storm"
+                    app:ccpDialog_fastScroller_bubbleTextAppearance="@style/bubbleText"
+                    app:ccpDialog_fastScroller_handleColor="@color/desert_storm"
+                    app:ccpDialog_showCloseIcon="true"
+                    app:ccpDialog_textColor="@color/desert_storm"
+                    app:ccp_autoDetectCountry="true"
+                    app:ccp_autoFormatNumber="true"
+                    app:ccp_contentColor="@color/black_russian"
+                    app:ccp_countryPreference="ro"
+                    app:ccp_defaultNameCode="ro"
+                    app:ccp_showArrow="false"
+                    app:ccp_showNameCode="false" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/phoneNumberRegistration"
+                    style="@style/TextInputLayoutStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="30dp"
+                    android:hint="Telefon"
+                    android:textSize="15sp"
+                    app:endIconMode="clear_text"
+                    app:endIconTint="@color/black_russian"
+                    app:errorEnabled="true"
+                    app:errorIconDrawable="@null">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="phone"
+                        android:textColor="@color/black_russian" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
 
-    <LinearLayout
-        android:id="@+id/phone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:layout_below="@id/fullName"
-        android:orientation="horizontal">
-
-        <com.hbb20.CountryCodePicker
-            android:id="@+id/ccpRegistration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="30dp"
-            app:ccpDialog_backgroundColor="@color/black"
-            app:ccpDialog_fastScroller_bubbleColor="@color/desert_storm"
-            app:ccpDialog_fastScroller_bubbleTextAppearance="@style/bubbleText"
-            app:ccpDialog_fastScroller_handleColor="@color/desert_storm"
-            app:ccpDialog_showCloseIcon="true"
-            app:ccpDialog_textColor="@color/desert_storm"
-            app:ccp_autoDetectCountry="true"
-            app:ccp_autoFormatNumber="true"
-            app:ccp_contentColor="@color/black_russian"
-            app:ccp_countryPreference="ro"
-            app:ccp_defaultNameCode="ro"
-            app:ccp_showArrow="false"
-            app:ccp_showNameCode="false" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/phoneNumberRegistration"
-            style="@style/TextInputLayoutStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="30dp"
-            android:hint="Telefon"
-            android:textSize="15sp"
-            app:endIconMode="clear_text"
-            app:endIconTint="@color/black_russian"
-            app:errorEnabled="true"
-            app:errorIconDrawable="@null">
-
-            <com.google.android.material.textfield.TextInputEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/email"
+                style="@style/TextInputLayoutStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="phone"
-                android:textColor="@color/black_russian" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
+                android:layout_below="@id/phone"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="-1dp"
+                android:layout_marginRight="30dp"
+                android:drawablePadding="10dp"
+                android:hint="@string/email"
+                android:textSize="15sp"
+                app:endIconMode="clear_text"
+                app:endIconTint="@color/black_russian"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:textColor="@color/black_russian" />
+            </com.google.android.material.textfield.TextInputLayout>
 
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/email"
-        style="@style/TextInputLayoutStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/phone"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="-1dp"
-        android:layout_marginRight="30dp"
-        android:drawablePadding="10dp"
-        android:hint="@string/email"
-        android:textSize="15sp"
-        app:endIconMode="clear_text"
-        app:endIconTint="@color/black_russian"
-        app:errorEnabled="true"
-        app:errorIconDrawable="@null">
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/password"
+                style="@style/TextInputLayoutStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/email"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:drawablePadding="10dp"
+                android:hint="@string/password"
+                android:textSize="15sp"
+                app:endIconMode="password_toggle"
+                app:endIconTint="@color/black_russian"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:textColor="@color/black_russian" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/password"
-        style="@style/TextInputLayoutStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/email"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:drawablePadding="10dp"
-        android:hint="@string/password"
-        android:textSize="15sp"
-        app:endIconMode="password_toggle"
-        app:endIconTint="@color/black_russian"
-        app:errorEnabled="true"
-        app:errorIconDrawable="@null">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/passwordTIET"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:textColor="@color/black_russian" />
-    </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/passwordTIET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:textColor="@color/black_russian" />
+            </com.google.android.material.textfield.TextInputLayout>
 
 
-    <!--    <Spinner-->
-    <!--        android:id="@+id/role"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_below="@id/password"-->
-    <!--        android:layout_marginLeft="30dp"-->
-    <!--        android:layout_marginRight="30dp"-->
+            <!--    <Spinner-->
+            <!--        android:id="@+id/role"-->
+            <!--        android:layout_width="match_parent"-->
+            <!--        android:layout_height="wrap_content"-->
+            <!--        android:layout_below="@id/password"-->
+            <!--        android:layout_marginLeft="30dp"-->
+            <!--        android:layout_marginRight="30dp"-->
 
-    <!--        android:background="@android:color/transparent"-->
-    <!--        android:spinnerMode="dropdown"-->
-    <!--        android:theme="@style/ThemeOverlay.AppCompat.Light" />-->
+            <!--        android:background="@android:color/transparent"-->
+            <!--        android:spinnerMode="dropdown"-->
+            <!--        android:theme="@style/ThemeOverlay.AppCompat.Light" />-->
 
-    <TextView
-        android:id="@+id/role"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
+            <TextView
+                android:id="@+id/role"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/password"
 
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="15dp"
-        android:layout_below="@id/password"
-        android:background="@drawable/text_view_border"
-        android:gravity="center_vertical"
-        android:hint="Rol"
-        android:padding="12dp"
-        android:textColor="@color/black_russian"
-        android:textColorHint="@color/black_russian"
-        android:textSize="15sp"
-        app:drawableEndCompat="@drawable/arrow_down_icon"
-        app:endIconTint="@color/black_russian"
-        app:errorEnabled="true"
-        app:errorIconDrawable="@null" />
-    <Button
-        android:id="@+id/createButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/role"
-        android:layout_centerInParent="true"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="30dp"
-        android:backgroundTint="@color/black_russian"
-        android:outlineSpotShadowColor="@color/black_russian"
-        android:text="@string/signUp"
-        android:textColor="#FFF7EC"
-        app:cornerRadius="3dp" />
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:background="@drawable/text_view_border"
+                android:gravity="center_vertical"
+                android:hint="Rol"
+                android:padding="12dp"
+                android:textColor="@color/black_russian"
+                android:textColorHint="@color/black_russian"
+                android:textSize="15sp"
+                app:drawableEndCompat="@drawable/arrow_down_icon"
+                app:endIconTint="@color/black_russian"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null" />
 
+            <LinearLayout
+                android:id="@+id/termsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/role"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/dontHaveAccout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/backToLoginButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="-7dp"
-        android:text="@string/haveAccount"
-        android:textColor="@color/black_russian"
-        android:textSize="17sp" />
+                <CheckBox
+                    android:id="@+id/checkboxTerms"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/black_russian" />
 
+                <TextView
+                    android:id="@+id/terms"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="italic"
+                    android:text="Termeni și condiții"
+                    android:textColor="@color/black_russian"
+                    android:textSize="17dp" />
+            </LinearLayout>
 
-    <Button
-        android:id="@+id/backToLoginButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"
-        android:backgroundTint="@color/black_russian"
-        android:outlineSpotShadowColor="@color/black_russian"
-        android:text="@string/login"
-        android:textColor="#F5E3D9"
-        app:cornerRadius="3dp" />
+            <Button
+                android:id="@+id/createButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:backgroundTint="@color/black_russian"
+                android:outlineSpotShadowColor="@color/black_russian"
+                android:text="@string/signUp"
+                android:textColor="#FFF7EC"
+                app:cornerRadius="3dp" />
+
+            <TextView
+                android:id="@+id/dontHaveAccout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="80dp"
+                android:layout_marginBottom="-7dp"
+                android:text="@string/haveAccount"
+                android:textColor="@color/black_russian"
+                android:textSize="17sp" />
+
+            <Button
+                android:id="@+id/backToLoginButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:backgroundTint="@color/black_russian"
+                android:outlineSpotShadowColor="@color/black_russian"
+                android:text="@string/login"
+                android:textColor="#F5E3D9"
+                app:cornerRadius="3dp" />
+        </LinearLayout>
+    </ScrollView>
 
     <ProgressBar
         android:id="@+id/progress_bar2"
@@ -270,6 +301,5 @@
         android:layout_centerInParent="true"
         android:indeterminateTint="@color/black_russian"
         android:visibility="gone" />
-
 
 </RelativeLayout>

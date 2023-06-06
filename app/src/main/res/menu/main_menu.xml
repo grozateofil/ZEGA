@@ -10,6 +10,12 @@
             android:title="Acasă" />
 
         <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/user_icon"
+            android:title="Profil" />
+
+
+        <item
             android:id="@+id/nav_error"
             android:icon="@drawable/error_icon"
             android:title="Eroare aparat" />
@@ -19,10 +25,6 @@
             android:icon="@drawable/hand"
             android:title="Consumabile" />
 
-        <item
-            android:id="@+id/nav_profile"
-            android:icon="@drawable/user_icon"
-            android:title="Profil" />
 
         <!--        <item-->
         <!--            android:id="@+id/nav_edit"-->
@@ -47,7 +49,7 @@
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/settings_icon"
-            android:title="Setări" />
+            android:title="Configurări" />
 
         <item
             android:id="@+id/nav_aboutUs"

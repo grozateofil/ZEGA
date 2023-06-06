@@ -17,10 +17,16 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.gt.zega.R;
+import com.gt.zega.entity.User;
 import com.gt.zega.util.AdapterForPersonalReports;
 
 import java.util.ArrayList;
@@ -38,6 +44,7 @@ public class SuppliesReportsFragment extends Fragment {
     private ArrayList<String> arrayList;
 
     private AdapterForPersonalReports customAdapter;
+    private User use;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,7 +63,7 @@ public class SuppliesReportsFragment extends Fragment {
         listView = view.findViewById(R.id.listOfReports);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLay);
         progressBar = view.findViewById(R.id.progress_bar_supplies_report);
-
+        getUserFromDB();
         progressBar.setVisibility(View.VISIBLE);
         storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
             @Override
@@ -65,7 +72,7 @@ public class SuppliesReportsFragment extends Fragment {
                     arrayList.add(item.getName());
                 }
 
-                customAdapter = new AdapterForPersonalReports(userId, arrayList, getContext(), "suppliesReport");
+                customAdapter = new AdapterForPersonalReports(userId, use, arrayList, getContext(), "suppliesReport");
 
 //                if (arrayList.isEmpty()) {
 //                    message.setText("Nu exista niciun raport");
@@ -122,6 +129,21 @@ public class SuppliesReportsFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void getUserFromDB() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
+        databaseReference.child(userId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                use = dataSnapshot.getValue(User.class);
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 
     private void checkIfListIsEmpty() {

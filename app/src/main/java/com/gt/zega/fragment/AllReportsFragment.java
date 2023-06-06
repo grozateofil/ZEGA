@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -64,10 +65,11 @@ public class AllReportsFragment extends Fragment {
 
     private ProgressBar progressBar;
 
-    private String type;
+    private String typeOfReport;
+    private User currentUser;
 
-    public AllReportsFragment(String type) {
-        this.type = type;
+    public AllReportsFragment(String typeOfReport) {
+        this.typeOfReport = typeOfReport;
 
     }
 
@@ -93,9 +95,11 @@ public class AllReportsFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                     String uid = userSnapshot.getKey();
-                    User name = userSnapshot.getValue(User.class);
+                    User user = userSnapshot.getValue(User.class);
 
-                    StorageReference userFilesRef = storageReference.child(uid).child(type);
+                    StorageReference userFilesRef = storageReference.child(uid).child(typeOfReport);
+
+                    getUserFromDB();
 
                     userFilesRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
                         @Override
@@ -106,7 +110,7 @@ public class AllReportsFragment extends Fragment {
                                 files.add(filename);
                             }
 
-                            UserFiles userFiles = new UserFiles(uid, name, files);
+                            UserFiles userFiles = new UserFiles(uid, user, files);
                             userFilesArrayList.add(userFiles);
 
                             Collections.sort(userFilesArrayList, new Comparator<UserFiles>() {
@@ -116,7 +120,7 @@ public class AllReportsFragment extends Fragment {
                                 }
                             });
 
-                            expandableListAdapter = new ExpandableListAdapter(getContext(), userFilesArrayList, type);
+                            expandableListAdapter = new ExpandableListAdapter(getContext(), currentUser, userFilesArrayList, typeOfReport);
                             expandableListView.setAdapter(expandableListAdapter);
                             expandableListView.setGroupIndicator(null);
 
@@ -133,7 +137,7 @@ public class AllReportsFragment extends Fragment {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -147,7 +151,7 @@ public class AllReportsFragment extends Fragment {
 
                 databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                             String uid = userSnapshot.getKey();
                             User name = userSnapshot.getValue(User.class);
@@ -176,35 +180,6 @@ public class AllReportsFragment extends Fragment {
                                     }
                                 }
                             });
-
-//                            userFilesRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
-//                                @Override
-//                                public void onSuccess(ListResult listResult) {
-//                                    ArrayList<String> files = new ArrayList<>();
-//                                    for (StorageReference item : listResult.getItems()) {
-//                                        String filename = item.getName();
-//                                        files.add(filename);
-//                                    }
-//
-//                                    UserFiles userFiles = new UserFiles(uid, name, files);
-//                                    userFilesArrayList.add(userFiles);
-//
-//                                    Collections.sort(userFilesArrayList, new Comparator<UserFiles>() {
-//                                        @Override
-//                                        public int compare(UserFiles userFiles1, UserFiles userFiles2) {
-//                                            return userFiles1.getUser().getFirstName().toLowerCase(Locale.ROOT).compareTo(userFiles2.getUser().getFirstName().toLowerCase(Locale.ROOT));
-//                                        }
-//                                    });
-//
-//                                    expandableListAdapter.notifyDataSetChanged();
-//
-//                                }
-//                            }).addOnFailureListener(new OnFailureListener() {
-//                                @Override
-//                                public void onFailure(@NonNull Exception e) {
-//                                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-//                                }
-//                            });
                         }
                     }
 
@@ -265,7 +240,7 @@ public class AllReportsFragment extends Fragment {
                                 new DatePickerDialog.OnDateSetListener() {
                                     @Override
                                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                        fromTIL.getEditText().setText(dayOfMonth + "." + (month + 1) + "." + year);
+                                        fromTIL.getEditText().setText(getString(R.string.date, dayOfMonth, (month + 1), year));
                                     }
                                 },
                                 year, month, day);
@@ -289,7 +264,7 @@ public class AllReportsFragment extends Fragment {
                                 new DatePickerDialog.OnDateSetListener() {
                                     @Override
                                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                        untilTIL.getEditText().setText(dayOfMonth + "." + (month + 1) + "." + year);
+                                        untilTIL.getEditText().setText(getString(R.string.date, dayOfMonth, (month + 1), year));
                                     }
                                 },
                                 year, month, day);
@@ -317,6 +292,21 @@ public class AllReportsFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void getUserFromDB() {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        databaseReference.child(uid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                currentUser = dataSnapshot.getValue(User.class);
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 
 }

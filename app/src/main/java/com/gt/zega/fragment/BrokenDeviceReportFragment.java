@@ -17,10 +17,16 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.gt.zega.R;
+import com.gt.zega.entity.User;
 import com.gt.zega.util.AdapterForPersonalReports;
 
 import java.util.ArrayList;
@@ -30,6 +36,7 @@ public class BrokenDeviceReportFragment extends Fragment {
     private StorageReference storageReference;
     private FirebaseStorage firebaseStorage;
     private String userId;
+    private User use;
 
     private ListView listView;
     private TextView message;
@@ -49,6 +56,7 @@ public class BrokenDeviceReportFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         userId = user.getUid();
 
+
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference().child("users/" + userId + "/brokenDeviceReport");
         arrayList = new ArrayList<>();
@@ -56,6 +64,7 @@ public class BrokenDeviceReportFragment extends Fragment {
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         progressBar = view.findViewById(R.id.progress_bar_broken_device_report);
 
+        getUserFromDB();
 
         progressBar.setVisibility(View.VISIBLE);
         storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
@@ -65,7 +74,7 @@ public class BrokenDeviceReportFragment extends Fragment {
                     arrayList.add(item.getName());
                 }
 
-                customAdapter = new AdapterForPersonalReports(userId, arrayList, getContext(), "brokenDeviceReport");
+                customAdapter = new AdapterForPersonalReports(userId, use, arrayList, getContext(), "brokenDeviceReport");
 
 //                if (arrayList.isEmpty()) {
 //                    message.setText("Nu exista niciun raport");
@@ -122,6 +131,21 @@ public class BrokenDeviceReportFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void getUserFromDB() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
+        databaseReference.child(userId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                use = dataSnapshot.getValue(User.class);
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 
     private void checkIfListIsEmpty() {
