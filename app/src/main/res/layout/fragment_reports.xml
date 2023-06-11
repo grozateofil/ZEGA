@@ -11,16 +11,19 @@
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
+        android:layout_marginStart="50dp"
+        app:tabMode="scrollable"
         android:background="@android:color/transparent"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         app:tabSelectedTextColor="@color/black_russian"
+        app:tabIndicatorColor="@color/black_russian"
+        app:tabGravity="fill"
         app:tabTextColor="@color/lightGray2">
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/myReports"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Rapoartele mele" />
 
@@ -32,7 +35,7 @@
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/allReportsSupplies"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Consumabile" />
 

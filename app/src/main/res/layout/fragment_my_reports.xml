@@ -10,18 +10,19 @@
         android:id="@+id/tabLay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
+        android:layout_marginStart="50dp"
         android:background="@android:color/transparent"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         app:tabSelectedTextColor="@color/black_russian"
+        app:tabIndicatorColor="@color/black_russian"
         app:tabTextColor="@color/lightGray2">
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/devicesReports"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Aparate" />
+            android:text="Aparaturi" />
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/suppliesReports"

@@ -185,4 +185,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         notifyDataSetChanged();
     }
 
+    public void updateData(ArrayList<UserFiles> newData) {
+        listAfterFiltered = newData;
+        notifyDataSetChanged();
+    }
+
 }

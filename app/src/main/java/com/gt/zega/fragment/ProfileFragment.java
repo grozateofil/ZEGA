@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -92,16 +91,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         editSaveButton = view.findViewById(R.id.saveChangesButton);
         progressBar = view.findViewById(R.id.progress_bar_profile);
 
-        editSaveButton.setTextOff("Editare");
-        editSaveButton.setTextOn(getText(R.string.save));
-        editSaveButton.setChecked(isEditMode);
-
         ccp.registerCarrierNumberEditText(phoneNumber.getEditText());
-
-        firstname.setEnabled(false);
-        lastname.setEnabled(false);
-        phoneNumber.setEnabled(false);
-        ccp.setEnabled(false);
 
         validations = new ValidationsImpl();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -113,36 +103,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             getUserData(userKey);
         }
 
-        firstname.getEditText().addTextChangedListener(textWatcher);
-        lastname.getEditText().addTextChangedListener(textWatcher);
-        phoneNumber.getEditText().addTextChangedListener(textWatcher);
 
 //        profilePicture.setOnClickListener(this);
         resetPassword.setOnClickListener(this);
-//        editSaveButton.setOnClickListener(this);
-        editSaveButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                isEditMode = b;
-
-                if (isEditMode) {
-
-                    firstname.setEnabled(true);
-                    lastname.setEnabled(true);
-                    phoneNumber.setEnabled(true);
-                    ccp.setEnabled(true);
-
-                } else {
-
-                    firstname.setEnabled(false);
-                    lastname.setEnabled(false);
-                    phoneNumber.setEnabled(false);
-                    ccp.setEnabled(false);
-
-                    updateData(firstname, lastname, phoneNumber, ccp, emailAddress);
-                }
-            }
-        });
+        editSaveButton.setOnClickListener(this);
 
         return view;
     }
@@ -156,6 +120,21 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 //                break;
             case (R.id.resetPasswordButton):
                 resetPassword();
+                break;
+
+            case (R.id.saveChangesButton):
+                if (editSaveButton.isChecked()) {
+                    firstname.setEnabled(true);
+                    lastname.setEnabled(true);
+                    phoneNumber.setEnabled(true);
+                    ccp.setEnabled(true);
+                } else {
+                    firstname.setEnabled(false);
+                    lastname.setEnabled(false);
+                    phoneNumber.setEnabled(false);
+                    ccp.setEnabled(false);
+                    updateData(firstname, lastname, phoneNumber, ccp, emailAddress);
+                }
                 break;
         }
 
@@ -222,6 +201,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 user = dataSnapshot.getValue(User.class);
 
                 if (user != null) {
+                    if (user.isBlockedAccount()) {
+                        FirebaseAuth.getInstance().signOut();
+                    }
                     String userRole = user.getRole();
                     if (superUsersList.contains(userRole) || userRole.equals(getText(R.string.admin).toString())) {
                         role.setText(userRole);
@@ -241,7 +223,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
                 }
                 progressBar.setVisibility(View.GONE);
-                enabled(true);
+                resetPassword.setEnabled(true);
+                editSaveButton.setEnabled(true);
             }
 
             @Override

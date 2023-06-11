@@ -77,7 +77,8 @@
                 android:layout_marginTop="10dp"
                 android:text="12234567890"
                 android:textColor="@color/black_russian"
-                android:textSize="23sp" />
+                android:textSize="23sp"
+                android:textStyle="italic" />
 
         </LinearLayout>
 
@@ -85,6 +86,8 @@
             android:id="@+id/mapLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/black_russian"
+            android:outlineSpotShadowColor="@color/black_russian"
             android:text="Locatie"
             android:textColor="@color/floral_white" />
 

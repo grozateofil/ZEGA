@@ -5,6 +5,8 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,11 +35,17 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.gt.zega.R;
+import com.gt.zega.adapter.HospitalAdapter;
+import com.gt.zega.adapter.HospitalSectionAdapter;
+import com.gt.zega.entity.Hospital;
 import com.gt.zega.entity.User;
 import com.gt.zega.entity.UserAccount;
 import com.gt.zega.util.Validations;
@@ -49,7 +57,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 
-public class RegisterFragment extends Fragment implements View.OnClickListener {
+public class RegisterFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
 //    private ImageView imageView;
 //    private Uri imageUri;
@@ -61,6 +69,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     private TextInputLayout email;
     private TextInputLayout password;
     private TextView role;
+    private TextView hospital;
+    private TextView hospitalSection;
     private CheckBox checkBox;
     private TextView terms;
     private Button createButton;
@@ -70,12 +80,17 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     private FirebaseAuth fAuth;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    private DatabaseReference dbReference;
     private FirebaseStorage firebaseStorage;
     private StorageReference storageReference;
 
     private Validations validations;
     private String userUid;
     private User user;
+    private Hospital selectedHospital;
+
+    private ArrayList<Hospital> hospitalArrayList;
+    private ArrayList<String> hospitalSectionsArrayList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -90,6 +105,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         email = view.findViewById(R.id.email);
         password = view.findViewById(R.id.password);
         role = view.findViewById(R.id.role);
+        hospital = view.findViewById(R.id.hsp);
+        hospitalSection = view.findViewById(R.id.sct);
         terms = view.findViewById(R.id.terms);
         checkBox = view.findViewById(R.id.checkboxTerms);
         createButton = view.findViewById(R.id.createButton);
@@ -105,11 +122,66 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         fAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("users");
-
+        dbReference = FirebaseDatabase.getInstance().getReference("hospitals");
         firebaseStorage = FirebaseStorage.getInstance();
+
+        hospitalArrayList = new ArrayList<>();
+        validations = new ValidationsImpl();
+        hospitalSectionsArrayList = new ArrayList<>();
+        getHospitalFromDB();
+
+        hospital.setOnLongClickListener(this);
+        hospitalSection.setOnLongClickListener(this);
+
+        role.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                hospital.setText(null);
+                hospitalSection.setText(null);
+                hospitalSectionsArrayList.clear();
+                if (!role.getText().toString().isEmpty()) {
+                    hospital.setVisibility(View.VISIBLE);
+                } else {
+                    hospital.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        hospital.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                hospitalSection.setText(null);
+                hospitalSection.setVisibility(View.GONE);
+                hospitalSectionsArrayList.clear();
+                if (!hospital.getText().toString().isEmpty() && !role.getText().toString().equalsIgnoreCase("inginer")) {
+                    hospitalSection.setVisibility(View.VISIBLE);
+                } else {
+                    hospitalSection.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+
+
 //        storageReference = firebaseStorage.getReference("usersProfilePictures");
 
-        validations = new ValidationsImpl();
 
         firstname.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
         lastname.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
@@ -122,6 +194,8 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         createButton.setOnClickListener(this);
         backToLoginButton.setOnClickListener(this);
         role.setOnClickListener(this);
+        hospital.setOnClickListener(this);
+        hospitalSection.setOnClickListener(this);
         terms.setOnClickListener(this);
 
         return view;
@@ -134,6 +208,27 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 //            case (R.id.selectPhotoFromGalery):
 //                openGallery();
 //                break;
+            case (R.id.role):
+                openDialogWithUserRoles();
+                break;
+
+            case (R.id.hsp):
+                if (hospitalArrayList.size() > 0)
+                    openDialogWithHospitals(hospitalArrayList);
+                else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Nu s-a incarcat lista cu spitale", Toast.LENGTH_SHORT).show();
+                }
+
+                break;
+
+            case (R.id.sct):
+                if (hospitalSectionsArrayList.size() > 0)
+                    openDialogWithHospitalSections(hospitalSectionsArrayList);
+                break;
+
+            case (R.id.terms):
+                openDialogWithTerms();
+                break;
 
             case (R.id.createButton):
                 if (validation())
@@ -141,20 +236,12 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                     firebaseRegistration();
 //                    } else {
 //                        Toast.makeText(getActivity().getApplicationContext(), "Nicio imagine selectata pt profil", Toast.LENGTH_SHORT).show();
-//
 //                    }
                 break;
             case (R.id.backToLoginButton):
                 getActivity().onBackPressed();
                 break;
 
-            case (R.id.role):
-                openDialogWithUserRoles();
-                break;
-
-            case (R.id.terms):
-                openDialogWithTerms();
-                break;
         }
     }
 
@@ -202,6 +289,28 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         };
     }
 
+    public void getHospitalFromDB() {
+        hospitalArrayList = new ArrayList<>();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("hospitals");
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
+                    Hospital hospital = objectSnapshot.getValue(Hospital.class);
+                    if (!hospitalArrayList.stream().anyMatch(f -> f.getHospitalName().equalsIgnoreCase(hospital.getHospitalName())))
+                        hospitalArrayList.add(hospital);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getActivity().getApplicationContext(), "Eroare la înregistrare", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
     private boolean validation() {
         return (validations.textInputLayoutValidation(firstname) &
                 validations.textInputLayoutValidation(lastname) &
@@ -209,6 +318,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                 validations.emailValidation(email) &
                 validations.createPassword(password) &
                 validations.textViewValidation(role) &
+                validations.textViewValidation(hospital) &
                 validations.checkBoxValidation(checkBox, getContext()));
     }
 
@@ -218,10 +328,15 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         String phoneNumber = ccp.getFullNumberWithPlus();
         String emailAddress = email.getEditText().getText().toString();
         String pass = password.getEditText().getText().toString();
+        String userHospital = hospital.getText().toString();
+        ArrayList<String> userSections = new ArrayList<>(Arrays.asList(hospitalSection.getText().toString()));
         String role = this.role.getText().toString();
+        boolean blockedAccount = false;
+
 
         UserAccount userAccount = new UserAccount(emailAddress, pass);
-        user = new User(firstName, lastName, phoneNumber, role);
+        user = new User(firstName, lastName, phoneNumber, userHospital, userSections, role, blockedAccount);
+//        user = new User(firstName, lastName, phoneNumber, selectedHospital, role, blockedAccount);
 
 
 //        storageReference = firebaseStorage.getReference("usersProfilePictures/" + emailAddress + "_profile_picture." + getPhotoExtension(imageUri));
@@ -306,6 +421,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         };
 
         listView.setAdapter(adapter);
+        listView.setScrollBarFadeDuration(0);
 
         closeFragButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -326,18 +442,137 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    private void openDialogWithHospitals(ArrayList<Hospital> arrayListWithHospitals) {
+        Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.devices_list_view);
+
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dialog.show();
+
+        ListView listView = dialog.findViewById(R.id.list_view);
+        ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
+
+        HospitalAdapter hospitalAdapter = new HospitalAdapter(getContext(), arrayListWithHospitals);
+        listView.setAdapter(hospitalAdapter);
+
+        closeFragButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                hospital.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+                hospital.setText(hospitalAdapter.getItem(position).getHospitalName());
+                selectedHospital = hospitalAdapter.getItem(position);
+                hospital.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//                        hospitalSection.setText(null);
+                        if (!hospital.getText().toString().isEmpty() && !role.getText().toString().equalsIgnoreCase("inginer")) {
+                            hospitalSection.setVisibility(View.VISIBLE);
+                        } else {
+                            hospitalSection.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
+
+                try {
+                    hospitalSectionsArrayList = new ArrayList<>();
+                    hospitalSectionsArrayList.addAll(hospitalAdapter.getItem(position).getHospitalSections());
+                } catch (NullPointerException e) {
+                    Toast.makeText(getContext(), getString(R.string.without_sections, hospitalAdapter.getItem(position).getHospitalName()), Toast.LENGTH_SHORT).show();
+                }
+
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private void openDialogWithHospitalSections(ArrayList<String> arrayListWithDevices) {
+        Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.devices_list_view);
+
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dialog.show();
+
+        EditText searchEditText = dialog.findViewById(R.id.edit_text);
+        ListView listView = dialog.findViewById(R.id.list_view);
+        ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
+
+        HospitalSectionAdapter sectionAdapter = new HospitalSectionAdapter(getContext(), arrayListWithDevices);
+        listView.setAdapter(sectionAdapter);
+
+        closeFragButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                sectionAdapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                hospitalSection.setText(sectionAdapter.getItem(position));
+                hospitalSection.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+
+                dialog.dismiss();
+            }
+        });
+    }
+
     private void openDialogWithTerms() {
         new AlertDialog.Builder(getContext())
                 .setTitle("Termeni și condiții")
                 .setMessage("Ești de acord cu acest termen?")
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton("De acord", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         checkBox.setChecked(true);
                     }
+                }).setNegativeButton("Nu sunt de acord", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (checkBox.isChecked()) {
+                            checkBox.setChecked(false);
+                        }
+                    }
                 })
                 .show();
-
     }
 
 
@@ -380,11 +615,33 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         email.setEnabled(type);
         password.setEnabled(type);
         role.setEnabled(type);
-        createButton.setEnabled(type);
-        backToLoginButton.setEnabled(type);
+        hospital.setEnabled(type);
+        hospitalSection.setEnabled(type);
         checkBox.setEnabled(type);
         terms.setEnabled(type);
+        createButton.setEnabled(type);
+        backToLoginButton.setEnabled(type);
     }
 
+    @Override
+    public boolean onLongClick(View view) {
+        switch (view.getId()) {
+            case (R.id.role):
+
+                break;
+
+            case (R.id.hsp):
+                hospitalSectionsArrayList.clear();
+                hospital.setText(null);
+                hospitalSection.setText(null);
+
+                break;
+
+            case (R.id.sct):
+                hospitalSection.setText(null);
+                break;
+        }
+        return false;
+    }
 }
 

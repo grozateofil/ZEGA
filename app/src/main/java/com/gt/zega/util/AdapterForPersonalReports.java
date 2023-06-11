@@ -148,7 +148,7 @@ public class AdapterForPersonalReports extends BaseAdapter {
             }
         });
 
-        if (!arrayList.get(newPosition).contains("_REZ") && currentUser.getRole().equals("admin")) {
+        if (!arrayList.get(newPosition).contains("_REZ") && (currentUser.getRole().equals("admin") || currentUser.getRole().equals("inginer"))) {
             menuButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

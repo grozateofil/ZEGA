@@ -75,6 +75,8 @@
         android:layout_below="@id/date"
         android:layout_centerHorizontal="true"
         android:text="Aplica filtre"
+        android:backgroundTint="@color/black_russian"
+        android:outlineSpotShadowColor="@color/black_russian"
         android:textColor="@color/floral_white" />
 
 </RelativeLayout>

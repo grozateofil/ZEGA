@@ -158,11 +158,11 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
                 User user = dataSnapshot.getValue(User.class);
                 if (user != null) {
                     userRole = user.getRole();
-                    hideTextView(getView().findViewById(R.id.addNewHospital), (userRole.equals("inginer") || userRole.equals("admin")));
+                    hideTextView(getView().findViewById(R.id.addNewHospital), userRole.equals("admin"));
                     hideTextView(getView().findViewById(R.id.addNewDevice), superUsersList.contains(userRole) || userRole.equals("admin"));
                     hideTextView(getView().findViewById(R.id.addNewFaultCode), superUsersList.contains(userRole) || userRole.equals("admin"));
                     hideTextView(getView().findViewById(R.id.addNewSupplie), superUsersList.contains(userRole) || userRole.equals("admin"));
-                    hideTextView(getView().findViewById(R.id.deleteAccount), userRole.equals("admin"));
+                    hideTextView(getView().findViewById(R.id.deleteAccount), false);
                 }
             }
 

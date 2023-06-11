@@ -1,6 +1,7 @@
 package com.gt.zega.fragment;
 
 import android.content.Intent;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -28,6 +29,8 @@ public class AboutUsFragment extends Fragment {
 
         phoneNumber = view.findViewById(R.id.phoneContact);
         mapLocation = view.findViewById(R.id.mapLocation);
+
+        phoneNumber.setPaintFlags(phoneNumber.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         phoneNumber.setOnClickListener(new View.OnClickListener() {
             @Override

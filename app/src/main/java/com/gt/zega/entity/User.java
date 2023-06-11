@@ -1,13 +1,17 @@
 package com.gt.zega.entity;
 
+import java.util.ArrayList;
+
 public class User {
 
-    private String role;
     private String firstName;
     private String lastName;
     private String phoneNumber;
-    private String imageUrl;
+    //    private String imageUrl;
     private UserAccount userAccount;
+    private String hospitalName;
+    private ArrayList<String> hospitalSections;
+    private String role;
     private boolean blockedAccount;
 
     public User() {
@@ -15,27 +19,29 @@ public class User {
     }
 
 
-    public User(String firstName, String lastName, String phoneNumber) {
+//    public User(String firstName, String lastName, String phoneNumber) {
+//        this.firstName = firstName;
+//        this.lastName = lastName;
+//        this.phoneNumber = phoneNumber;
+////        this.imageUrl = imageUrl;
+//    }
+//
+//    public User(String firstName, String lastName, String phoneNumber, String role) {
+//        this.role = role;
+//        this.firstName = firstName;
+//        this.lastName = lastName;
+//        this.phoneNumber = phoneNumber;
+//    }
+
+    public User(String firstName, String lastName, String phoneNumber, String hospitalName, ArrayList<String> hospitalSections, String role, boolean blockedAccount) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
-        this.imageUrl = imageUrl;
-    }
-
-    public User(String firstName, String lastName, String phoneNumber, String role) {
+        this.userAccount = userAccount;
+        this.hospitalName = hospitalName;
+        this.hospitalSections = hospitalSections;
         this.role = role;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phoneNumber = phoneNumber;
-
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
+        this.blockedAccount = blockedAccount;
     }
 
     public String getFirstName() {
@@ -70,12 +76,28 @@ public class User {
         this.userAccount = userAccount;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getHospitalName() {
+        return hospitalName;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setHospitalName(String hospitalName) {
+        this.hospitalName = hospitalName;
+    }
+
+    public ArrayList<String> getHospitalSections() {
+        return hospitalSections;
+    }
+
+    public void setHospitalSections(ArrayList<String> hospitalSections) {
+        this.hospitalSections = hospitalSections;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public boolean isBlockedAccount() {
@@ -92,6 +114,14 @@ public class User {
 
     @Override
     public String toString() {
-        return "User: " + "role: " + role + ", firstName: " + firstName + ", lastName: " + lastName + ", phoneNumber: " + phoneNumber + ", imageUrl: " + imageUrl + ", userAccount: " + userAccount;
+        return "User: " + ", firstName: " + firstName +
+                ", lastName: " + lastName +
+                ", phoneNumber: " + phoneNumber +
+                ", userAccount: " + userAccount +
+                ", hospital: " + hospitalName +
+                ", hospitalSection: " + hospitalSections +
+                "role: " + role;
     }
+
+
 }

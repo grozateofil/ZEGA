@@ -29,70 +29,12 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/selectDevice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="18dp"
-                android:layout_marginEnd="30dp"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/text_view_border"
-                android:gravity="center_vertical"
-                android:hint="Selectează aparat"
-                android:padding="12dp"
-                android:textColor="@color/black_russian"
-                android:textColorHint="@color/black_russian"
-                android:textSize="15sp"
-                app:drawableEndCompat="@drawable/arrow_down_icon"
-                app:endIconTint="@color/black_russian"
-                app:errorEnabled="true"
-                app:errorIconDrawable="@null" />
-
-            <TextView
-                android:id="@+id/errorCode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/selectDevice"
-                android:layout_marginStart="30dp"
-                android:layout_marginEnd="30dp"
-                android:background="@drawable/text_view_border"
-                android:gravity="center_vertical"
-                android:hint="Selectare cod defectiune"
-                android:padding="12dp"
-                android:textColor="@color/black_russian"
-                android:textColorHint="@color/black_russian"
-                android:textSize="15sp"
-                app:drawableEndCompat="@drawable/arrow_down_icon"
-                app:endIconTint="@color/black_russian"
-                app:errorEnabled="true"
-                app:errorIconDrawable="@null" />
-
-            <TextView
-                android:id="@+id/description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/errorCode"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="-1dp"
-                android:layout_marginEnd="30dp"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/text_view_border"
-                android:clickable="false"
-                android:gravity="center_vertical"
-                android:hint=""
-                android:padding="8dp"
-                android:textColor="@color/black_russian"
-                android:textIsSelectable="false"
-                android:textSize="15sp" />
-
-            <TextView
                 android:id="@+id/hospital"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:layout_marginStart="30dp"
-                android:layout_marginTop="1dp"
+                android:layout_marginTop="18dp"
+
                 android:layout_marginEnd="30dp"
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/text_view_border"
@@ -102,7 +44,6 @@
                 android:textColor="@color/black_russian"
                 android:textColorHint="@color/black_russian"
                 android:textSize="15sp"
-                app:drawableEndCompat="@drawable/arrow_down_icon"
                 app:endIconTint="@color/black_russian"
                 app:errorEnabled="true"
                 app:errorIconDrawable="@null" />
@@ -123,7 +64,6 @@
                 android:textColor="@color/black_russian"
                 android:textColorHint="@color/black_russian"
                 android:textSize="15sp"
-                app:drawableEndCompat="@drawable/arrow_down_icon"
                 app:endIconTint="@color/black_russian"
                 app:errorEnabled="true"
                 app:errorIconDrawable="@null" />
@@ -133,7 +73,6 @@
                 style="@style/TextInputLayoutStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/hospital"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="-1dp"
                 android:layout_marginEnd="30dp"
@@ -156,12 +95,67 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:id="@+id/selectDevice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginStart="30dp"
+
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/text_view_border"
+                android:gravity="center_vertical"
+                android:hint="Selectează aparat"
+                android:padding="12dp"
+                android:textColor="@color/black_russian"
+                android:textColorHint="@color/black_russian"
+                android:textSize="15sp"
+                app:drawableEndCompat="@drawable/arrow_down_icon"
+                app:endIconTint="@color/black_russian"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null" />
+
+            <TextView
+                android:id="@+id/errorCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:background="@drawable/text_view_border"
+                android:gravity="center_vertical"
+                android:hint="Selectare cod defectiune"
+                android:padding="12dp"
+                android:textColor="@color/black_russian"
+                android:textColorHint="@color/black_russian"
+                android:textSize="15sp"
+                app:drawableEndCompat="@drawable/arrow_down_icon"
+                app:endIconTint="@color/black_russian"
+                app:errorEnabled="true"
+                app:errorIconDrawable="@null" />
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="-1dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/text_view_border"
+                android:clickable="false"
+                android:gravity="center_vertical"
+                android:hint=""
+                android:padding="8dp"
+                android:textColor="@color/black_russian"
+                android:textIsSelectable="false"
+                android:textSize="15sp" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/optionalDescription"
                 style="@style/TextInputLayoutStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/sectionRoom"
                 android:layout_marginLeft="30dp"
                 android:layout_marginTop="-1dp"
                 android:layout_marginRight="30dp"
@@ -188,7 +182,6 @@
                 android:id="@+id/importImages"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:layout_below="@id/optionalDescription"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
                 android:gravity="center|start"
@@ -204,7 +197,7 @@
                 <ImageButton
                     android:id="@+id/addPicture"
                     android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_height="match_parent"
                     android:background="@android:color/transparent"
                     android:src="@drawable/photo_camera_icon"
                     tools:ignore="ContentDescription" />
@@ -214,7 +207,6 @@
                 android:id="@+id/addNewDeviceButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/importImages"
                 android:layout_gravity="center"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"

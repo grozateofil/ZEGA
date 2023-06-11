@@ -79,7 +79,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName|textCapWords"
                 android:singleLine="true"
-                android:textColor="@color/black_russian" />
+                android:textColor="@color/black_russian"
+                android:textCursorDrawable="@drawable/color_cursor" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -89,6 +90,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="30dp"
             android:layout_weight="50"
+            android:enabled="false"
             android:hint="@string/lastName"
             android:textSize="15sp"
             app:endIconMode="clear_text"
@@ -101,7 +103,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName|textCapWords"
                 android:singleLine="true"
-                android:textColor="@color/black_russian" />
+                android:textColor="@color/black_russian"
+                android:textCursorDrawable="@drawable/color_cursor" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
@@ -118,6 +121,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="30dp"
+            android:enabled="false"
             app:ccpDialog_backgroundColor="@color/black"
             app:ccpDialog_fastScroller_bubbleColor="@color/desert_storm"
             app:ccpDialog_fastScroller_bubbleTextAppearance="@style/bubbleText"
@@ -139,7 +143,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="30dp"
+            android:enabled="false"
             android:hint="Telefon"
+            android:textCursorDrawable="@drawable/color_cursor"
             android:textSize="15sp"
             app:endIconMode="clear_text"
             app:endIconTint="@color/black_russian"
@@ -176,7 +182,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
-            android:textColor="@color/black_russian" />
+            android:textColor="@color/black_russian"
+            android:textCursorDrawable="@drawable/color_cursor" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -204,10 +211,26 @@
         android:layout_marginRight="30dp"
         android:layout_marginBottom="10dp"
         android:backgroundTint="@color/black_russian"
+        android:checked="false"
         android:outlineSpotShadowColor="@color/black_russian"
-        android:text=""
         android:textColor="#FFF7EC"
+        android:textOff="Editeaza"
+        android:textOn="Salveaza"
         app:cornerRadius="3dp" />
+
+    <!--    <Button-->
+    <!--        android:id="@+id/saveChangesButton"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_below="@id/resetPasswordButton"-->
+    <!--        android:layout_marginLeft="30dp"-->
+    <!--        android:layout_marginRight="30dp"-->
+    <!--        android:layout_marginBottom="10dp"-->
+    <!--        android:backgroundTint="@color/black_russian"-->
+    <!--        android:outlineSpotShadowColor="@color/black_russian"-->
+    <!--        android:text=""-->
+    <!--        android:textColor="#FFF7EC"-->
+    <!--        app:cornerRadius="3dp" />-->
 
     <ProgressBar
         android:id="@+id/progress_bar_profile"

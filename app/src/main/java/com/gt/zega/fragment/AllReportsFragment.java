@@ -156,30 +156,8 @@ public class AllReportsFragment extends Fragment {
                             String uid = userSnapshot.getKey();
                             User name = userSnapshot.getValue(User.class);
 
-                            StorageReference userFilesRef = storageReference.child(uid);
-
-                            userFilesRef.listAll().addOnCompleteListener(new OnCompleteListener<ListResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<ListResult> task) {
-                                    if (task.isSuccessful()) {
-                                        ArrayList<String> files = new ArrayList<>();
-                                        for (StorageReference item : task.getResult().getItems()) {
-                                            String filename = item.getName();
-                                            files.add(filename);
-                                        }
-                                        UserFiles userFiles = new UserFiles(uid, name, files);
-                                        userFilesArrayList.add(userFiles);
-
-                                        Collections.sort(userFilesArrayList, new Comparator<UserFiles>() {
-                                            @Override
-                                            public int compare(UserFiles userFiles1, UserFiles userFiles2) {
-                                                return userFiles1.getUser().getFirstName().toLowerCase(Locale.ROOT).compareTo(userFiles2.getUser().getFirstName().toLowerCase(Locale.ROOT));
-                                            }
-                                        });
-                                        expandableListAdapter.notifyDataSetChanged();
-                                    }
-                                }
-                            });
+                            getUserFilesFromDB(uid, name);
+                            expandableListAdapter.notifyDataSetChanged();
                         }
                     }
 
@@ -192,6 +170,7 @@ public class AllReportsFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
+
 
         search.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
@@ -292,6 +271,35 @@ public class AllReportsFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void getUserFilesFromDB(String uid, User name) {
+        StorageReference userFilesRef = storageReference.child(uid).child(typeOfReport);
+
+        userFilesRef.listAll().addOnCompleteListener(new OnCompleteListener<ListResult>() {
+            @Override
+            public void onComplete(@NonNull Task<ListResult> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<String> files = new ArrayList<>();
+                    for (StorageReference item : task.getResult().getItems()) {
+                        String filename = item.getName();
+                        files.add(filename);
+                    }
+                    UserFiles userFiles = new UserFiles(uid, name, files);
+                    userFilesArrayList.add(userFiles);
+
+                    Collections.sort(userFilesArrayList, new Comparator<UserFiles>() {
+                        @Override
+                        public int compare(UserFiles userFiles1, UserFiles userFiles2) {
+                            return userFiles1.getUser().getFirstName().toLowerCase(Locale.ROOT).compareTo(userFiles2.getUser().getFirstName().toLowerCase(Locale.ROOT));
+                        }
+                    });
+                    expandableListAdapter.updateData(userFilesArrayList);
+                    expandableListAdapter.notifyDataSetChanged();
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }
+        });
     }
 
     private void getUserFromDB() {

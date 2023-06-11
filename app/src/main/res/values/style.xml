@@ -10,6 +10,7 @@
         <item name="hintTextColor">@color/black_russian</item> <!--hintColor from outline-->
         <item name="android:textColorHint">@color/black_russian
         </item> <!--hintColor from inside the TextInputLayout-->
+        <item name="colorControlActivated">@color/black_russian</item>
         <item name="android:textCursorDrawable">@color/black_russian</item>
     </style>
 
@@ -20,6 +21,12 @@
         </item> <!--hintColor from inside the TextInputLayout-->
         <item name="android:textCursorDrawable">@color/floral_white</item>
     </style>
+
+    <!--    <style name="TextInputLayoutAppearance" parent="Widget.Design.TextInputLayout">-->
+    <!--        <item name="colorControlNormal">@color/red</item>-->
+    <!--        <item name="colorControlActivated">@color/black_russian</item>-->
+    <!--        <item name="colorControlHighlight">@color/black_russian</item>-->
+    <!--    </style>-->
 
     <style name="circleImageView" parent="">
         <item name="cornerFamily">rounded</item>

@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.Login" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/black_russian</item>
+        <item name="colorPrimary">@color/floral_white</item>
         <item name="colorPrimaryVariant">@color/darkYellow</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->

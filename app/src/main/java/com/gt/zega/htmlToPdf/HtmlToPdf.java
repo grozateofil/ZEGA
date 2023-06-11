@@ -52,7 +52,6 @@ public class HtmlToPdf {
     private String defaultDescription;
     private String optionalDescription;
     private String hospitalName;
-    private String hospitalLocation;
     private String hospitalSection;
     private String roomSection;
     private ArrayList<Uri> listOfImages;
@@ -62,7 +61,7 @@ public class HtmlToPdf {
     private String reportType;
 
 
-    public HtmlToPdf(Activity activity, Context context, User user, String deviceName, String faultCode, String defaultDescription, String hospitalName, String hospitalLocation, String hospitalSection, String roomSection, String optionalDescription, ArrayList<Uri> listOfImages, String reportType) {
+    public HtmlToPdf(Activity activity, Context context, User user, String deviceName, String faultCode, String defaultDescription, String hospitalName, String hospitalSection, String roomSection, String optionalDescription, ArrayList<Uri> listOfImages, String reportType) {
         this.activity = activity;
         this.context = context;
         this.user = user;
@@ -70,7 +69,6 @@ public class HtmlToPdf {
         this.faultCode = faultCode;
         this.defaultDescription = defaultDescription;
         this.hospitalName = hospitalName;
-        this.hospitalLocation = hospitalLocation;
         this.hospitalSection = hospitalSection;
         this.roomSection = roomSection;
         this.optionalDescription = optionalDescription;
@@ -79,14 +77,13 @@ public class HtmlToPdf {
         this.reportType = reportType;
     }
 
-    public HtmlToPdf(Activity activity, Context context, User user, String suppliesName, String deviceName, String hospitalName, String hospitalLocation, String hospitalSection, String roomSection, String reportType) {
+    public HtmlToPdf(Activity activity, Context context, User user, String suppliesName, String deviceName, String hospitalName, String hospitalSection, String roomSection, String reportType) {
         this.activity = activity;
         this.context = context;
         this.user = user;
         this.suppliesName = suppliesName;
         this.deviceName = deviceName;
         this.hospitalName = hospitalName;
-        this.hospitalLocation = hospitalLocation;
         this.hospitalSection = hospitalSection;
         this.roomSection = roomSection;
 
@@ -115,9 +112,9 @@ public class HtmlToPdf {
         try {
             Document document = null;
             if (reportType.equalsIgnoreCase("brokenDeviceReport")) {
-                document = Jsoup.parse(HtmlComponents.createHtml(context, date, time, user, deviceName, faultCode, defaultDescription, hospitalName, hospitalLocation, hospitalSection, roomSection, optionalDescription, listOfImages), "UTF-8");
+                document = Jsoup.parse(HtmlComponents.createHtml(context, date, time, user, deviceName, faultCode, defaultDescription, hospitalName, hospitalSection, roomSection, optionalDescription, listOfImages), "UTF-8");
             } else if (reportType.equalsIgnoreCase("suppliesReport")) {
-                document = Jsoup.parse(HtmlComponents.createHtml1(context, date, time, user, suppliesName, deviceName, hospitalName, hospitalLocation, hospitalSection, roomSection), "UTF-8");
+                document = Jsoup.parse(HtmlComponents.createHtml1(context, date, time, user, suppliesName, deviceName, hospitalName, hospitalSection, roomSection), "UTF-8");
             }
             System.out.println(document.outerHtml());
             if (!fileName.endsWith(".html")) {

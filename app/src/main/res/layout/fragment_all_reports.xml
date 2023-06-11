@@ -27,12 +27,14 @@
             app:endIconMode="clear_text"
             app:endIconTint="@color/black_russian"
             app:errorEnabled="true"
+
             app:errorIconDrawable="@null">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
+                android:textCursorDrawable="@drawable/color_cursor"
                 android:textColor="@color/black_russian" /><!--android:textCursorDrawable="@drawable/color_cursor" -->
 
         </com.google.android.material.textfield.TextInputLayout>

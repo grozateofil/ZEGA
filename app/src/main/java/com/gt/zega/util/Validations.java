@@ -22,4 +22,5 @@ public interface Validations {
     public boolean textViewValidation(TextView materialTextView);
 
     public boolean checkBoxValidation(CheckBox checkBox, Context context);
+
 }

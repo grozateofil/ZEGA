@@ -27,11 +27,11 @@
 
     <string name="demo">Hello, %1$s! You have %2$d new messages.</string>
     <string name="date">%1$d.%2$d.%3$d</string>
-    <string name="delete_file_confirmation">Stergeti fisierul "%1$s"?</string>
-    <string name="anulare_raport">Doriți anularea raportului "%1$s"?</string>
-    <string name="inlaturare_anulare_raport">Doriți să înlăturați anularea raportunui "%1$s"?</string>
+    <string name="delete_file_confirmation">Stergeti fisierul \"%1$s\"?</string>
+    <string name="anulare_raport">Doriți anularea raportului \"%1$s\"?</string>
+    <string name="inlaturare_anulare_raport">Doriți să înlăturați anularea raportunui \"%1$s\"?</string>
 
-    <string name="without_sections">"%1$s" nu are sectii asociate.</string>
+    <string name="without_sections">\"%1$s\" nu are sectii asociate.</string>
     <string name="reset_password">Introduceți mai jos adresa de e-mail și vă vom trimite un link pentru a putea să vă resetați parola.</string>
     <string name="reset_password_confirmation">V-am trimis un e-mail la adresa\n %1$s pentru a putea reseta parola.\n\nDaca nu ați primit nimic este posibil ca e-mailul să-l fi primit în folderul de spam.</string>
 

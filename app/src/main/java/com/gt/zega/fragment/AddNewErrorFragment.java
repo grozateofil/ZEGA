@@ -59,7 +59,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 
-public class AddNewErrorFragment extends Fragment {
+public class AddNewErrorFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
     private final int MAX_NUMBER_OF_PHOTOS = 3;
     private final ArrayList<Uri> listOfImages = new ArrayList<>();
@@ -160,9 +160,7 @@ public class AddNewErrorFragment extends Fragment {
         hospitalArrayList = new ArrayList<>();
         hospitalSectionsArrayList = new ArrayList<>();
 
-        getDevices();
         getFaultCodes();
-        getHospitalFromDB();
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
@@ -170,103 +168,17 @@ public class AddNewErrorFragment extends Fragment {
             getUserData(userKey);
         }
 
-        selectDevice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openDialogWithMedicalDevices(deviceArrayList);
-            }
-        });
+        hospital.setOnLongClickListener(this);
+        hospitalSection.setOnLongClickListener(this);
+        selectDevice.setOnLongClickListener(this);
+        errorCode.setOnLongClickListener(this);
 
-        selectDevice.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                selectDevice.setText(null);
-                return true;
-            }
-        });
-
-        errorCode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openDialogWithErrorCodes(errorCodeArrayList);
-            }
-        });
-
-        errorCode.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                errorCode.setText(null);
-                errorCodeDescription.setText(null);
-                return true;
-            }
-        });
-
-        hospital.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openDialogWithHospitals(hospitalArrayList);
-            }
-        });
-
-        hospital.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                hospital.setText(null);
-                hospitalSection.setText(null);
-                hospitalSectionsArrayList.clear();
-                return true;
-            }
-        });
-
-        hospitalSection.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                hospitalSection.setText(null);
-                return true;
-            }
-        });
-
-        hospitalSection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (hospitalSectionsArrayList.size() > 0)
-                    openDialogWithHospitalSections(hospitalSectionsArrayList);
-            }
-        });
-
-        addPictureButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (linearLayout.getChildCount() < MAX_NUMBER_OF_PHOTOS)
-                    choosePhotoFromGallery();
-                else
-                    Toast.makeText(getActivity().getApplicationContext(), "Maxim " + MAX_NUMBER_OF_PHOTOS + " imagini", Toast.LENGTH_SHORT).show();
-            }
-        });
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (validation()) {
-                    enabled(false);
-                    htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectDevice.getText().toString(), errorCode.getText().toString(), errorCodeDescription.getText().toString(), hospital.getText().toString(), currentAddress.toString(), hospitalSection.getText().toString(), sectionRoom.getEditText().getText().toString(), description.getEditText().getText().toString(), listOfImages, "brokenDeviceReport");
-                    saveProblemForGraphFragment();
-                    if (htmlToPdf.writeHTML()) {
-                        selectDevice.setText(null);
-                        errorCode.setText(null);
-                        errorCodeDescription.setText(null);
-                        hospital.setText(null);
-                        hospitalSection.setText(null);
-                        sectionRoom.getEditText().setText(null);
-                        description.getEditText().setText(null);
-
-                        linearLayout.removeAllViews();
-                        listOfImages.clear();
-                        enabled(true);
-
-                    }
-                }
-            }
-        });
+        hospital.setOnClickListener(this);
+        hospitalSection.setOnClickListener(this);
+        selectDevice.setOnClickListener(this);
+        errorCode.setOnClickListener(this);
+        addPictureButton.setOnClickListener(this);
+        addButton.setOnClickListener(this);
 
         return view;
     }
@@ -288,14 +200,16 @@ public class AddNewErrorFragment extends Fragment {
         linearLayout.addView(imageView);
     }
 
-    private void getDevices() {
+    private void getDevices2(String selectedSection) {
+
         databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
                     Device device = objectSnapshot.getValue(Device.class);
-                    deviceArrayList.clear();
-                    deviceArrayList.add(device);
+                    if (device.getSection().equalsIgnoreCase(selectedSection)) {
+                        deviceArrayList.add(device);
+                    }
                 }
             }
 
@@ -345,11 +259,47 @@ public class AddNewErrorFragment extends Fragment {
         });
     }
 
+    public void getHospitalSectionsFromDB() {
+        hospitalSectionsArrayList = new ArrayList<>();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("hospitals").child(hospital.getText().toString()).child("hospitalSections");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
+                    String arrayList = objectSnapshot.getValue(String.class);
+//                    Hospital hospital = objectSnapshot.getValue(Hospital.class);
+//                    if (!hospitalSectionsArrayList.stream().anyMatch(f -> f.getHospitalName().equalsIgnoreCase(hospital.getHospitalName())))
+                    hospitalSectionsArrayList.add(arrayList);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private void getUserData(String userKey) {
         databaseReference.child(userKey).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
+                if (!user.getRole().equalsIgnoreCase("admin")) {
+                    hospital.setText(user.getHospitalName());
+                }
+                if (!user.getRole().equalsIgnoreCase("admin") && !user.getRole().equalsIgnoreCase("inginer")) {
+                    hospitalSection.setText(user.getHospitalSections().get(0));
+
+                } else if (user.getRole().equalsIgnoreCase("admin")) {
+                    hospital.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.arrow_down_icon, 0);
+                    hospitalSection.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.arrow_down_icon, 0);
+                    getHospitalFromDB();
+                } else if (user.getRole().equalsIgnoreCase("inginer")) {
+                    hospitalSection.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.arrow_down_icon, 0);
+                    getHospitalSectionsFromDB();
+                }
+
             }
 
             @Override
@@ -534,6 +484,7 @@ public class AddNewErrorFragment extends Fragment {
                     @Override
                     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                         hospitalSection.setText(null);
+                        selectDevice.setText(null);
                     }
 
                     @Override
@@ -600,7 +551,26 @@ public class AddNewErrorFragment extends Fragment {
 
                 hospitalSection.setText(sectionAdapter.getItem(position));
                 hospitalSection.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+                hospitalSection.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        selectDevice.setText(null);
+                        deviceArrayList.clear();
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
+
+//                getMedicalDevicesFromSelectedSection(sectionAdapter.getItem(position));
+                getDevices2(sectionAdapter.getItem(position));
                 dialog.dismiss();
             }
         });
@@ -712,6 +682,109 @@ public class AddNewErrorFragment extends Fragment {
         description.setEnabled(type);
         linearLayout.setEnabled(type);
         addPictureButton.setEnabled(type);
+        addButton.setEnabled(type);
     }
 
+
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId()) {
+            case (R.id.hospital):
+                if (user.getRole().equalsIgnoreCase("admin") && hospitalArrayList.size() > 0)
+                    openDialogWithHospitals(hospitalArrayList);
+                break;
+
+            case (R.id.section):
+                if ((user.getRole().equalsIgnoreCase("admin") || user.getRole().equalsIgnoreCase("inginer")) && hospitalSectionsArrayList.size() > 0) {
+                    openDialogWithHospitalSections(hospitalSectionsArrayList);
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Nu ati selectat un spital", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            case (R.id.selectDevice):
+                if (!hospitalSection.getText().toString().isEmpty()) {
+                    if (!hospitalSection.getText().toString().isEmpty() && deviceArrayList.size() > 0) {
+                        openDialogWithMedicalDevices(deviceArrayList);
+                    } else {
+                        Toast.makeText(getActivity().getApplicationContext(), "Nu exista niciun aparat in sectia  \"" + hospitalSection.getText().toString() + "\"", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Nu ati selectat o sectie", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            case (R.id.errorCode):
+                if (!selectDevice.getText().toString().isEmpty()) {
+                    openDialogWithErrorCodes(errorCodeArrayList);
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Nu ati selectat un aparat", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            case (R.id.addPicture):
+                if (linearLayout.getChildCount() < MAX_NUMBER_OF_PHOTOS)
+                    choosePhotoFromGallery();
+                else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Maxim " + MAX_NUMBER_OF_PHOTOS + " imagini", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            case (R.id.addNewDeviceButton):
+                if (validation()) {
+                    enabled(false);
+                    progressBar.setVisibility(View.VISIBLE);
+                    htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectDevice.getText().toString(), errorCode.getText().toString(), errorCodeDescription.getText().toString(), hospital.getText().toString(), hospitalSection.getText().toString(), sectionRoom.getEditText().getText().toString(), description.getEditText().getText().toString(), listOfImages, "brokenDeviceReport");
+                    saveProblemForGraphFragment();
+                    if (htmlToPdf.writeHTML()) {
+                        if (user.getRole().equalsIgnoreCase("admin"))
+                            hospital.setText(null);
+                        if (user.getRole().equalsIgnoreCase("admin") || user.getRole().equalsIgnoreCase("inginer"))
+                            hospitalSection.setText(null);
+
+                        sectionRoom.getEditText().setText(null);
+                        selectDevice.setText(null);
+                        errorCode.setText(null);
+                        errorCodeDescription.setText(null);
+                        description.getEditText().setText(null);
+                        linearLayout.removeAllViews();
+                        listOfImages.clear();
+                        progressBar.setVisibility(View.GONE);
+                        enabled(true);
+                    }
+                }
+                break;
+        }
+    }
+
+    @Override
+    public boolean onLongClick(View view) {
+        switch (view.getId()) {
+            case (R.id.hospital):
+                if (user.getRole().equalsIgnoreCase("admin")) {
+                    hospital.setText(null);
+                    hospitalSection.setText(null);
+                    selectDevice.setText(null);
+                    hospitalSectionsArrayList.clear();
+                    deviceArrayList.clear();
+                }
+                break;
+            case (R.id.section):
+                if (user.getRole().equalsIgnoreCase("admin") || user.getRole().equalsIgnoreCase("inginer")) {
+                    hospitalSection.setText(null);
+                    selectDevice.setText(null);
+                    deviceArrayList.clear();
+                }
+                break;
+            case (R.id.selectDevice):
+                selectDevice.setText(null);
+                break;
+            case (R.id.errorCode):
+                errorCode.setText(null);
+                errorCodeDescription.setText(null);
+                break;
+        }
+        return false;
+    }
 }

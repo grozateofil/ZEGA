@@ -21,7 +21,7 @@ import java.util.Locale;
 
 public class HtmlComponents {
 
-    public static String createHtml(Context context, String date, String time, User user, String deviceName, String faultCode, String defaultDescription, String hospitalName, String hospitalLocation, String hospitalSection, String roomSection, String optionalDescription, ArrayList<Uri> list) throws IOException {
+    public static String createHtml(Context context, String date, String time, User user, String deviceName, String faultCode, String defaultDescription, String hospitalName, String hospitalSection, String roomSection, String optionalDescription, ArrayList<Uri> list) throws IOException {
         String userName = user.getFirstName() + " " + user.getLastName();
         String phoneNumber = user.getPhoneNumber();
         String htmlHead = "<!DOCTYPE html>\n" +
@@ -104,11 +104,6 @@ public class HtmlComponents {
                 "</tr>\n" +
 
                 "<tr>\n" +
-                "<th>Locatie spital</th>\n" +
-                "<td>" + hospitalLocation + "</td>\n" +
-                "</tr>\n" +
-
-                "<tr>\n" +
                 "<th>Sectia</th>\n" +
                 "<td>" + hospitalSection + "</td>\n" +
                 "</tr>\n" +
@@ -170,7 +165,7 @@ public class HtmlComponents {
         return null;
     }
 
-    public static String createHtml1(Context context, String date, String time, User user, String suppliesName, String deviceName, String hospitalName, String hospitalLocation, String hospitalSection, String roomSection) throws IOException {
+    public static String createHtml1(Context context, String date, String time, User user, String suppliesName, String deviceName, String hospitalName, String hospitalSection, String roomSection) throws IOException {
         String userName = user.getFirstName() + " " + user.getLastName();
         String phoneNumber = user.getPhoneNumber();
         String htmlHead = "<!DOCTYPE html>\n" +
@@ -245,11 +240,6 @@ public class HtmlComponents {
                 "<tr>\n" +
                 "<th>Spital</th>\n" +
                 "<td>" + hospitalName + "</td>\n" +
-                "</tr>\n" +
-
-                "<tr>\n" +
-                "<th>Locatie spital</th>\n" +
-                "<td>" + hospitalLocation + "</td>\n" +
                 "</tr>\n" +
 
                 "<tr>\n" +

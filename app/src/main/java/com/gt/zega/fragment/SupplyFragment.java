@@ -32,7 +32,6 @@ import com.gt.zega.adapter.DeviceAdapter;
 import com.gt.zega.adapter.HospitalAdapter;
 import com.gt.zega.adapter.HospitalSectionAdapter;
 import com.gt.zega.adapter.SuppliesAdapter;
-import com.gt.zega.entity.Address;
 import com.gt.zega.entity.Device;
 import com.gt.zega.entity.Hospital;
 import com.gt.zega.entity.Supply;
@@ -67,7 +66,7 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
 
     private DatabaseReference databaseRef;
     private FirebaseUser firebaseUser;
-    private Address currentAddress;
+//    private Address currentAddress;
 
     private HtmlToPdf htmlToPdf;
 
@@ -94,26 +93,23 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
             getUserData(userKey);
         }
 
-        getDevices();
-        getHospitalFromDB();
         getSupplies();
 
-        selectSupplies.setOnClickListener(this);
-        selectMedicalDevice.setOnClickListener(this);
         selectHospital.setOnClickListener(this);
         selectHospitalSection.setOnClickListener(this);
+        selectMedicalDevice.setOnClickListener(this);
+        selectSupplies.setOnClickListener(this);
         sendButton.setOnClickListener(this);
 
-        selectSupplies.setOnLongClickListener(this);
-        selectMedicalDevice.setOnLongClickListener(this);
         selectHospital.setOnLongClickListener(this);
         selectHospitalSection.setOnLongClickListener(this);
-        sendButton.setOnLongClickListener(this);
+        selectMedicalDevice.setOnLongClickListener(this);
+        selectSupplies.setOnLongClickListener(this);
 
         return view;
     }
 
-    private void getDevices() {
+    private void getDevices(String selectedSection) {
         medicalDevicesArrayList = new ArrayList<>();
         databaseRef = FirebaseDatabase.getInstance().getReference().child("devices");
         databaseRef.addValueEventListener(new ValueEventListener() {
@@ -121,7 +117,9 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
                     Device device = objectSnapshot.getValue(Device.class);
-                    medicalDevicesArrayList.add(device);
+                    if (device.getSection().equalsIgnoreCase(selectedSection)) {
+                        medicalDevicesArrayList.add(device);
+                    }
                 }
             }
 
@@ -143,6 +141,28 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
                     Hospital hospital = objectSnapshot.getValue(Hospital.class);
                     if (!hospitalsArrayList.stream().anyMatch(f -> f.getHospitalName().equalsIgnoreCase(hospital.getHospitalName())))
                         hospitalsArrayList.add(hospital);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+
+    public void getHospitalSectionsFromDB() {
+        hospitalSectionsArrayList = new ArrayList<>();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("hospitals").child(selectHospital.getText().toString()).child("hospitalSections");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
+                    String arrayList = objectSnapshot.getValue(String.class);
+//                    Hospital hospital = objectSnapshot.getValue(Hospital.class);
+//                    if (!hospitalSectionsArrayList.stream().anyMatch(f -> f.getHospitalName().equalsIgnoreCase(hospital.getHospitalName())))
+                    hospitalSectionsArrayList.add(arrayList);
                 }
             }
 
@@ -178,6 +198,19 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
+                if (!user.getRole().equalsIgnoreCase("admin"))
+                    selectHospital.setText(user.getHospitalName());
+                if (!user.getRole().equalsIgnoreCase("admin") && !user.getRole().equalsIgnoreCase("inginer")) {
+                    selectHospital.setEnabled(false);
+                    selectHospitalSection.setText(user.getHospitalSections().get(0));
+                } else if (user.getRole().equalsIgnoreCase("admin")) {
+                    selectHospital.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.arrow_down_icon, 0);
+                    selectHospitalSection.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.arrow_down_icon, 0);
+                    getHospitalFromDB();
+                } else if (user.getRole().equalsIgnoreCase("inginer")) {
+                    selectHospitalSection.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.arrow_down_icon, 0);
+                    getHospitalSectionsFromDB();
+                }
             }
 
             @Override
@@ -280,23 +313,7 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
 
                 selectHospital.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
                 selectHospital.setText(adapter.getItem(position).getHospitalName());
-                selectHospital.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                        selectHospitalSection.setText(null);
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-
-                    }
-                });
 
                 try {
                     hospitalSectionsArrayList = new ArrayList<>();
@@ -304,12 +321,13 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
                 } catch (NullPointerException e) {
                     Toast.makeText(getContext(), getString(R.string.without_sections, adapter.getItem(position).getHospitalName()), Toast.LENGTH_SHORT).show();
                 }
-                currentAddress = adapter.getItem(position).getHospitalAddress();
+//                currentAddress = adapter.getItem(position).getHospitalAddress();
 
                 dialog.dismiss();
             }
         });
     }
+
 
     private void openDialogWithHospitalSections(ArrayList<String> arrayListWithDevices) {
         dialog = new Dialog(getContext());
@@ -355,7 +373,24 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
 
                 selectHospitalSection.setText(sectionAdapter.getItem(position).toString());
                 selectHospitalSection.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+                selectHospitalSection.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        selectMedicalDevice.setText(null);
+                        medicalDevicesArrayList.clear();
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
+                getDevices(sectionAdapter.getItem(position));
                 dialog.dismiss();
             }
         });
@@ -421,31 +456,58 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
                 validations.textInputLayoutValidation(devLocation);
     }
 
+    public void enabled(boolean type) {
+        selectHospital.setEnabled(type);
+        selectHospitalSection.setEnabled(type);
+        selectMedicalDevice.setEnabled(type);
+        selectSupplies.setEnabled(type);
+        devLocation.setEnabled(type);
+        sendButton.setEnabled(type);
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case (R.id.selectHospital):
+                if (user.getRole().equalsIgnoreCase("admin") && hospitalsArrayList.size() > 0)
+                    openDialogWithHospitals(hospitalsArrayList);
+                break;
+
+            case (R.id.selectSection):
+                if ((user.getRole().equalsIgnoreCase("admin") || user.getRole().equalsIgnoreCase("inginer")) && hospitalSectionsArrayList.size() > 0)
+                    openDialogWithHospitalSections(hospitalSectionsArrayList);
+                break;
+
+            case (R.id.selectMedicalDevice):
+                if (!selectHospitalSection.getText().toString().isEmpty()) {
+                    if (!selectHospitalSection.getText().toString().isEmpty() && medicalDevicesArrayList.size() > 0) {
+                        openDialogWithMedicalDevices(medicalDevicesArrayList);
+                    } else {
+                        Toast.makeText(getActivity().getApplicationContext(), "Nu exista niciun aparat in sectia  \"" + selectHospitalSection.getText().toString() + "\"", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Nu ati selectat o sectie", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
             case (R.id.selectSupplies):
                 openDialogWithSupplies(suppliesArrayList);
                 break;
-            case (R.id.selectMedicalDevice):
-                openDialogWithMedicalDevices(medicalDevicesArrayList);
-                break;
-            case (R.id.selectHospital):
-                openDialogWithHospitals(hospitalsArrayList);
-                break;
-            case (R.id.selectSection):
-                if (hospitalSectionsArrayList.size() > 0)
-                    openDialogWithHospitalSections(hospitalSectionsArrayList);
-                break;
+
             case (R.id.sendButton):
                 if (validation()) {
-                    htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectSupplies.getText().toString(), selectMedicalDevice.getText().toString(), selectHospital.getText().toString(), currentAddress.toString(), selectHospitalSection.getText().toString(), devLocation.getEditText().getText().toString(), "suppliesReport");
+                    enabled(false);
+                    htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectSupplies.getText().toString(), selectMedicalDevice.getText().toString(), selectHospital.getText().toString(), selectHospitalSection.getText().toString(), devLocation.getEditText().getText().toString(), "suppliesReport");
                     if (htmlToPdf.writeHTML()) {
-                        selectSupplies.setText(null);
+                        if (user.getRole().equalsIgnoreCase("admin"))
+                            selectHospital.setText(null);
+                        if (user.getRole().equalsIgnoreCase("admin") || user.getRole().equalsIgnoreCase("inginer"))
+                            selectHospitalSection.setText(null);
+
                         selectMedicalDevice.setText(null);
-                        selectHospital.setText(null);
-                        selectHospitalSection.setText(null);
+                        selectSupplies.setText(null);
                         devLocation.getEditText().setText(null);
+                        enabled(true);
                     }
                 }
                 break;
@@ -455,18 +517,29 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
     @Override
     public boolean onLongClick(View view) {
         switch (view.getId()) {
+            case (R.id.selectHospital):
+                if (user.getRole().equalsIgnoreCase("admin")) {
+                    selectMedicalDevice.setText(null);
+                    selectHospital.setText(null);
+                    selectHospitalSection.setText(null);
+                    hospitalSectionsArrayList.clear();
+                    medicalDevicesArrayList.clear();
+                }
+                break;
+
+            case (R.id.selectSection):
+                if (user.getRole().equalsIgnoreCase("admin") || user.getRole().equalsIgnoreCase("inginer")) {
+                    selectHospitalSection.setText(null);
+                    selectMedicalDevice.setText(null);
+                    medicalDevicesArrayList.clear();
+                }
+                break;
+
             case (R.id.selectSupplies):
                 selectSupplies.setText(null);
                 break;
             case (R.id.selectMedicalDevice):
                 selectMedicalDevice.setText(null);
-                break;
-            case (R.id.selectHospital):
-                selectHospital.setText(null);
-                hospitalSectionsArrayList.clear();
-                break;
-            case (R.id.selectSection):
-                selectHospitalSection.setText(null);
                 break;
 
         }

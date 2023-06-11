@@ -5,11 +5,15 @@ public class Device {
     private String deviceCompanyName;
     private String deviceName;
     private String deviceCode;
+    private String hospital;
+    private String section;
 
-    public Device(String deviceCompanyName, String deviceName, String deviceCode) {
+    public Device(String deviceCompanyName, String deviceName, String deviceCode, String hospital, String section) {
         this.deviceCompanyName = deviceCompanyName;
         this.deviceName = deviceName;
         this.deviceCode = deviceCode;
+        this.hospital = hospital;
+        this.section = section;
     }
 
     public Device() {
@@ -41,6 +45,22 @@ public class Device {
 
     public String getNameAndCode() {
         return deviceName + ",  " + deviceCode;
+    }
+
+    public String getSection() {
+        return section;
+    }
+
+    public void setSection(String section) {
+        this.section = section;
+    }
+
+    public String getHospital() {
+        return hospital;
+    }
+
+    public void setHospital(String hospital) {
+        this.hospital = hospital;
     }
 
     @Override

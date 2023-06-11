@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,15 +35,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.gt.zega.R;
+import com.gt.zega.entity.Hospital;
 import com.gt.zega.entity.User;
 import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
 
+    private TextView errorMessage;
     private TextInputLayout email;
     private TextInputLayout password;
 
@@ -53,6 +57,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     private FirebaseAuth fAuth;
     private DatabaseReference databaseReference;
+    private DatabaseReference dbReference;
     private FirebaseUser firebaseUser;
 
     private SharedPreferences sharedPreferences;
@@ -66,11 +71,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private Validations validations;
     private String userKey;
     private static User user;
+    private ArrayList<Hospital> hospitalArrayList;
+    private boolean blockedAccount;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_login, container, false);
+        errorMessage = view.findViewById(R.id.errorMessage);
         email = view.findViewById(R.id.loginEmail);
         password = view.findViewById(R.id.loginPassword);
 
@@ -81,6 +89,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
         fAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
+        dbReference = FirebaseDatabase.getInstance().getReference().child("hospitals");
         firebaseUser = fAuth.getCurrentUser();
 
         sharedPreferences = getContext().getSharedPreferences("Preferences", 0);
@@ -179,7 +188,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-
                 if (task.isSuccessful()) {
                     email.setError(null);
                     email.setErrorEnabled(false);
@@ -187,19 +195,39 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                     password.setError(null);
                     password.setErrorEnabled(false);
 
-                    Toast.makeText(getActivity().getApplicationContext(), "Succes!", Toast.LENGTH_SHORT).show();
-
+// TODO crapa pentru ca dupa ce dau LogOut, User us ramane user-ul precedent
                     databaseReference.child(fAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             User us = dataSnapshot.getValue(User.class);
 
-                            SharedPreferences prefs = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);//PreferenceManager.getDefaultSharedPreferences(getContext());
-                            SharedPreferences.Editor editor = prefs.edit();
-                            editor.putString("userRole", us.getRole());
-                            editor.apply();
+                            if (!us.isBlockedAccount()) {
+                                progressBar.setVisibility(View.GONE);
+                                errorMessage.setVisibility(View.INVISIBLE);
+                                Toast.makeText(getContext(), "V-ați conectat cu succes!", Toast.LENGTH_SHORT).show();
+                                SharedPreferences prefs = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);//PreferenceManager.getDefaultSharedPreferences(getContext());
+                                SharedPreferences.Editor editor = prefs.edit();
+                                editor.putString("userRole", us.getRole());
+                                editor.apply();
 
-                            onUserRoleSelectedListener.onUserRoleSelected(us.getRole());
+                                onUserRoleSelectedListener.onUserRoleSelected(us.getRole());
+
+
+                                HomeFragment homeFragment = new HomeFragment();
+                                FragmentManager fragmentManager = getParentFragmentManager();
+                                fragmentManager.beginTransaction().replace(R.id.content_frame, homeFragment).commit();
+
+                                SharedPreferences.Editor editor2 = sharedPreferences.edit();
+                                editor2.putString("LOGIN", emailAddress);
+                                editor2.commit();
+                            } else {
+                                FirebaseAuth.getInstance().signOut();
+                                progressBar.setVisibility(View.GONE);
+                                enabled(true);
+                                errorMessage.setVisibility(View.VISIBLE);
+                                errorMessage.setText("CONT BLOCAT");
+                            }
+
                         }
 
                         @Override
@@ -207,14 +235,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                         }
                     });
 
-                    HomeFragment homeFragment = new HomeFragment();
-                    FragmentManager fragmentManager = getParentFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.content_frame, homeFragment).commit();
+//                    HomeFragment homeFragment = new HomeFragment();
+//                    FragmentManager fragmentManager = getParentFragmentManager();
+//                    fragmentManager.beginTransaction().replace(R.id.content_frame, homeFragment).commit();
 
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("LOGIN", emailAddress);
-//                    editor.putString("userUid",firebaseUser.getUid());
-                    editor.commit();
+//                    SharedPreferences.Editor editor = sharedPreferences.edit();
+//                    editor.putString("LOGIN", emailAddress);
+////                    editor.putString("userUid",firebaseUser.getUid());
+//                    editor.commit();
 
 
                 } else {
@@ -236,6 +264,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
 
     }
+
 
     public void enabled(boolean type) {
         email.setEnabled(type);
@@ -275,6 +304,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     public static User getCurrentUser() {
         return user;
     }
+
 
     public interface OnUserRoleSelectedListener {
         void onUserRoleSelected(String userRole);

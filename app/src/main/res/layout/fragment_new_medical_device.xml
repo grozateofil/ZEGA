@@ -19,10 +19,47 @@
         android:textStyle="bold" />
 
     <LinearLayout
+        android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/deviceHospital"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/text_view_border"
+            android:gravity="center_vertical"
+            android:hint="Selectați spital"
+            android:padding="12dp"
+            android:textColor="@color/black_russian"
+            android:textColorHint="@color/black_russian"
+            android:textSize="15sp"
+            app:endIconTint="@color/black_russian"
+            app:errorEnabled="true"
+            app:errorIconDrawable="@null" />
+
+        <TextView
+            android:id="@+id/deviceSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/text_view_border"
+            android:gravity="center_vertical"
+            android:hint="Selectați secția"
+            android:padding="12dp"
+            android:textColor="@color/black_russian"
+            android:textColorHint="@color/black_russian"
+            android:textSize="15sp"
+            app:endIconTint="@color/black_russian"
+            app:errorEnabled="true"
+            app:errorIconDrawable="@null" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/deviceCompany"
@@ -43,7 +80,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName|textCapWords"
                 android:singleLine="true"
-                android:textColor="@color/black_russian" />
+                android:textColor="@color/black_russian"
+                android:textCursorDrawable="@drawable/color_cursor" />
         </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -66,7 +104,8 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName|textCapWords"
                 android:singleLine="true"
-                android:textColor="@color/black_russian" />
+                android:textColor="@color/black_russian"
+                android:textCursorDrawable="@drawable/color_cursor" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -89,7 +128,8 @@
                 android:inputType="textCapCharacters"
                 android:maxLength="7"
                 android:singleLine="true"
-                android:textColor="@color/black_russian" />
+                android:textColor="@color/black_russian"
+                android:textCursorDrawable="@drawable/color_cursor" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
@@ -106,6 +146,16 @@
             app:cornerRadius="3dp" />
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar_create_medical_device"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="@color/black_russian"
+        android:visibility="gone" />
 
 
 </RelativeLayout>
