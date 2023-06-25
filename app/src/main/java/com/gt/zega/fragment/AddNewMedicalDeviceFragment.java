@@ -32,9 +32,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.gt.zega.R;
 import com.gt.zega.adapter.HospitalAdapter;
-import com.gt.zega.adapter.HospitalSectionAdapter;
-import com.gt.zega.entity.Device;
+import com.gt.zega.adapter.HospitalDepartmentAdapter;
 import com.gt.zega.entity.Hospital;
+import com.gt.zega.entity.MedicalDevice;
 import com.gt.zega.entity.User;
 import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
@@ -42,7 +42,7 @@ import com.gt.zega.util.ValidationsImpl;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class NewMedicalDeviceFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
+public class AddNewMedicalDeviceFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
     private TextView deviceHospital;
     private TextView deviceSection;
@@ -60,7 +60,7 @@ public class NewMedicalDeviceFragment extends Fragment implements View.OnClickLi
 
     private ArrayList<String> usersList;
 
-    private Device device;
+    private MedicalDevice medicalDevice;
     private User user;
     private ArrayList<String> hospitalSectionArrayList;
     private ArrayList<Hospital> hospitalsArrayList;
@@ -70,7 +70,7 @@ public class NewMedicalDeviceFragment extends Fragment implements View.OnClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_new_medical_device, container, false);
+        View view = inflater.inflate(R.layout.fragment_add_new_medical_device, container, false);
 
         usersList = new ArrayList<>(Arrays.asList(getText(R.string.super_user).toString().split(",")));
 
@@ -122,7 +122,7 @@ public class NewMedicalDeviceFragment extends Fragment implements View.OnClickLi
                     }
                     if (!userRole.equalsIgnoreCase("admin") && !userRole.equalsIgnoreCase("inginer")) {
                         deviceHospital.setEnabled(false);
-                        deviceSection.setText(user.getHospitalSections().get(0));
+                        deviceSection.setText(user.getHospitalDepartmentsNames().get(0));
                     } else if (userRole.equalsIgnoreCase("admin")) {
                         deviceHospital.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.arrow_down_icon, 0);
                         deviceSection.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.arrow_down_icon, 0);
@@ -249,7 +249,7 @@ public class NewMedicalDeviceFragment extends Fragment implements View.OnClickLi
 
                 try {
                     hospitalSectionArrayList = new ArrayList<>();
-                    hospitalSectionArrayList.addAll(hospitalAdapter.getItem(position).getHospitalSections());
+                    hospitalSectionArrayList.addAll(hospitalAdapter.getItem(position).getHospitalDepartments());
                 } catch (NullPointerException e) {
                     Toast.makeText(getContext(), getString(R.string.without_sections, hospitalAdapter.getItem(position).getHospitalName()), Toast.LENGTH_SHORT).show();
                 }
@@ -270,7 +270,7 @@ public class NewMedicalDeviceFragment extends Fragment implements View.OnClickLi
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        HospitalSectionAdapter sectionAdapter = new HospitalSectionAdapter(getContext(), arrayListWithDevices);
+        HospitalDepartmentAdapter sectionAdapter = new HospitalDepartmentAdapter(getContext(), arrayListWithDevices);
         listView.setAdapter(sectionAdapter);
 
         closeFragButton.setOnClickListener(new View.OnClickListener() {
@@ -345,10 +345,10 @@ public class NewMedicalDeviceFragment extends Fragment implements View.OnClickLi
             case (R.id.addNewMedicalDeviceButton):
                 if (validation()) {
                     progressBar.setVisibility(View.VISIBLE);
-                    device = new Device(deviceCompany.getEditText().getText().toString(), deviceName.getEditText().getText().toString(), deviceCode.getEditText().getText().toString(), deviceHospital.getText().toString(), deviceSection.getText().toString());
+                    medicalDevice = new MedicalDevice(deviceCompany.getEditText().getText().toString(), deviceName.getEditText().getText().toString(), deviceCode.getEditText().getText().toString(), deviceHospital.getText().toString(), deviceSection.getText().toString());
 
                     databaseReference = firebaseDatabase.getReference("devices");
-                    databaseReference.child(device.getDeviceCode()).setValue(device).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    databaseReference.child(medicalDevice.getDeviceCode()).setValue(medicalDevice).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {

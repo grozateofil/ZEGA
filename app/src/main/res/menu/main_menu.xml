@@ -25,12 +25,6 @@
             android:icon="@drawable/hand"
             android:title="Consumabile" />
 
-
-        <!--        <item-->
-        <!--            android:id="@+id/nav_edit"-->
-        <!--            android:icon="@drawable/edit_icon"-->
-        <!--            android:title="Editare" />-->
-
         <item
             android:id="@+id/nav_myReport"
             android:icon="@drawable/my_reports"
@@ -43,7 +37,7 @@
 
         <item
             android:id="@+id/nav_statistics"
-            android:icon="@drawable/statistics"
+            android:icon="@drawable/bar_chart"
             android:title="Statistici" />
 
         <item

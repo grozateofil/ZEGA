@@ -11,9 +11,9 @@
         -->
     </cloud-backup>
     <!--
-    <device-transfer>
+    <medicalDevice-transfer>
         <include .../>
         <exclude .../>
-    </device-transfer>
+    </medicalDevice-transfer>
     -->
 </data-extraction-rules>

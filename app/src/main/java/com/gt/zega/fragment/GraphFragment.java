@@ -249,7 +249,7 @@ public class GraphFragment extends Fragment implements MonthSelectedFragment.OnD
                             errorCodesArrayList.add(errorCode);
                         }
 
-                        dayData = new BrokenMedicalDevicesMonthly(date, errorCodesArrayList, arrayListOfDevicesCodes.size(), new ArrayList<>(arrayListOfDevicesCodes));
+                        dayData = new BrokenMedicalDevicesMonthly(date, errorCodesArrayList, arrayListOfDevicesCodes.size(), arrayListOfDevicesCodes);
 
                     } else {
                         dayData = new BrokenMedicalDevicesMonthly(date, new ArrayList<>(), 0, new ArrayList<>());

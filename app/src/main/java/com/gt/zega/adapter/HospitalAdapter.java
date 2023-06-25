@@ -71,7 +71,6 @@ public class HospitalAdapter extends ArrayAdapter<Hospital> {
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();
                 ArrayList<Hospital> filteredList = new ArrayList<>();
-
                 String query = constraint.toString().toLowerCase();
                 for (Hospital item : oldArrayList) {
                     if (item.getHospitalName().toLowerCase().contains(query)) {

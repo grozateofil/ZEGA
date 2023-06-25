@@ -13,17 +13,17 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.gt.zega.R;
-import com.gt.zega.entity.Supply;
+import com.gt.zega.entity.ConsumablesOfMedicalDevice;
 
 import java.util.ArrayList;
 
-public class SuppliesAdapter extends ArrayAdapter<Supply> {
+public class SuppliesAdapter extends ArrayAdapter<ConsumablesOfMedicalDevice> {
 
-    private ArrayList<Supply> oldArrayList;
-    private ArrayList<Supply> filteredArrayList;
+    private ArrayList<ConsumablesOfMedicalDevice> oldArrayList;
+    private ArrayList<ConsumablesOfMedicalDevice> filteredArrayList;
     private Context context;
 
-    public SuppliesAdapter(@NonNull Context context, ArrayList<Supply> oldArrayList) {
+    public SuppliesAdapter(@NonNull Context context, ArrayList<ConsumablesOfMedicalDevice> oldArrayList) {
         super(context, R.layout.list_item_layout_user_name);
         this.context = context;
         this.oldArrayList = oldArrayList;
@@ -36,7 +36,7 @@ public class SuppliesAdapter extends ArrayAdapter<Supply> {
     }
 
     @Override
-    public Supply getItem(int position) {
+    public ConsumablesOfMedicalDevice getItem(int position) {
         return filteredArrayList.get(position);
     }
 
@@ -70,12 +70,12 @@ public class SuppliesAdapter extends ArrayAdapter<Supply> {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();
-                ArrayList<Supply> filteredList = new ArrayList<>();
+                ArrayList<ConsumablesOfMedicalDevice> filteredList = new ArrayList<>();
 
                 String query = constraint.toString().toLowerCase();
-                for (Supply supply : oldArrayList) {
-                    if (supply.getNameAndCode().toLowerCase().contains(query)) {
-                        filteredList.add(supply);
+                for (ConsumablesOfMedicalDevice consumablesOfMedicalDevice : oldArrayList) {
+                    if (consumablesOfMedicalDevice.getNameAndCode().toLowerCase().contains(query)) {
+                        filteredList.add(consumablesOfMedicalDevice);
                     }
                 }
 
@@ -86,7 +86,7 @@ public class SuppliesAdapter extends ArrayAdapter<Supply> {
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                filteredArrayList = (ArrayList<Supply>) results.values;
+                filteredArrayList = (ArrayList<ConsumablesOfMedicalDevice>) results.values;
                 notifyDataSetChanged();
             }
         };

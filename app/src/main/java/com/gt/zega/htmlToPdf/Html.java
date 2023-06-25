@@ -35,11 +35,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class HtmlToPdf {
+public class Html {
     private final int REQUEST_CODE_MANAGE_EXTERNAL_STORAGE = 777;
 
     private String DIRECTORY = "ZEGA";
-    private String PDF_DIRECTORY = "Pdf";
+    private String HTML_DIRECTORY = "Html";
     private String htmlFileName;
     private String pdfFileName;
 
@@ -61,7 +61,7 @@ public class HtmlToPdf {
     private String reportType;
 
 
-    public HtmlToPdf(Activity activity, Context context, User user, String deviceName, String faultCode, String defaultDescription, String hospitalName, String hospitalSection, String roomSection, String optionalDescription, ArrayList<Uri> listOfImages, String reportType) {
+    public Html(Activity activity, Context context, User user, String deviceName, String faultCode, String defaultDescription, String hospitalName, String hospitalSection, String roomSection, String optionalDescription, ArrayList<Uri> listOfImages, String reportType) {
         this.activity = activity;
         this.context = context;
         this.user = user;
@@ -77,7 +77,7 @@ public class HtmlToPdf {
         this.reportType = reportType;
     }
 
-    public HtmlToPdf(Activity activity, Context context, User user, String suppliesName, String deviceName, String hospitalName, String hospitalSection, String roomSection, String reportType) {
+    public Html(Activity activity, Context context, User user, String suppliesName, String deviceName, String hospitalName, String hospitalSection, String roomSection, String reportType) {
         this.activity = activity;
         this.context = context;
         this.user = user;
@@ -100,7 +100,7 @@ public class HtmlToPdf {
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 //            if (Environment.isExternalStorageManager()) {
 //                File directory = new File(Environment.getExternalStoragePublicDirectory("").getPath() + File.separator + DIRECTORY + File.separator + PDF_DIRECTORY); // works
-        File directory = context.getExternalFilesDir(PDF_DIRECTORY);
+        File directory = context.getExternalFilesDir(HTML_DIRECTORY);
         System.out.println("-------------------------------------->" + directory.getAbsolutePath());
         if (!directory.exists()) {
             if (!directory.mkdirs())
@@ -127,7 +127,7 @@ public class HtmlToPdf {
                 if (file.createNewFile()) {
                     FileUtils.writeStringToFile(file, document.outerHtml(), StandardCharsets.UTF_8);
 
-                    uploadUserFileToFirebaseStorage(file, context, activity);
+                    uploadUserFileToFirebaseStorage(file, context);
 
                     wasCreated = true;
                 }
@@ -164,7 +164,7 @@ public class HtmlToPdf {
         });
     }
 
-    private void uploadUserFileToFirebaseStorage(File file, Context context, Activity activity) {
+    private void uploadUserFileToFirebaseStorage(File file, Context context) {
 
         View customProgressDialogView = LayoutInflater.from(context).inflate(R.layout.fragment_add_new_error, null);
 //        ProgressBar progressBar = customProgressDialogView.findViewById(R.id.progress_bar_create_broken_device_report);

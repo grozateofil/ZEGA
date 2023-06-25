@@ -84,7 +84,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
                 break;
 
             case (R.id.addNewDevice):
-                requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new NewMedicalDeviceFragment()).addToBackStack(null).commit();
+                requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new AddNewMedicalDeviceFragment()).addToBackStack(null).commit();
                 break;
 
             case (R.id.addNewFaultCode):

@@ -88,7 +88,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
-                    android:maxLines="3"
+                    android:maxLines="2"
                     android:scrollbarThumbVertical="@android:color/transparent"
                     android:scrollbars="vertical"
                     android:textColor="@color/black_russian" />

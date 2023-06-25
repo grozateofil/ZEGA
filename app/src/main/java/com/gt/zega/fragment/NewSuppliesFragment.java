@@ -16,7 +16,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.gt.zega.R;
-import com.gt.zega.entity.Supply;
+import com.gt.zega.entity.ConsumablesOfMedicalDevice;
 import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
 
@@ -34,7 +34,7 @@ public class NewSuppliesFragment extends Fragment {
 
     private Validations validations;
 
-    private Supply supply;
+    private ConsumablesOfMedicalDevice consumablesOfMedicalDevice;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,8 +57,8 @@ public class NewSuppliesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (validation()) {
-                    supply = new Supply(supplieName.getEditText().getText().toString(), supplieCode.getEditText().getText().toString(), supplieBrand.getEditText().getText().toString());
-                    databaseReference.child(supplieCode.getEditText().getText().toString()).setValue(supply).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    consumablesOfMedicalDevice = new ConsumablesOfMedicalDevice(supplieName.getEditText().getText().toString(), supplieCode.getEditText().getText().toString(), supplieBrand.getEditText().getText().toString());
+                    databaseReference.child(supplieCode.getEditText().getText().toString()).setValue(consumablesOfMedicalDevice).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {

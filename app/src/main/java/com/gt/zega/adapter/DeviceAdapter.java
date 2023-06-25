@@ -13,16 +13,16 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.gt.zega.R;
-import com.gt.zega.entity.Device;
+import com.gt.zega.entity.MedicalDevice;
 
 import java.util.ArrayList;
 
-public class DeviceAdapter extends ArrayAdapter<Device> {
-    private ArrayList<Device> oldArrayList;
-    private ArrayList<Device> filteredArrayList;
+public class DeviceAdapter extends ArrayAdapter<MedicalDevice> {
+    private ArrayList<MedicalDevice> oldArrayList;
+    private ArrayList<MedicalDevice> filteredArrayList;
     private Context context;
 
-    public DeviceAdapter(@NonNull Context context, ArrayList<Device> oldArrayList) {
+    public DeviceAdapter(@NonNull Context context, ArrayList<MedicalDevice> oldArrayList) {
         super(context, R.layout.list_item_layout_user_name);
         this.context = context;
         this.oldArrayList = oldArrayList;
@@ -35,7 +35,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
     }
 
     @Override
-    public Device getItem(int position) {
+    public MedicalDevice getItem(int position) {
         return filteredArrayList.get(position);
     }
 
@@ -69,12 +69,12 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();
-                ArrayList<Device> filteredList = new ArrayList<>();
+                ArrayList<MedicalDevice> filteredList = new ArrayList<>();
 
                 String query = constraint.toString().toLowerCase();
-                for (Device device : oldArrayList) {
-                    if (device.getNameAndCode().toLowerCase().contains(query)) {
-                        filteredList.add(device);
+                for (MedicalDevice medicalDevice : oldArrayList) {
+                    if (medicalDevice.getNameAndCode().toLowerCase().contains(query)) {
+                        filteredList.add(medicalDevice);
                     }
                 }
 
@@ -85,7 +85,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                filteredArrayList = (ArrayList<Device>) results.values;
+                filteredArrayList = (ArrayList<MedicalDevice>) results.values;
                 notifyDataSetChanged();
             }
         };

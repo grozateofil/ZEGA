@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        String userName = sharedPreferences.getString("userData", null);
 
         sharedPref = getApplicationContext().getSharedPreferences("myPrefs", 0);
-        userRole = sharedPref.getString("userRole", "user");
+        userRole = sharedPref.getString("userRole", "");
 
         contentView = findViewById(R.id.holder);
         drawerLayout = findViewById(R.id.drawerLayout);
@@ -277,11 +277,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragmentSelected = true;
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new ProfileFragment()).commit();
                 break;
-
-//            case (R.id.nav_edit):
-//                fragmentSelected = true;
-//                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new EditPhotoFragment()).commit();
-//                break;
 
             case (R.id.nav_myReport):
                 fragmentSelected = true;

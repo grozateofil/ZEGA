@@ -6,12 +6,12 @@ public class Hospital {
 
     private String hospitalName;
     private Address hospitalAddress;
-    private ArrayList<String> hospitalSections;
+    private ArrayList<String> hospitalDepartments;
 
-    public Hospital(String hospitalName, Address hospitalAddress, ArrayList<String> hospitalSections) {
+    public Hospital(String hospitalName, Address hospitalAddress, ArrayList<String> hospitalDepartments) {
         this.hospitalName = hospitalName;
         this.hospitalAddress = hospitalAddress;
-        this.hospitalSections = hospitalSections;
+        this.hospitalDepartments = hospitalDepartments;
     }
 
     public Hospital() {
@@ -33,20 +33,20 @@ public class Hospital {
         this.hospitalAddress = hospitalAddress;
     }
 
-    public ArrayList<String> getHospitalSections() {
-        return hospitalSections;
+    public ArrayList<String> getHospitalDepartments() {
+        return hospitalDepartments;
     }
 
-    public void setHospitalSections(ArrayList<String> hospitalSections) {
-        this.hospitalSections = hospitalSections;
+    public void setHospitalDepartments(ArrayList<String> hospitalDepartments) {
+        this.hospitalDepartments = hospitalDepartments;
     }
 
     @Override
     public String toString() {
         String toString = hospitalName + ", " + hospitalAddress;
 
-        if (hospitalSections.size() > 0) {
-            toString += ", sectii: " + hospitalSections;
+        if (hospitalDepartments.size() > 0) {
+            toString += ", sectii: " + hospitalDepartments;
         }
 
         return toString;

@@ -2,7 +2,7 @@ package com.gt.zega.entity;
 
 import java.io.Serializable;
 
-public class BrokenMedicalDevices implements Serializable {
+public class BrokenMedicalDevice implements Serializable {
 
     private String problemName;
     private String year;
@@ -10,7 +10,7 @@ public class BrokenMedicalDevices implements Serializable {
     private String day;
     private String deviceCode;
 
-    public BrokenMedicalDevices(String problemName, String year, String month, String day, String deviceCode) {
+    public BrokenMedicalDevice(String problemName, String year, String month, String day, String deviceCode) {
         this.problemName = problemName;
         this.year = year;
         this.month = month;
@@ -18,7 +18,7 @@ public class BrokenMedicalDevices implements Serializable {
         this.deviceCode = deviceCode;
     }
 
-    public BrokenMedicalDevices(String year, String month) {
+    public BrokenMedicalDevice(String year, String month) {
         this.problemName = problemName;
         this.year = year;
         this.month = month;

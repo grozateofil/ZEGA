@@ -186,11 +186,38 @@
             android:textCursorDrawable="@drawable/color_cursor" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/typePassword"
+        style="@style/TextInputLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/newEmail"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="-1dp"
+        android:layout_marginRight="30dp"
+        android:hint="@string/password"
+        android:inputType="textPassword"
+        android:textSize="15sp"
+        android:visibility="gone"
+        app:endIconMode="password_toggle"
+        app:endIconTint="@color/black_russian"
+        app:errorEnabled="true"
+        app:errorIconDrawable="@null">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:textColor="@color/black_russian"
+            android:textCursorDrawable="@drawable/color_cursor" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <Button
         android:id="@+id/resetPasswordButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/newEmail"
+        android:layout_below="@id/typePassword"
         android:layout_centerInParent="true"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"

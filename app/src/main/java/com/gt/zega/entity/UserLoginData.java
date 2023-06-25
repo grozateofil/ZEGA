@@ -1,10 +1,10 @@
 package com.gt.zega.entity;
 
-public class UserAccount {
+public class UserLoginData {
     private String email;
     private String password;
 
-    public UserAccount(String email, String password) {
+    public UserLoginData(String email, String password) {
         this.email = email;
         this.password = password;
     }

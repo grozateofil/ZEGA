@@ -7,10 +7,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -44,10 +41,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.gt.zega.R;
 import com.gt.zega.adapter.HospitalAdapter;
-import com.gt.zega.adapter.HospitalSectionAdapter;
+import com.gt.zega.adapter.HospitalDepartmentAdapter;
 import com.gt.zega.entity.Hospital;
 import com.gt.zega.entity.User;
-import com.gt.zega.entity.UserAccount;
+import com.gt.zega.entity.UserLoginData;
 import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
 import com.hbb20.CountryCodePicker;
@@ -77,7 +74,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     private Button backToLoginButton;
     private ProgressBar progressBar;
 
-    private FirebaseAuth fAuth;
+    private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private DatabaseReference dbReference;
@@ -95,8 +92,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_register, container, false);
-
-//        imageView = view.findViewById(R.id.selectPhotoFromGalery);
 
         firstname = view.findViewById(R.id.firstname);
         lastname = view.findViewById(R.id.lastname);
@@ -119,7 +114,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
 
         terms.setPaintFlags(terms.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
-        fAuth = FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("users");
         dbReference = FirebaseDatabase.getInstance().getReference("hospitals");
@@ -179,18 +174,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
             }
         });
 
-
-//        storageReference = firebaseStorage.getReference("usersProfilePictures");
-
-
-        firstname.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
-        lastname.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
-        phoneNumber.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
-        email.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
-        password.getEditText().setCustomInsertionActionModeCallback(getActionModeCallback());
-
-
-//        imageView.setOnClickListener(this);
         createButton.setOnClickListener(this);
         backToLoginButton.setOnClickListener(this);
         role.setOnClickListener(this);
@@ -218,7 +201,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
                 else {
                     Toast.makeText(getActivity().getApplicationContext(), "Nu s-a incarcat lista cu spitale", Toast.LENGTH_SHORT).show();
                 }
-
                 break;
 
             case (R.id.sct):
@@ -333,62 +315,42 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         String role = this.role.getText().toString();
         boolean blockedAccount = false;
 
-
-        UserAccount userAccount = new UserAccount(emailAddress, pass);
+        UserLoginData userLoginData = new UserLoginData(emailAddress, pass);
         user = new User(firstName, lastName, phoneNumber, userHospital, userSections, role, blockedAccount);
-//        user = new User(firstName, lastName, phoneNumber, selectedHospital, role, blockedAccount);
 
-
-//        storageReference = firebaseStorage.getReference("usersProfilePictures/" + emailAddress + "_profile_picture." + getPhotoExtension(imageUri));
-//        storageReference.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                        @Override
-//                        public void onSuccess(Uri uri) {
-//                            String imageUrl = uri.toString();
-//                            user = new User(firstName, lastName, phoneNumber, imageUrl);
         progressBar.setVisibility(View.VISIBLE);
         enabled(false);
-        fAuth.createUserWithEmailAndPassword(userAccount.getEmail(), userAccount.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        firebaseAuth.createUserWithEmailAndPassword(userLoginData.getEmail(), userLoginData.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     email.setError(null);
                     email.setErrorEnabled(false);
 
-                    FirebaseUser firebaseUser = fAuth.getCurrentUser();
+                    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                     userUid = firebaseUser.getUid();
                     databaseReference.child(userUid).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
 
-//                                fAuth.setLanguageCode("ro");
-//                                firebaseUser.sendEmailVerification();
-//                                Toast.makeText(getActivity().getApplicationContext(), "Ți-a fost trimis un email pentru a valida adresa de email", Toast.LENGTH_LONG).show();
+                                firebaseAuth.setLanguageCode("ro");
+                                firebaseUser.sendEmailVerification();
+                                Toast.makeText(getContext(), getString(R.string.mesaj_validare_email), Toast.LENGTH_LONG).show();
 
                                 getActivity().onBackPressed();
                             } else {
-                                Toast.makeText(getActivity().getApplicationContext(), "Eroare la înregistrare", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), getString(R.string.eroare_inregistrare), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
                 } else {
                     progressBar.setVisibility(View.GONE);
                     enabled(true);
-                    email.setError("Există deja un cont asociat acestei adrese de email");
+                    email.setError(getString(R.string.email_existent));
                 }
             }
         });
-//                        }
-//                    });
-//                }
-//            }
-//        });
-
-
     }
 
     private void openDialogWithUserRoles() {
@@ -494,7 +456,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
 
                 try {
                     hospitalSectionsArrayList = new ArrayList<>();
-                    hospitalSectionsArrayList.addAll(hospitalAdapter.getItem(position).getHospitalSections());
+                    hospitalSectionsArrayList.addAll(hospitalAdapter.getItem(position).getHospitalDepartments());
                 } catch (NullPointerException e) {
                     Toast.makeText(getContext(), getString(R.string.without_sections, hospitalAdapter.getItem(position).getHospitalName()), Toast.LENGTH_SHORT).show();
                 }
@@ -515,7 +477,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        HospitalSectionAdapter sectionAdapter = new HospitalSectionAdapter(getContext(), arrayListWithDevices);
+        HospitalDepartmentAdapter sectionAdapter = new HospitalDepartmentAdapter(getContext(), arrayListWithDevices);
         listView.setAdapter(sectionAdapter);
 
         closeFragButton.setOnClickListener(new View.OnClickListener() {
@@ -582,30 +544,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
 //        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
 //    }
 
-    @NonNull
-    private ActionMode.Callback getActionModeCallback() {
-        return new ActionMode.Callback() {
-            @Override
-            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                return false;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode actionMode) {
-
-            }
-        };
-    }
 
     public void enabled(boolean type) {
         firstname.setEnabled(type);

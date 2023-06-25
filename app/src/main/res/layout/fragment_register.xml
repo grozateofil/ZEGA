@@ -20,19 +20,6 @@
         android:textSize="35sp"
         android:textStyle="bold" />
 
-    <!--    <com.google.android.material.imageview.ShapeableImageView-->
-    <!--        android:id="@+id/selectPhotoFromGalery"-->
-    <!--        android:layout_width="70dp"-->
-    <!--        android:layout_height="70dp"-->
-    <!--        android:layout_below="@id/tv_logo"-->
-    <!--        android:layout_alignParentStart="true"-->
-    <!--        android:layout_centerHorizontal="true"-->
-    <!--        android:layout_marginLeft="30dp"-->
-    <!--        android:background="@drawable/avatar"-->
-    <!--        android:clickable="true"-->
-    <!--        android:scaleType="fitXY"-->
-    <!--        app:shapeAppearanceOverlay="@style/circleImageView" />-->
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -55,7 +42,7 @@
                     style="@style/TextInputLayoutStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
+                    android:layout_marginStart="30dp"
                     android:layout_weight="50"
                     android:hint="@string/firstName"
                     android:textSize="15sp"
@@ -78,8 +65,7 @@
                     style="@style/TextInputLayoutStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="30dp"
-                    android:layout_toRightOf="@id/firstname"
+                    android:layout_marginEnd="30dp"
                     android:layout_weight="50"
                     android:hint="@string/lastName"
                     android:textSize="15sp"
@@ -201,19 +187,6 @@
                     android:inputType="textPassword"
                     android:textColor="@color/black_russian" />
             </com.google.android.material.textfield.TextInputLayout>
-
-
-            <!--    <Spinner-->
-            <!--        android:id="@+id/role"-->
-            <!--        android:layout_width="match_parent"-->
-            <!--        android:layout_height="wrap_content"-->
-            <!--        android:layout_below="@id/password"-->
-            <!--        android:layout_marginLeft="30dp"-->
-            <!--        android:layout_marginRight="30dp"-->
-
-            <!--        android:background="@android:color/transparent"-->
-            <!--        android:spinnerMode="dropdown"-->
-            <!--        android:theme="@style/ThemeOverlay.AppCompat.Light" />-->
 
             <TextView
                 android:id="@+id/role"

@@ -39,18 +39,18 @@ import com.gt.zega.util.ValidationsImpl;
 
 import java.util.ArrayList;
 
-public class NewHospitalSectionFragment extends Fragment {
+public class NewHospitalDepartmentFragment extends Fragment {
 
     private TextView selectHospital;
     private TextView description;
-    private Button hospitalSectionsButton;
-    private TextInputLayout hospitalSection;
-    private Button saveHospitalSectionButton;
+    private Button hospitalDepartmentsButton;
+    private TextInputLayout hospitalDepartment;
+    private Button saveHospitalDepartmentButton;
 
     private Validations validations;
 
     private ArrayList<Hospital> hospitalArrayList;
-    private ArrayList<String> hospitalSectionsArrayList;
+    private ArrayList<String> hospitalDepartmentsArrayList;
 
     private DatabaseReference databaseRef;
 
@@ -61,16 +61,16 @@ public class NewHospitalSectionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_new_hospital_section, container, false);
+        View view = inflater.inflate(R.layout.fragment_new_hospital_department, container, false);
 
         selectHospital = view.findViewById(R.id.selectHospitalTV);
         description = view.findViewById(R.id.descrip);
-        hospitalSectionsButton = view.findViewById(R.id.hospitalSections);
-        hospitalSection = view.findViewById(R.id.hospitalSectionName);
-        saveHospitalSectionButton = view.findViewById(R.id.saveHospitalSection);
+        hospitalDepartmentsButton = view.findViewById(R.id.hospitalSections);
+        hospitalDepartment = view.findViewById(R.id.hospitalSectionName);
+        saveHospitalDepartmentButton = view.findViewById(R.id.saveHospitalSection);
 
         validations = new ValidationsImpl();
-        hospitalSectionsButton.setVisibility(View.GONE);
+        hospitalDepartmentsButton.setVisibility(View.GONE);
         description.setVisibility(View.GONE);
 
         databaseRef = FirebaseDatabase.getInstance().getReference().child("hospitals");
@@ -101,10 +101,10 @@ public class NewHospitalSectionFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (!selectHospital.getText().toString().isEmpty()) {
-                    hospitalSectionsButton.setVisibility(View.VISIBLE);
+                    hospitalDepartmentsButton.setVisibility(View.VISIBLE);
                     description.setVisibility(View.VISIBLE);
                 } else {
-                    hospitalSectionsButton.setVisibility(View.GONE);
+                    hospitalDepartmentsButton.setVisibility(View.GONE);
                     description.setVisibility(View.GONE);
                 }
             }
@@ -115,25 +115,25 @@ public class NewHospitalSectionFragment extends Fragment {
             }
         });
 
-        hospitalSectionsButton.setOnClickListener(new View.OnClickListener() {
+        hospitalDepartmentsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openDialogWithHospitalSections(hospitalSectionsArrayList);
+                openDialogWithHospitalDepartments(hospitalDepartmentsArrayList);
             }
         });
 
-        saveHospitalSectionButton.setOnClickListener(new View.OnClickListener() {
+        saveHospitalDepartmentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (validation()) {
                     Address address = currentAddress;
-                    ArrayList<String> sections = currentHospital.getHospitalSections() == null ? new ArrayList<>() : currentHospital.getHospitalSections();
-                    if (!sections.stream().anyMatch(s -> s.equalsIgnoreCase(hospitalSection.getEditText().getText().toString().toUpperCase())))
-                        sections.add(hospitalSection.getEditText().getText().toString().toUpperCase());
+                    ArrayList<String> sections = currentHospital.getHospitalDepartments() == null ? new ArrayList<>() : currentHospital.getHospitalDepartments();
+                    if (!sections.stream().anyMatch(s -> s.equalsIgnoreCase(hospitalDepartment.getEditText().getText().toString().toUpperCase())))
+                        sections.add(hospitalDepartment.getEditText().getText().toString().toUpperCase());
                     else {
                         new AlertDialog.Builder(getContext())
                                 .setTitle("Atentie")
-                                .setMessage("Sectia " + hospitalSection.getEditText().getText().toString().toUpperCase() + " exista")
+                                .setMessage("Sectia " + hospitalDepartment.getEditText().getText().toString().toUpperCase() + " exista")
 
                                 // A null listener allows the button to dismiss the dialog and take no further action.
                                 .setNegativeButton(android.R.string.no, null)
@@ -148,7 +148,7 @@ public class NewHospitalSectionFragment extends Fragment {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 selectHospital.setText("");
-                                hospitalSection.getEditText().setText("");
+                                hospitalDepartment.getEditText().setText("");
                                 Toast.makeText(getActivity().getApplicationContext(), "Sectie adaugata cu succes", Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(getActivity().getApplicationContext(), "Eroare la adaugare", Toast.LENGTH_SHORT).show();
@@ -208,8 +208,8 @@ public class NewHospitalSectionFragment extends Fragment {
                 selectHospital.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
 
                 try {
-                    hospitalSectionsArrayList = new ArrayList<>();
-                    hospitalSectionsArrayList.addAll(hospitalAdapter.getItem(position).getHospitalSections());
+                    hospitalDepartmentsArrayList = new ArrayList<>();
+                    hospitalDepartmentsArrayList.addAll(hospitalAdapter.getItem(position).getHospitalDepartments());
                 } catch (NullPointerException e) {
                     Toast.makeText(getContext(), getString(R.string.without_sections, hospitalAdapter.getItem(position).getHospitalName()), Toast.LENGTH_SHORT).show();
                 }
@@ -222,7 +222,7 @@ public class NewHospitalSectionFragment extends Fragment {
         });
     }
 
-    private void openDialogWithHospitalSections(ArrayList<String> arrayListOfHospitalSections) {
+    private void openDialogWithHospitalDepartments(ArrayList<String> arrayListOfHospitalDepartments) {
         Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.devices_list_view);
 
@@ -233,7 +233,7 @@ public class NewHospitalSectionFragment extends Fragment {
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_expandable_list_item_1, arrayListOfHospitalSections) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_expandable_list_item_1, arrayListOfHospitalDepartments) {
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -295,6 +295,6 @@ public class NewHospitalSectionFragment extends Fragment {
     }
 
     private boolean validation() {
-        return validations.textViewValidation(selectHospital) & validations.textInputLayoutValidation(hospitalSection);
+        return validations.textViewValidation(selectHospital) & validations.textInputLayoutValidation(hospitalDepartment);
     }
 }

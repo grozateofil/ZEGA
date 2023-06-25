@@ -30,13 +30,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.gt.zega.R;
 import com.gt.zega.adapter.DeviceAdapter;
 import com.gt.zega.adapter.HospitalAdapter;
-import com.gt.zega.adapter.HospitalSectionAdapter;
+import com.gt.zega.adapter.HospitalDepartmentAdapter;
 import com.gt.zega.adapter.SuppliesAdapter;
-import com.gt.zega.entity.Device;
+import com.gt.zega.entity.ConsumablesOfMedicalDevice;
 import com.gt.zega.entity.Hospital;
-import com.gt.zega.entity.Supply;
+import com.gt.zega.entity.MedicalDevice;
 import com.gt.zega.entity.User;
-import com.gt.zega.htmlToPdf.HtmlToPdf;
+import com.gt.zega.htmlToPdf.Html;
 import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
 
@@ -56,8 +56,8 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
 
     private Dialog dialog;
 
-    private ArrayList<Supply> suppliesArrayList;
-    private ArrayList<Device> medicalDevicesArrayList;
+    private ArrayList<ConsumablesOfMedicalDevice> suppliesArrayList;
+    private ArrayList<MedicalDevice> medicalDevicesArrayList;
     private ArrayList<String> hospitalSectionsArrayList;
     private ArrayList<Hospital> hospitalsArrayList;
 
@@ -68,7 +68,7 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
     private FirebaseUser firebaseUser;
 //    private Address currentAddress;
 
-    private HtmlToPdf htmlToPdf;
+    private Html html;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -116,9 +116,9 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
-                    Device device = objectSnapshot.getValue(Device.class);
-                    if (device.getSection().equalsIgnoreCase(selectedSection)) {
-                        medicalDevicesArrayList.add(device);
+                    MedicalDevice medicalDevice = objectSnapshot.getValue(MedicalDevice.class);
+                    if (medicalDevice.getSection().equalsIgnoreCase(selectedSection)) {
+                        medicalDevicesArrayList.add(medicalDevice);
                     }
                 }
             }
@@ -180,8 +180,8 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
-                    Supply supply = objectSnapshot.getValue(Supply.class);
-                    suppliesArrayList.add(supply);
+                    ConsumablesOfMedicalDevice consumablesOfMedicalDevice = objectSnapshot.getValue(ConsumablesOfMedicalDevice.class);
+                    suppliesArrayList.add(consumablesOfMedicalDevice);
                 }
             }
 
@@ -202,7 +202,8 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
                     selectHospital.setText(user.getHospitalName());
                 if (!user.getRole().equalsIgnoreCase("admin") && !user.getRole().equalsIgnoreCase("inginer")) {
                     selectHospital.setEnabled(false);
-                    selectHospitalSection.setText(user.getHospitalSections().get(0));
+                    selectHospitalSection.setText(user.getHospitalDepartmentsNames().get(0));
+                    getDevices(user.getHospitalDepartmentsNames().get(0));
                 } else if (user.getRole().equalsIgnoreCase("admin")) {
                     selectHospital.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.arrow_down_icon, 0);
                     selectHospitalSection.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.arrow_down_icon, 0);
@@ -219,7 +220,7 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
         });
     }
 
-    private void openDialogWithSupplies(ArrayList<Supply> arrayListWithDevices) {
+    private void openDialogWithSupplies(ArrayList<ConsumablesOfMedicalDevice> arrayListWithDevices) {
         dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.devices_list_view);
 
@@ -317,7 +318,7 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
 
                 try {
                     hospitalSectionsArrayList = new ArrayList<>();
-                    hospitalSectionsArrayList.addAll(adapter.getItem(position).getHospitalSections());
+                    hospitalSectionsArrayList.addAll(adapter.getItem(position).getHospitalDepartments());
                 } catch (NullPointerException e) {
                     Toast.makeText(getContext(), getString(R.string.without_sections, adapter.getItem(position).getHospitalName()), Toast.LENGTH_SHORT).show();
                 }
@@ -340,7 +341,7 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        HospitalSectionAdapter sectionAdapter = new HospitalSectionAdapter(getContext(), arrayListWithDevices);
+        HospitalDepartmentAdapter sectionAdapter = new HospitalDepartmentAdapter(getContext(), arrayListWithDevices);
         listView.setAdapter(sectionAdapter);
 
         closeFragButton.setOnClickListener(new View.OnClickListener() {
@@ -396,7 +397,7 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
         });
     }
 
-    private void openDialogWithMedicalDevices(ArrayList<Device> arrayListWithDevices) {
+    private void openDialogWithMedicalDevices(ArrayList<MedicalDevice> arrayListWithMedicalDevices) {
         dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.devices_list_view);
 
@@ -407,7 +408,7 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        DeviceAdapter deviceAdapter = new DeviceAdapter(getContext(), arrayListWithDevices);
+        DeviceAdapter deviceAdapter = new DeviceAdapter(getContext(), arrayListWithMedicalDevices);
 
         listView.setAdapter(deviceAdapter);
 
@@ -497,8 +498,8 @@ public class SupplyFragment extends Fragment implements View.OnClickListener, Vi
             case (R.id.sendButton):
                 if (validation()) {
                     enabled(false);
-                    htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectSupplies.getText().toString(), selectMedicalDevice.getText().toString(), selectHospital.getText().toString(), selectHospitalSection.getText().toString(), devLocation.getEditText().getText().toString(), "suppliesReport");
-                    if (htmlToPdf.writeHTML()) {
+                    html = new Html(getActivity(), getContext(), user, selectSupplies.getText().toString(), selectMedicalDevice.getText().toString(), selectHospital.getText().toString(), selectHospitalSection.getText().toString(), devLocation.getEditText().getText().toString(), "suppliesReport");
+                    if (html.writeHTML()) {
                         if (user.getRole().equalsIgnoreCase("admin"))
                             selectHospital.setText(null);
                         if (user.getRole().equalsIgnoreCase("admin") || user.getRole().equalsIgnoreCase("inginer"))

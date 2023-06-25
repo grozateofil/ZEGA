@@ -7,10 +7,8 @@ public class User {
     private String firstName;
     private String lastName;
     private String phoneNumber;
-    //    private String imageUrl;
-    private UserAccount userAccount;
     private String hospitalName;
-    private ArrayList<String> hospitalSections;
+    private ArrayList<String> hospitalDepartmentsNames;
     private String role;
     private boolean blockedAccount;
 
@@ -18,28 +16,12 @@ public class User {
 
     }
 
-
-//    public User(String firstName, String lastName, String phoneNumber) {
-//        this.firstName = firstName;
-//        this.lastName = lastName;
-//        this.phoneNumber = phoneNumber;
-////        this.imageUrl = imageUrl;
-//    }
-//
-//    public User(String firstName, String lastName, String phoneNumber, String role) {
-//        this.role = role;
-//        this.firstName = firstName;
-//        this.lastName = lastName;
-//        this.phoneNumber = phoneNumber;
-//    }
-
-    public User(String firstName, String lastName, String phoneNumber, String hospitalName, ArrayList<String> hospitalSections, String role, boolean blockedAccount) {
+    public User(String firstName, String lastName, String phoneNumber, String hospitalName, ArrayList<String> hospitalDepartmentsNames, String role, boolean blockedAccount) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
-        this.userAccount = userAccount;
         this.hospitalName = hospitalName;
-        this.hospitalSections = hospitalSections;
+        this.hospitalDepartmentsNames = hospitalDepartmentsNames;
         this.role = role;
         this.blockedAccount = blockedAccount;
     }
@@ -68,14 +50,6 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public UserAccount getUserAccount() {
-        return userAccount;
-    }
-
-    public void setUserAccount(UserAccount userAccount) {
-        this.userAccount = userAccount;
-    }
-
     public String getHospitalName() {
         return hospitalName;
     }
@@ -84,12 +58,12 @@ public class User {
         this.hospitalName = hospitalName;
     }
 
-    public ArrayList<String> getHospitalSections() {
-        return hospitalSections;
+    public ArrayList<String> getHospitalDepartmentsNames() {
+        return hospitalDepartmentsNames;
     }
 
-    public void setHospitalSections(ArrayList<String> hospitalSections) {
-        this.hospitalSections = hospitalSections;
+    public void setHospitalDepartmentsNames(ArrayList<String> hospitalDepartmentsNames) {
+        this.hospitalDepartmentsNames = hospitalDepartmentsNames;
     }
 
     public String getRole() {
@@ -117,9 +91,8 @@ public class User {
         return "User: " + ", firstName: " + firstName +
                 ", lastName: " + lastName +
                 ", phoneNumber: " + phoneNumber +
-                ", userAccount: " + userAccount +
                 ", hospital: " + hospitalName +
-                ", hospitalSection: " + hospitalSections +
+                ", hospitalSection: " + hospitalDepartmentsNames +
                 "role: " + role;
     }
 

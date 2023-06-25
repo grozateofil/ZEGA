@@ -15,13 +15,13 @@ import com.gt.zega.R;
 
 import java.util.ArrayList;
 
-public class HospitalSectionAdapter extends ArrayAdapter<String> {
+public class HospitalDepartmentAdapter extends ArrayAdapter<String> {
 
     private ArrayList<String> oldArrayList;
     private ArrayList<String> filteredArrayList;
     private Context context;
 
-    public HospitalSectionAdapter(@NonNull Context context, ArrayList<String> oldArrayList) {
+    public HospitalDepartmentAdapter(@NonNull Context context, ArrayList<String> oldArrayList) {
         super(context, android.R.layout.simple_list_item_activated_1);
         this.oldArrayList = oldArrayList;
         this.filteredArrayList = new ArrayList<>(oldArrayList);

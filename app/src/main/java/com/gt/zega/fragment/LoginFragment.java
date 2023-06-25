@@ -177,11 +177,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         String emailAddress = email.getEditText().getText().toString().replaceAll("\\s", "");
         String pass = password.getEditText().getText().toString();
 
-//        fAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-//            @Override
-//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-//                FirebaseUser userObject = firebaseAuth.getCurrentUser();
-//                if (userObject != null && userObject.isEmailVerified()) {
         enabled(false);
         progressBar.setVisibility(View.VISIBLE);
         fAuth.signInWithEmailAndPassword(emailAddress, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -195,23 +190,21 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                     password.setError(null);
                     password.setErrorEnabled(false);
 
-// TODO crapa pentru ca dupa ce dau LogOut, User us ramane user-ul precedent
                     databaseReference.child(fAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            User us = dataSnapshot.getValue(User.class);
+                            User currentUser = dataSnapshot.getValue(User.class);
 
-                            if (!us.isBlockedAccount()) {
+                            if (!currentUser.isBlockedAccount()) {
                                 progressBar.setVisibility(View.GONE);
                                 errorMessage.setVisibility(View.INVISIBLE);
                                 Toast.makeText(getContext(), "V-ați conectat cu succes!", Toast.LENGTH_SHORT).show();
-                                SharedPreferences prefs = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);//PreferenceManager.getDefaultSharedPreferences(getContext());
+                                SharedPreferences prefs = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = prefs.edit();
-                                editor.putString("userRole", us.getRole());
+                                editor.putString("userRole", currentUser.getRole());
                                 editor.apply();
 
-                                onUserRoleSelectedListener.onUserRoleSelected(us.getRole());
-
+                                onUserRoleSelectedListener.onUserRoleSelected(currentUser.getRole());
 
                                 HomeFragment homeFragment = new HomeFragment();
                                 FragmentManager fragmentManager = getParentFragmentManager();
@@ -235,16 +228,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                         }
                     });
 
-//                    HomeFragment homeFragment = new HomeFragment();
-//                    FragmentManager fragmentManager = getParentFragmentManager();
-//                    fragmentManager.beginTransaction().replace(R.id.content_frame, homeFragment).commit();
-
-//                    SharedPreferences.Editor editor = sharedPreferences.edit();
-//                    editor.putString("LOGIN", emailAddress);
-////                    editor.putString("userUid",firebaseUser.getUid());
-//                    editor.commit();
-
-
                 } else {
                     email.setError("\0");
                     password.setError("\0");
@@ -255,13 +238,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
             }
         });
-
-//                } else {
-//                    Toast.makeText(getActivity().getApplicationContext(), "Adresa de email nu a fost confirmata", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-
 
     }
 

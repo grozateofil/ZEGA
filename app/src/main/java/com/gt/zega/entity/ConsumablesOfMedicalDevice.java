@@ -1,18 +1,18 @@
 package com.gt.zega.entity;
 
-public class Supply {
+public class ConsumablesOfMedicalDevice {
 
     private String name;
     private String code;
     private String brand;
 
-    public Supply(String name, String code, String brand) {
+    public ConsumablesOfMedicalDevice(String name, String code, String brand) {
         this.name = name;
         this.code = code;
         this.brand = brand;
     }
 
-    public Supply() {
+    public ConsumablesOfMedicalDevice() {
     }
 
     public String getName() {

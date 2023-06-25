@@ -12,6 +12,7 @@
     <string name="email">Email</string>
     <string name="password">Parolă</string>
     <string name="save">SALVEAZĂ</string>
+    <string name="welcome">Bine ai venit</string>
     <string name="login">Conectează-te</string>
     <string name="firstName">Prenume</string>
     <string name="lastName">Nume de familie</string>
@@ -30,6 +31,9 @@
     <string name="delete_file_confirmation">Stergeti fisierul \"%1$s\"?</string>
     <string name="anulare_raport">Doriți anularea raportului \"%1$s\"?</string>
     <string name="inlaturare_anulare_raport">Doriți să înlăturați anularea raportunui \"%1$s\"?</string>
+    <string name="mesaj_validare_email">Ți-a fost trimis un email pentru a valida adresa de email</string>
+    <string name="email_existent">Există deja un cont asociat acestei adrese de email</string>
+    <string name="eroare_inregistrare">Eroare la înregistrare</string>
 
     <string name="without_sections">\"%1$s\" nu are sectii asociate.</string>
     <string name="reset_password">Introduceți mai jos adresa de e-mail și vă vom trimite un link pentru a putea să vă resetați parola.</string>

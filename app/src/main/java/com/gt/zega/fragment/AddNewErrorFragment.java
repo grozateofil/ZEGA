@@ -42,14 +42,14 @@ import com.gt.zega.R;
 import com.gt.zega.adapter.DeviceAdapter;
 import com.gt.zega.adapter.FaultCodeAdapter;
 import com.gt.zega.adapter.HospitalAdapter;
-import com.gt.zega.adapter.HospitalSectionAdapter;
+import com.gt.zega.adapter.HospitalDepartmentAdapter;
 import com.gt.zega.entity.Address;
-import com.gt.zega.entity.BrokenMedicalDevices;
-import com.gt.zega.entity.Device;
+import com.gt.zega.entity.BrokenMedicalDevice;
 import com.gt.zega.entity.FaultCode;
 import com.gt.zega.entity.Hospital;
+import com.gt.zega.entity.MedicalDevice;
 import com.gt.zega.entity.User;
-import com.gt.zega.htmlToPdf.HtmlToPdf;
+import com.gt.zega.htmlToPdf.Html;
 import com.gt.zega.util.Validations;
 import com.gt.zega.util.ValidationsImpl;
 
@@ -68,17 +68,17 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
     private TextView errorCode;
     private TextView errorCodeDescription;
     private TextView hospital;
-    private TextView hospitalSection;
-    private TextInputLayout sectionRoom;
+    private TextView hospitalDepartment;
+    private TextInputLayout departmentRoom;
     private TextInputLayout description;
     private ProgressBar progressBar;
 
     private Dialog dialog;
-    private ArrayList<Device> deviceArrayList;
+    private ArrayList<MedicalDevice> medicalDeviceArrayList;
     private ArrayList<FaultCode> errorCodeArrayList;
     private ArrayList<Hospital> hospitalArrayList;
 
-    private ArrayList<String> hospitalSectionsArrayList;
+    private ArrayList<String> hospitalDepartmentsArrayList;
     private LinearLayout linearLayout;
 
     private ImageButton addPictureButton;
@@ -90,7 +90,7 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
     private Validations validations;
     private User user;
     private String userKey;
-    private HtmlToPdf htmlToPdf;
+    private Html html;
 
     private Address currentAddress;
 
@@ -139,8 +139,8 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
         errorCode = view.findViewById(R.id.errorCode);
         errorCodeDescription = view.findViewById(R.id.description);
         hospital = view.findViewById(R.id.hospital);
-        hospitalSection = view.findViewById(R.id.section);
-        sectionRoom = view.findViewById(R.id.sectionRoom);
+        hospitalDepartment = view.findViewById(R.id.section);
+        departmentRoom = view.findViewById(R.id.sectionRoom);
         description = view.findViewById(R.id.optionalDescription);
 
         linearLayout = view.findViewById(R.id.photosLinearLayout);
@@ -155,10 +155,10 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
         databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
         databaseRef = FirebaseDatabase.getInstance().getReference().child("devices");
 
-        deviceArrayList = new ArrayList<>();
+        medicalDeviceArrayList = new ArrayList<>();
         errorCodeArrayList = new ArrayList<>();
         hospitalArrayList = new ArrayList<>();
-        hospitalSectionsArrayList = new ArrayList<>();
+        hospitalDepartmentsArrayList = new ArrayList<>();
 
         getFaultCodes();
 
@@ -169,12 +169,12 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
         }
 
         hospital.setOnLongClickListener(this);
-        hospitalSection.setOnLongClickListener(this);
+        hospitalDepartment.setOnLongClickListener(this);
         selectDevice.setOnLongClickListener(this);
         errorCode.setOnLongClickListener(this);
 
         hospital.setOnClickListener(this);
-        hospitalSection.setOnClickListener(this);
+        hospitalDepartment.setOnClickListener(this);
         selectDevice.setOnClickListener(this);
         errorCode.setOnClickListener(this);
         addPictureButton.setOnClickListener(this);
@@ -187,7 +187,6 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
     public void choosePhotoFromGallery() {
         Intent photo = new Intent();
         photo.setType("image/*");
-
         photo.setAction(Intent.ACTION_GET_CONTENT);
         pickImage.launch(photo);
     }
@@ -200,15 +199,15 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
         linearLayout.addView(imageView);
     }
 
-    private void getDevices2(String selectedSection) {
+    private void getDevices(String selectedSection) {
 
         databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
-                    Device device = objectSnapshot.getValue(Device.class);
-                    if (device.getSection().equalsIgnoreCase(selectedSection)) {
-                        deviceArrayList.add(device);
+                    MedicalDevice medicalDevice = objectSnapshot.getValue(MedicalDevice.class);
+                    if (medicalDevice.getSection().equalsIgnoreCase(selectedSection)) {
+                        medicalDeviceArrayList.add(medicalDevice);
                     }
                 }
             }
@@ -238,7 +237,7 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
         });
     }
 
-    public void getHospitalFromDB() {
+    public void getHospitalsFromDB() {
         hospitalArrayList = new ArrayList<>();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("hospitals");
 
@@ -247,8 +246,7 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
                     Hospital hospital = objectSnapshot.getValue(Hospital.class);
-                    if (!hospitalArrayList.stream().anyMatch(f -> f.getHospitalName().equalsIgnoreCase(hospital.getHospitalName())))
-                        hospitalArrayList.add(hospital);
+                    hospitalArrayList.add(hospital);
                 }
             }
 
@@ -259,17 +257,15 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
         });
     }
 
-    public void getHospitalSectionsFromDB() {
-        hospitalSectionsArrayList = new ArrayList<>();
+    public void getHospitalDepartmentsFromDB() {
+        hospitalDepartmentsArrayList = new ArrayList<>();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("hospitals").child(hospital.getText().toString()).child("hospitalSections");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot objectSnapshot : snapshot.getChildren()) {
-                    String arrayList = objectSnapshot.getValue(String.class);
-//                    Hospital hospital = objectSnapshot.getValue(Hospital.class);
-//                    if (!hospitalSectionsArrayList.stream().anyMatch(f -> f.getHospitalName().equalsIgnoreCase(hospital.getHospitalName())))
-                    hospitalSectionsArrayList.add(arrayList);
+                    String sectionName = objectSnapshot.getValue(String.class);
+                    hospitalDepartmentsArrayList.add(sectionName);
                 }
             }
 
@@ -285,19 +281,18 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
-                if (!user.getRole().equalsIgnoreCase("admin")) {
-                    hospital.setText(user.getHospitalName());
-                }
                 if (!user.getRole().equalsIgnoreCase("admin") && !user.getRole().equalsIgnoreCase("inginer")) {
-                    hospitalSection.setText(user.getHospitalSections().get(0));
-
+                    hospital.setText(user.getHospitalName());
+                    hospitalDepartment.setText(user.getHospitalDepartmentsNames().get(0));
+                    getDevices(user.getHospitalDepartmentsNames().get(0));
                 } else if (user.getRole().equalsIgnoreCase("admin")) {
                     hospital.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.arrow_down_icon, 0);
-                    hospitalSection.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.arrow_down_icon, 0);
-                    getHospitalFromDB();
+                    hospitalDepartment.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.arrow_down_icon, 0);
+                    getHospitalsFromDB();
                 } else if (user.getRole().equalsIgnoreCase("inginer")) {
-                    hospitalSection.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.arrow_down_icon, 0);
-                    getHospitalSectionsFromDB();
+                    hospital.setText(user.getHospitalName());
+                    hospitalDepartment.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.arrow_down_icon, 0);
+                    getHospitalDepartmentsFromDB();
                 }
 
             }
@@ -309,7 +304,7 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
     }
 
 
-    private void checkMonthExistence(DatabaseReference dayRef, BrokenMedicalDevices brokenMD) {
+    private void checkMonthExistence(DatabaseReference dayRef, BrokenMedicalDevice brokenMD) {
         dayRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -483,7 +478,7 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
 
                     @Override
                     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                        hospitalSection.setText(null);
+                        hospitalDepartment.setText(null);
                         selectDevice.setText(null);
                     }
 
@@ -494,8 +489,7 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
                 });
 
                 try {
-                    hospitalSectionsArrayList = new ArrayList<>();
-                    hospitalSectionsArrayList.addAll(hospitalAdapter.getItem(position).getHospitalSections());
+                    hospitalDepartmentsArrayList.addAll(hospitalAdapter.getItem(position).getHospitalDepartments());
                 } catch (NullPointerException e) {
                     Toast.makeText(getContext(), getString(R.string.without_sections, hospitalAdapter.getItem(position).getHospitalName()), Toast.LENGTH_SHORT).show();
                 }
@@ -506,7 +500,7 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
         });
     }
 
-    private void openDialogWithHospitalSections(ArrayList<String> arrayListWithDevices) {
+    private void openDialogWithHospitalDepartments(ArrayList<String> arrayListWithDepartments) {
         dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.devices_list_view);
 
@@ -517,8 +511,8 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        HospitalSectionAdapter sectionAdapter = new HospitalSectionAdapter(getContext(), arrayListWithDevices);
-        listView.setAdapter(sectionAdapter);
+        HospitalDepartmentAdapter departmentAdapter = new HospitalDepartmentAdapter(getContext(), arrayListWithDepartments);
+        listView.setAdapter(departmentAdapter);
 
         closeFragButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -536,7 +530,7 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                sectionAdapter.getFilter().filter(s);
+                departmentAdapter.getFilter().filter(s);
             }
 
             @Override
@@ -549,9 +543,9 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                hospitalSection.setText(sectionAdapter.getItem(position));
-                hospitalSection.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
-                hospitalSection.addTextChangedListener(new TextWatcher() {
+                hospitalDepartment.setText(departmentAdapter.getItem(position));
+                hospitalDepartment.setTextColor(ContextCompat.getColor(getContext(), R.color.black_russian));
+                hospitalDepartment.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -560,7 +554,7 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
                     @Override
                     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                         selectDevice.setText(null);
-                        deviceArrayList.clear();
+                        medicalDeviceArrayList.clear();
                     }
 
                     @Override
@@ -569,14 +563,14 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
                     }
                 });
 
-//                getMedicalDevicesFromSelectedSection(sectionAdapter.getItem(position));
-                getDevices2(sectionAdapter.getItem(position));
+//                getMedicalDevicesFromSelectedSection(departmentAdapter.getItem(position));
+                getDevices(departmentAdapter.getItem(position));
                 dialog.dismiss();
             }
         });
     }
 
-    private void openDialogWithMedicalDevices(ArrayList<Device> arrayListWithDevices) {
+    private void openDialogWithMedicalDevices(ArrayList<MedicalDevice> arrayListWithMedicalDevices) {
         dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.devices_list_view);
 
@@ -587,7 +581,7 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
         ListView listView = dialog.findViewById(R.id.list_view);
         ImageButton closeFragButton = dialog.findViewById(R.id.closeFrag);
 
-        DeviceAdapter deviceAdapter = new DeviceAdapter(getContext(), arrayListWithDevices);
+        DeviceAdapter deviceAdapter = new DeviceAdapter(getContext(), arrayListWithMedicalDevices);
         listView.setAdapter(deviceAdapter);
 
         closeFragButton.setOnClickListener(new View.OnClickListener() {
@@ -629,31 +623,31 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
     public void saveProblemForGraphFragment() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = firebaseDatabase.getReference("brokenMedicalDevices");
-        BrokenMedicalDevices brokenMedicalDevices = new BrokenMedicalDevices(errorCode.getText().toString(), String.valueOf(Year.now().getValue()), LocalDate.now().getMonth().name(), String.valueOf(LocalDate.now().getDayOfMonth()), selectDevice.getText().toString().split(",")[1].trim());
+        BrokenMedicalDevice brokenMedicalDevice = new BrokenMedicalDevice(errorCode.getText().toString(), String.valueOf(Year.now().getValue()), LocalDate.now().getMonth().name(), String.valueOf(LocalDate.now().getDayOfMonth()), selectDevice.getText().toString().split(",")[1].trim());
 
         DatabaseReference yearsRef = databaseReference.child("years");
-        DatabaseReference yearRef = yearsRef.child(brokenMedicalDevices.getYear());
+        DatabaseReference yearRef = yearsRef.child(brokenMedicalDevice.getYear());
 
         DatabaseReference monthsRef = yearRef.child("months");
-        DatabaseReference monthRef = monthsRef.child(brokenMedicalDevices.getMonth());
+        DatabaseReference monthRef = monthsRef.child(brokenMedicalDevice.getMonth());
 
         DatabaseReference daysRef = monthRef.child("days");
-        DatabaseReference dayRef = daysRef.child(brokenMedicalDevices.getDay());
+        DatabaseReference dayRef = daysRef.child(brokenMedicalDevice.getDay());
 
         DatabaseReference errorsNameRef = dayRef.child("errorsName");
-        DatabaseReference problemNameRef = errorsNameRef.child(brokenMedicalDevices.getProblemName());
+        DatabaseReference problemNameRef = errorsNameRef.child(brokenMedicalDevice.getProblemName());
 
 
         errorsNameRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    checkMonthExistence(problemNameRef, brokenMedicalDevices);
+                    checkMonthExistence(problemNameRef, brokenMedicalDevice);
 
                 } else {
                     errorsNameRef.setValue("").addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            checkMonthExistence(problemNameRef, brokenMedicalDevices);
+                            checkMonthExistence(problemNameRef, brokenMedicalDevice);
                         }
                     });
                 }
@@ -669,16 +663,16 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
         return (validations.textViewValidation(selectDevice) &
                 validations.textViewValidation(errorCode) &
                 validations.textViewValidation(hospital) &
-                validations.textViewValidation(hospitalSection) &
-                validations.textInputLayoutValidation(sectionRoom));
+                validations.textViewValidation(hospitalDepartment) &
+                validations.textInputLayoutValidation(departmentRoom));
     }
 
     public void enabled(boolean type) {
         selectDevice.setEnabled(type);
         errorCode.setEnabled(type);
         hospital.setEnabled(type);
-        hospitalSection.setEnabled(type);
-        sectionRoom.setEnabled(type);
+        hospitalDepartment.setEnabled(type);
+        departmentRoom.setEnabled(type);
         description.setEnabled(type);
         linearLayout.setEnabled(type);
         addPictureButton.setEnabled(type);
@@ -696,19 +690,19 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
                 break;
 
             case (R.id.section):
-                if ((user.getRole().equalsIgnoreCase("admin") || user.getRole().equalsIgnoreCase("inginer")) && hospitalSectionsArrayList.size() > 0) {
-                    openDialogWithHospitalSections(hospitalSectionsArrayList);
+                if ((user.getRole().equalsIgnoreCase("admin") || user.getRole().equalsIgnoreCase("inginer")) && hospitalDepartmentsArrayList.size() > 0) {
+                    openDialogWithHospitalDepartments(hospitalDepartmentsArrayList);
                 } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Nu ati selectat un spital", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Nu ati selectat un spital", Toast.LENGTH_SHORT).show();
                 }
                 break;
 
             case (R.id.selectDevice):
-                if (!hospitalSection.getText().toString().isEmpty()) {
-                    if (!hospitalSection.getText().toString().isEmpty() && deviceArrayList.size() > 0) {
-                        openDialogWithMedicalDevices(deviceArrayList);
+                if (!hospitalDepartment.getText().toString().isEmpty()) {
+                    if (!hospitalDepartment.getText().toString().isEmpty() && medicalDeviceArrayList.size() > 0) {
+                        openDialogWithMedicalDevices(medicalDeviceArrayList);
                     } else {
-                        Toast.makeText(getActivity().getApplicationContext(), "Nu exista niciun aparat in sectia  \"" + hospitalSection.getText().toString() + "\"", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getApplicationContext(), "Nu exista niciun aparat in sectia  \"" + hospitalDepartment.getText().toString() + "\"", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Nu ati selectat o sectie", Toast.LENGTH_SHORT).show();
@@ -735,15 +729,15 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
                 if (validation()) {
                     enabled(false);
                     progressBar.setVisibility(View.VISIBLE);
-                    htmlToPdf = new HtmlToPdf(getActivity(), getContext(), user, selectDevice.getText().toString(), errorCode.getText().toString(), errorCodeDescription.getText().toString(), hospital.getText().toString(), hospitalSection.getText().toString(), sectionRoom.getEditText().getText().toString(), description.getEditText().getText().toString(), listOfImages, "brokenDeviceReport");
+                    html = new Html(getActivity(), getContext(), user, selectDevice.getText().toString(), errorCode.getText().toString(), errorCodeDescription.getText().toString(), hospital.getText().toString(), hospitalDepartment.getText().toString(), departmentRoom.getEditText().getText().toString(), description.getEditText().getText().toString(), listOfImages, "brokenDeviceReport");
                     saveProblemForGraphFragment();
-                    if (htmlToPdf.writeHTML()) {
+                    if (html.writeHTML()) {
                         if (user.getRole().equalsIgnoreCase("admin"))
                             hospital.setText(null);
                         if (user.getRole().equalsIgnoreCase("admin") || user.getRole().equalsIgnoreCase("inginer"))
-                            hospitalSection.setText(null);
+                            hospitalDepartment.setText(null);
 
-                        sectionRoom.getEditText().setText(null);
+                        departmentRoom.getEditText().setText(null);
                         selectDevice.setText(null);
                         errorCode.setText(null);
                         errorCodeDescription.setText(null);
@@ -764,17 +758,17 @@ public class AddNewErrorFragment extends Fragment implements View.OnClickListene
             case (R.id.hospital):
                 if (user.getRole().equalsIgnoreCase("admin")) {
                     hospital.setText(null);
-                    hospitalSection.setText(null);
+                    hospitalDepartment.setText(null);
                     selectDevice.setText(null);
-                    hospitalSectionsArrayList.clear();
-                    deviceArrayList.clear();
+                    hospitalDepartmentsArrayList.clear();
+                    medicalDeviceArrayList.clear();
                 }
                 break;
             case (R.id.section):
                 if (user.getRole().equalsIgnoreCase("admin") || user.getRole().equalsIgnoreCase("inginer")) {
-                    hospitalSection.setText(null);
+                    hospitalDepartment.setText(null);
                     selectDevice.setText(null);
-                    deviceArrayList.clear();
+                    medicalDeviceArrayList.clear();
                 }
                 break;
             case (R.id.selectDevice):

@@ -8,10 +8,7 @@
     <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
         <item name="boxStrokeColor">@color/text_input_box_stroke_black</item>
         <item name="hintTextColor">@color/black_russian</item> <!--hintColor from outline-->
-        <item name="android:textColorHint">@color/black_russian
-        </item> <!--hintColor from inside the TextInputLayout-->
-        <item name="colorControlActivated">@color/black_russian</item>
-        <item name="android:textCursorDrawable">@color/black_russian</item>
+        <item name="android:textColorHint">@color/black_russian</item>
     </style>
 
     <style name="TextInputLayoutDeleteAccountStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">

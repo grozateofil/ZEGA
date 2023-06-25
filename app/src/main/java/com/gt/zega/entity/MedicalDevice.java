@@ -1,6 +1,6 @@
 package com.gt.zega.entity;
 
-public class Device {
+public class MedicalDevice {
 
     private String deviceCompanyName;
     private String deviceName;
@@ -8,7 +8,7 @@ public class Device {
     private String hospital;
     private String section;
 
-    public Device(String deviceCompanyName, String deviceName, String deviceCode, String hospital, String section) {
+    public MedicalDevice(String deviceCompanyName, String deviceName, String deviceCode, String hospital, String section) {
         this.deviceCompanyName = deviceCompanyName;
         this.deviceName = deviceName;
         this.deviceCode = deviceCode;
@@ -16,7 +16,7 @@ public class Device {
         this.section = section;
     }
 
-    public Device() {
+    public MedicalDevice() {
     }
 
     public String getDeviceCompanyName() {
