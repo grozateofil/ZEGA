@@ -128,19 +128,23 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case (R.id.saveChangesButton):
-                if (editSaveButton.isChecked()) {
-                    firstname.setEnabled(true);
-                    lastname.setEnabled(true);
-                    phoneNumber.setEnabled(true);
-                    ccp.setEnabled(true);
-                    emailAddress.setEnabled(true);
-                } else if (validation(firstname, lastname, phoneNumber, ccp)) {
-                    firstname.setEnabled(false);
-                    lastname.setEnabled(false);
-                    phoneNumber.setEnabled(false);
-                    ccp.setEnabled(false);
-                    emailAddress.setEnabled(false);
-                    updateData(firstname, lastname, ccp, emailAddress);
+                try {
+                    if (editSaveButton.isChecked()) {
+                        firstname.setEnabled(true);
+                        lastname.setEnabled(true);
+                        phoneNumber.setEnabled(true);
+                        ccp.setEnabled(true);
+//                    emailAddress.setEnabled(true);
+                    } else if (validation(firstname, lastname, phoneNumber, ccp)) {
+                        firstname.setEnabled(false);
+                        lastname.setEnabled(false);
+                        phoneNumber.setEnabled(false);
+                        ccp.setEnabled(false);
+//                    emailAddress.setEnabled(false);
+                        updateData(firstname, lastname, ccp, emailAddress);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 break;
         }
@@ -244,61 +248,57 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateData(TextInputLayout firstname, TextInputLayout lastname, CountryCodePicker ccp, TextInputLayout email) {
-        HashMap<String, Object> hashMap = new HashMap();
-        if (!user.getFirstName().equals(firstname.getEditText().getText().toString())) {
-            hashMap.put("firstName", firstname.getEditText().getText().toString().trim());
-        }
-        if (!user.getLastName().equals(lastname.getEditText().getText().toString())) {
-            hashMap.put("lastName", lastname.getEditText().getText().toString().trim());
-        }
-        if (!user.getPhoneNumber().equals(ccp.getFullNumberWithPlus())) {
-            hashMap.put("phoneNumber", ccp.getFullNumberWithPlus().trim());
-        }
-        if (!emailAddress.getEditText().getText().toString().equals(firebaseAuth.getCurrentUser().getEmail())) {
-            hashMap.put("email", emailAddress.getEditText().getText().toString().trim());
-        }
+        try {
+            HashMap<String, Object> hashMap = new HashMap();
+            if (!user.getFirstName().equals(firstname.getEditText().getText().toString())) {
+                hashMap.put("firstName", firstname.getEditText().getText().toString().trim());
+            }
+            if (!user.getLastName().equals(lastname.getEditText().getText().toString())) {
+                hashMap.put("lastName", lastname.getEditText().getText().toString().trim());
+            }
+            if (!user.getPhoneNumber().equals(ccp.getFullNumberWithPlus())) {
+                hashMap.put("phoneNumber", ccp.getFullNumberWithPlus().trim());
+            }
+            if (!emailAddress.getEditText().getText().toString().equals(firebaseAuth.getCurrentUser().getEmail())) {
+                hashMap.put("email", emailAddress.getEditText().getText().toString().trim());
+            }
 
 
-        if (hashMap.size() > 0) {
-            enabled(false);
-            progressBar.setVisibility(View.VISIBLE);
-            databaseReference.child(userKey).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-
-//                        saveProfilePicture();
-                        if (hashMap.size() == 1) {
-                            Toast.makeText(getContext(), getCollect(hashMap) + " actualizat cu succes", Toast.LENGTH_SHORT).show();
-                        } else if (hashMap.size() == 2) {
-                            Toast.makeText(getContext(), getCollect(hashMap) + " actualizate cu succes", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getContext(), "Date actualizate cu succes", Toast.LENGTH_SHORT).show();
-                        }
-                        progressBar.setVisibility(View.GONE);
-                        enabled(true);
-                    } else {
-                        enabled(false);
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(getContext(), "Actualizarea datelor a eșuat.\nRedeschideți pagina.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-
-            if (hashMap.containsKey("email")) {
-                password.setVisibility(View.VISIBLE);
-                firebaseUser.updateEmail(email.getEditText().getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+            if (hashMap.size() > 0) {
+                enabled(false);
+                progressBar.setVisibility(View.VISIBLE);
+                databaseReference.child(userKey).updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(getContext(), "Email 2 actualizat cu succes", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Date actualizate cu succes", Toast.LENGTH_SHORT).show();
+                            progressBar.setVisibility(View.GONE);
+                            enabled(true);
                         } else {
-                            Toast.makeText(getContext(), "Date actualizate cu succes - nu", Toast.LENGTH_SHORT).show();
-
+                            enabled(false);
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getContext(), "Actualizarea datelor a eșuat.\nRedeschideți pagina.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+
+                if (hashMap.containsKey("email")) {
+                    password.setVisibility(View.VISIBLE);
+                    firebaseUser.updateEmail(email.getEditText().getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(getContext(), "Email 2 actualizat cu succes", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getContext(), "Date actualizate cu succes - nu", Toast.LENGTH_SHORT).show();
+
+                            }
+                        }
+                    });
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -314,7 +314,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         lastname.setEnabled(type);
         phoneNumber.setEnabled(type);
         ccp.setEnabled(type);
-        emailAddress.setEnabled(type);
         resetPassword.setEnabled(type);
         editSaveButton.setEnabled(type);
     }

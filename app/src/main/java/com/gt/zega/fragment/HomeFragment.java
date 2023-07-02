@@ -66,9 +66,8 @@ public class HomeFragment extends Fragment {
                     firstname = user.getFirstName();
                     lastname = user.getLastName();
                     progressBar.setVisibility(View.GONE);
-                    hello.setText("Bună, " + role.toUpperCase() + " " + firstname + " " + lastname + "!");
+                    hello.setText("Bună, " + role + " " + firstname + " " + lastname.toUpperCase() + "!");
                 } else {
-                    //TODO sa iasa automat din cont
                 }
             }
 

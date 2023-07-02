@@ -196,23 +196,27 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                             User currentUser = dataSnapshot.getValue(User.class);
 
                             if (!currentUser.isBlockedAccount()) {
-                                progressBar.setVisibility(View.GONE);
-                                errorMessage.setVisibility(View.INVISIBLE);
-                                Toast.makeText(getContext(), "V-ați conectat cu succes!", Toast.LENGTH_SHORT).show();
-                                SharedPreferences prefs = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = prefs.edit();
-                                editor.putString("userRole", currentUser.getRole());
-                                editor.apply();
+                                try {
+                                    progressBar.setVisibility(View.GONE);
+                                    errorMessage.setVisibility(View.INVISIBLE);
+//                                Toast.makeText(getContext(), "V-ați conectat cu succes!", Toast.LENGTH_SHORT).show();
+                                    SharedPreferences prefs = context.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = prefs.edit();
+                                    editor.putString("userRole", currentUser.getRole());
+                                    editor.apply();
 
-                                onUserRoleSelectedListener.onUserRoleSelected(currentUser.getRole());
+                                    onUserRoleSelectedListener.onUserRoleSelected(currentUser.getRole());
 
-                                HomeFragment homeFragment = new HomeFragment();
-                                FragmentManager fragmentManager = getParentFragmentManager();
-                                fragmentManager.beginTransaction().replace(R.id.content_frame, homeFragment).commit();
+                                    HomeFragment homeFragment = new HomeFragment();
+                                    FragmentManager fragmentManager = getParentFragmentManager();
+                                    fragmentManager.beginTransaction().replace(R.id.content_frame, homeFragment).commit();
 
-                                SharedPreferences.Editor editor2 = sharedPreferences.edit();
-                                editor2.putString("LOGIN", emailAddress);
-                                editor2.commit();
+                                    SharedPreferences.Editor editor2 = sharedPreferences.edit();
+                                    editor2.putString("LOGIN", emailAddress);
+                                    editor2.commit();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             } else {
                                 FirebaseAuth.getInstance().signOut();
                                 progressBar.setVisibility(View.GONE);

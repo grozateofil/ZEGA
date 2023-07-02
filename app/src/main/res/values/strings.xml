@@ -40,8 +40,8 @@
     <string name="reset_password_confirmation">V-am trimis un e-mail la adresa\n %1$s pentru a putea reseta parola.\n\nDaca nu ați primit nimic este posibil ca e-mailul să-l fi primit în folderul de spam.</string>
 
     <string name="admin">admin</string>
-    <string name="super_user">inginer, asistent sef, medic sef</string>
-    <string name="user">medic, asistent</string>
+    <string name="super_user">inginer,asistent sef,medic sef</string>
+    <string name="user">medic,asistent</string>
 
 
 </resources>
