@@ -1,0 +1,53 @@
+Buna ziua, ma numesc Teofil Groza, iar lucrarea mea de licenta consta intr-o aplicatie mobila pentru raportarea aparatelor medicale nefunctionale si cuprinde 7 capitole pe care le vedeti acum pe diapozitiv.
+
+
+1. Ideea dezvoltarii acestei aplicatii mi-a venit in urma voluntariatului pe care l-am facut la Spitalul Judetean din Timisoara, in sectia de Anestezie si Terapie Intensiva pe parcursul ultimului an de studiu. Acolo am observat o problema in comunicarea dintre cadrele medicale si inginerii spitalului, problema care consta in faptul ca medicii si asistentele nu raporteaza la timp aparatele medicale defecte sau omit din a specifica bucati foarte importante din problema intampinata. Si astfel a luat nastele acesta aplicatie mobila numita ZEGA, care permite cadrelor medicale sa raporteze imediat orice problema legata de aparatele medicale pe care o intampina.
+
+
+2. Pentru a putea dezvolta acestă aplicatie am folosit ca mediu de dezvoltare Android Studio, iar codul din spatele acestui software a fost scris folosind limbajul JAVA. Pentru rapoartele care alcătuiesc inima aplicatiei am folosit 2 mari componente, si anume HTML si CSS, iar toate datele din aplicatie sunt stocate in baza de date FIREBASE. 
+* De ce am folosit baza de date FIREBASE si nu alta platforma cum ar fi MYSQL sau X ? Pentru ca Firebase este un set cuprinzator de instrumente pentru crearea aplicatiilor si jocurilor pentru mobil. Citirea si crierea se fac foarte rapid, astfel utilizatorul are acces la orice informatie instant.
+
+
+3. Aplicatia are o structura bine definita, cuprinzând 4 niveluri de acces:
+  a) nivelul ADMINISTRATOR are acces la toate functionalitatile aplicatiei, precum 
+      - crearea si modificarea datelor personale
+      - crearea si modificarea tuturor rapoartelor create de utilizatori
+      - poate adauga spitale, secții aferente unui spital, dar si aparate medicale sau consumabile pentru diferite aparate
+      - și poate vizualiza statisticile lunare pentru fiecare spital
+
+  b) un utilizator cu nivelul de acces INGINER poate crea si modifica totalitatea raportelor din spitalul curent
+      - poate de asemenea sa adauge secții si aparate medicale pentru spitalul in care activeaza
+      - si poate vizualiza statisticile lunare ce cuprind numarul de defectiuni si tipul aparatelor nefuncționale din spital
+
+  c) nivelurile MEDIC SEF si ASISTENT SEF au acees la funcții precum:
+      - crearea si citirea tuturor rapoartelor din sectiile in care lucrează
+      - și vizualizarea statisticilor lunare aferente sectiilor in care acești utilizari activeaza
+
+  d) iar la final, utilizatorii cu nivelurile de acces MEDIC si ASISTENT pot doar sa creeze si sa vizualizeze rapoartele de tipurile EROARE APARAT sau CONSUMABIL
+
+
+4. Aplicatia mea intitulata ZEGA are 4 functionalitati majore:
+    1. Raportarea aparatelor medicale nefunctionale este prima si cea mai importantă, acesta fiind si motivul pentru care am creat-o
+    2. De asemenea aparate necesita si consumabile si este esentiala si o evidenta a înlocuirii lor la timp
+    3. Rapoarete trebuie create, vizualizate si modificate, iar la nivel de conducere trebuie trase niste concluzii pe baza statisticilor lunare
+
+
+5. Baza de date, asa cum am amintit acum cateva momente, este Firebase. Firebase este o baza de date NoSQL. Termenul de NoSQL se referă la bazele de date nerelaționale, care stochează datele într-un format diferit de tabelele relaționale, in cazul de fată formatul este de tip nod. Structura acesteia cuprinde 6 noduri:
+  1. nodul UTILIZATORI este compus din cate un subnod pentru fiecare utilizator, iar acest subnod cuprinde date precum un cod unic asociat fiecarui utilizator, numele, prenumele, spitalul, sectia si rolul persoanei care detine un cont.
+  2. in nodul SPITALE vor fi salvate toate spitalele cu nume, adresa si sectiile aferente in care va fi implementata această aplicatie, in momentul de fata contine doar sectia de ATI din cel mai mare spital din vestul tarii, si anume Spitalul Judetean Timisoara
+  3. nodul APARATE MEDICALE, cuprinde toate aparatele medicale cu datele aferente (cod aparat, nume producator, nume aparat si numele spitalului si sectiei unde este folosit)
+  4. in nodul APARATE MEDICALE NEFUNCȚIONALE sunt salvate datele fiecarui aparat declarat nefunctional. Date cum ar fi (anul, luna si ziua defectarii, numele erorii intampinate, codurile aparatelor defecte si numarul acestora din fiecare zi)
+  5. nodul consumabile contine datele de identificare are fiecarui consumabil (cod consumabil, nume producator si nume consumabil)
+  6. si ultimul, dar nu cel din urma, nodul CODURI DEFECTIUNI cuprinde un nomenclator cu totalitatea codurilor de erorare care exista pe aparatele utilizate in sectiile salvate
+
+
+6. Drept concluzii, aplicatia respectă cerintele si funcționalitățile necesare in spital, deoarece a fost construita in urma unor discitii pe care le-am avut cu beneficiarii si actualizata pe baza reactiilor acestora 
+   Durata creării unui raport este cuprinsă intre 15 si 25 de secunde, iar această masuratoare a fost efectuata pe un grup de 12 medici rezidenti pe care i-am cronometrat in cat timp raporteaza o problema
+   Aplicatia ZEGA poate sa fie extinsă in mai multe spitale si sectii, iar acest fapt se datoreaza si interfetei cu utilizatorul care este intuitive si usor de utilizat. Acest fapt nu-l spun doar eu, ci a reieșit din testele care au fost efectuate pe aplicatie de catre acel grup de medici rezidenti.
+
+
+7. Principalele directii de dezvolate pe care ma voi axa sunt
+  1. Posibilitea de generare a rapoartelor in format PDF, in momentul de fata sunt doar in format HTML
+  2. Crearea de statistici multiple, cum ar fi: cate defectiuni au aparut intr-o luna la un tip de aparat sau care este cel mai intalnit cod de eroare.
+ Deocamdată statistica este simplă pentru ca atat am avut timp in cele 7 săptămâni de pregatire a lucrarii, dar doresc sa o dezvolt mult mai tare la MASTER.
+  3. adaugarea de funcționalități conform cerintelor care imi vor fi comunicate de catre clint.
